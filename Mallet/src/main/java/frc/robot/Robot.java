@@ -19,13 +19,11 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    // m_robotContainer.updateShuffleboard();
   }
 
   //called when the robot is disabled
   @Override
   public void disabledInit() {
-    // RobotContainer.resetDesiredAngle();
   }
 
   //called continuously while robot is disabled
@@ -41,7 +39,6 @@ public class Robot extends TimedRobot {
   //called periodically when robot is in auto
   @Override
   public void autonomousPeriodic() {
-    // System.out.println(m_robotContainer.getAutoInput().toString());
   }
 
   //called when teleop is selected

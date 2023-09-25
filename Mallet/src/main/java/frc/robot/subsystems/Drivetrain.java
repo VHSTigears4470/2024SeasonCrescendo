@@ -25,7 +25,6 @@ public class Drivetrain extends SubsystemBase {
 
   // Set up the differential drive controller
   private final DifferentialDrive m_diffDrive = new DifferentialDrive(m_left, m_right);
- // private final DifferentialDrive m_diffDrive = new DifferentialDrive(m_brMotor, m_frMotor);
 
   // Set up the BuiltInAccelerometer
   private final BuiltInAccelerometer m_accelerometer = new BuiltInAccelerometer();
