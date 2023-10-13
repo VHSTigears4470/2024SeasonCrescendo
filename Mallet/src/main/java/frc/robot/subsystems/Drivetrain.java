@@ -1,166 +1,322 @@
-package frc.robot.subsystems;
+  // Copyright (c) FIRST and other WPILib contributors.
+  // Open Source Software; you can modify and/or share it under the terms of
+  // the WPILib BSD license file in the root directory of this project.
 
-import frc.robot.Constants;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import edu.wpi.first.wpilibj.BuiltInAccelerometer;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+  package frc.robot.subsystems;
 
-public class Drivetrain extends SubsystemBase {
-  private final CANSparkMax m_flMotor = new CANSparkMax(3, MotorType.kBrushless);
-  private final CANSparkMax m_blMotor = new CANSparkMax(4, MotorType.kBrushless);
-  MotorControllerGroup m_left = new MotorControllerGroup(m_flMotor, m_blMotor);
-  private final CANSparkMax m_frMotor = new CANSparkMax(1, MotorType.kBrushless);
-  private final CANSparkMax m_brMotor = new CANSparkMax(2, MotorType.kBrushless);
-  MotorControllerGroup m_right = new MotorControllerGroup(m_frMotor, m_brMotor);
+  import com.pathplanner.lib.PathConstraints;
+  import com.pathplanner.lib.PathPlanner;
+  import com.pathplanner.lib.PathPlannerTrajectory;
+  import com.pathplanner.lib.auto.PIDConstants;
+  import com.pathplanner.lib.auto.SwerveAutoBuilder;
+  import edu.wpi.first.math.geometry.Pose2d;
+  import edu.wpi.first.math.geometry.Rotation2d;
+  import edu.wpi.first.math.geometry.Translation2d;
+  import edu.wpi.first.math.kinematics.ChassisSpeeds;
+  import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+  import edu.wpi.first.math.trajectory.Trajectory;
+  import edu.wpi.first.wpilibj.Timer;
+  import edu.wpi.first.wpilibj2.command.Command;
+  import edu.wpi.first.wpilibj2.command.SubsystemBase;
+  import java.io.File;
+  import java.util.List;
+  import java.util.Map;
+  import swervelib.SwerveController;
+  import swervelib.SwerveDrive;
+  import swervelib.parser.SwerveControllerConfiguration;
+  import swervelib.parser.SwerveDriveConfiguration;
+  import swervelib.parser.SwerveParser;
+  import swervelib.telemetry.SwerveDriveTelemetry;
+  import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
-  private final RelativeEncoder m_leftEncoder = m_flMotor.getEncoder();
-  private final RelativeEncoder m_rightEncoder = m_frMotor.getEncoder();
-  private final RelativeEncoder m_leftBackEncoder = m_blMotor.getEncoder();
-  private final RelativeEncoder m_rightBackEncoder = m_brMotor.getEncoder();
+  public class Drivetrain extends SubsystemBase
+  {
 
-  // Set up the differential drive controller
-  private final DifferentialDrive m_diffDrive = new DifferentialDrive(m_left, m_right);
+    //SwerveDrive variable
+    private final SwerveDrive swerveDrive;
+    /**
+     * The auto builder for PathPlanner, there can only ever be one created so we save it just incase we generate multiple
+     * paths with events.
+     */
+    private SwerveAutoBuilder autoBuilder = null;
 
-  // Set up the BuiltInAccelerometer
-  private final BuiltInAccelerometer m_accelerometer = new BuiltInAccelerometer();
-
-  private double balancePosition;
-
-  /** Creates a new Drivetrain. */
-  public Drivetrain() {
-    m_flMotor.setIdleMode(IdleMode.kBrake);
-    m_blMotor.setIdleMode(IdleMode.kBrake);
-    m_frMotor.setIdleMode(IdleMode.kBrake);
-    m_brMotor.setIdleMode(IdleMode.kBrake);
-    // We need to invert one side of the drivetrain so that positive voltages result in both sides moving forward. Depending on how your robot's gearbox is constructed, you might have to invert the left side instead.
-    m_brMotor.setInverted(true);
-    m_frMotor.setInverted(true);
-    m_leftEncoder.setPositionConversionFactor(Constants.K_WHEEL_DIAMETER_INCH);
-    m_rightEncoder.setPositionConversionFactor(Constants.K_WHEEL_DIAMETER_INCH);
-    m_leftBackEncoder.setPositionConversionFactor(Constants.K_WHEEL_DIAMETER_INCH);
-    m_rightBackEncoder.setPositionConversionFactor(Constants.K_WHEEL_DIAMETER_INCH);
-    
-    resetEncoders();
-  }
-  //testing single motor
-  public CANSparkMax getTestMotor() {
-    return m_brMotor;
-  }
-
-  // negative is forward or to the right
-  public void arcadeDrive(double xaxisSpeed, double zaxisRotate) {
-    m_diffDrive.arcadeDrive(xaxisSpeed, .5*zaxisRotate);
-  }
-
-  public void resetEncoders() {
-    m_leftEncoder.setPosition(0);
-    m_rightEncoder.setPosition(0);
-    m_leftBackEncoder.setPosition(0);
-    m_rightBackEncoder.setPosition(0);
-  }
-
-  public void runTest(double speed){
-    m_brMotor.set(speed);
-  }
-
-  public void setBalanceToCurrentPos(boolean backwards) {
-    if (!backwards)
-      balancePosition = getAverageDistanceInch()-42.5;
-    else 
-      balancePosition = getAverageDistanceInch()+42.5;
-  }
-
-  public void balance() {
-    double speed = (balancePosition - getAverageDistanceInch())/4;
-    if (Math.abs(speed) > .45) {
-      speed = speed > 0 ? .45 : -.45;
+    /**
+     * Initialize {@link SwerveDrive} with the directory provided.
+     *
+     * @param directory Directory of swerve drive config files.
+     */
+    public Drivetrain(File directory)
+    {
+      // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
+      SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+      try
+      {
+        swerveDrive = new SwerveParser(directory).createSwerveDrive();
+      } catch (Exception e)
+      {
+        throw new RuntimeException(e);
+      }
     }
-    arcadeDrive(speed, 0);
-  }
 
-  // For when the time calls for it, run this
-  public void stopMotors(){
-    m_diffDrive.arcadeDrive(0, 0);
-  }
+    /**
+     * Construct the swerve drive.
+     *
+     * @param driveCfg      SwerveDriveConfiguration for the swerve.
+     * @param controllerCfg Swerve Controller.
+     */
+    public Drivetrain(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg)
+    {
+      swerveDrive = new SwerveDrive(driveCfg, controllerCfg);
+    }
 
-  public RelativeEncoder getLeftEncoder() {
-    return m_leftEncoder;
-  }
+    /**
+     * The primary method for controlling the drivebase.  Takes a {@link Translation2d} and a rotation rate, and
+     * calculates and commands module states accordingly.  Can use either open-loop or closed-loop velocity control for
+     * the wheel velocities.  Also has field- and robot-relative modes, which affect how the translation vector is used.
+     *
+     * @param translation   {@link Translation2d} that is the commanded linear velocity of the robot, in meters per
+     *                      second. In robot-relative mode, positive x is torwards the bow (front) and positive y is
+     *                      torwards port (left).  In field-relative mode, positive x is away from the alliance wall
+     *                      (field North) and positive y is torwards the left wall when looking through the driver station
+     *                      glass (field West).
+     * @param rotation      Robot angular rate, in radians per second. CCW positive.  Unaffected by field/robot
+     *                      relativity.
+     * @param fieldRelative Drive mode.  True for field-relative, false for robot-relative.
+     * @param isOpenLoop    Whether to use closed-loop velocity control.  Set to true to disable closed-loop.
+     */
+    public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop)
+    {
+      //Translation is where to go, rotation is speed to rotate, fieldRelative tells whether the robot is measured based off the field or the robot, isOpenLoop is the method to rotate (closed is constantly adjusting itself)
+      swerveDrive.drive(translation, rotation, fieldRelative, isOpenLoop);
+    }
 
-  public RelativeEncoder getRightEncoder() {
-    return m_rightEncoder;
-  }
+    @Override
+    public void periodic()
+    {
+    }
 
-  public RelativeEncoder getRightBackEncoder(){
-    return m_rightBackEncoder;
-  }
+    @Override
+    public void simulationPeriodic()
+    {
+    }
 
-  public RelativeEncoder getLeftBackEncoder(){
-    return m_leftBackEncoder;
-  }
+    /**
+     * Get the swerve drive kinematics object.
+     *
+     * @return {@link SwerveDriveKinematics} of the swerve drive.
+     */
+    public SwerveDriveKinematics getKinematics()
+    {
+      return swerveDrive.kinematics;
+    }
 
-  public double getLeftDistanceInch() {
-    return m_leftEncoder.getPosition();
-  }
+    /**
+     * Resets odometry to the given pose. Gyro angle and module positions do not need to be reset when calling this
+     * method.  However, if either gyro angle or module position is reset, this must be called in order for odometry to
+     * keep working.
+     *
+     * @param initialHolonomicPose The pose to set the odometry to
+     */
+    public void resetOdometry(Pose2d initialHolonomicPose)
+    {
+      swerveDrive.resetOdometry(initialHolonomicPose);
+    }
 
-  public double getLeftBackDistanceInch(){
-    return m_leftBackEncoder.getPosition();
-  }
+    /**
+     * Gets the current pose (position and rotation) of the robot, as reported by odometry.
+     *
+     * @return The robot's pose
+     */
+    public Pose2d getPose()
+    {
+      return swerveDrive.getPose();
+    }
 
-  public double getRightDistanceInch() {
-    return m_rightEncoder.getPosition();
-  }
+    /**
+     * Set chassis speeds with closed-loop velocity control.
+     *
+     * @param chassisSpeeds Chassis Speeds to set.
+     */
+    public void setChassisSpeeds(ChassisSpeeds chassisSpeeds)
+    {
+      swerveDrive.setChassisSpeeds(chassisSpeeds);
+    }
 
-  public double getRightBackDistanceInch(){
-    return m_rightBackEncoder.getPosition();
-  }
+    /**
+     * Post the trajectory to the field.
+     *
+     * @param trajectory The trajectory to post.
+     */
+    public void postTrajectory(Trajectory trajectory)
+    {
+      swerveDrive.postTrajectory(trajectory);
+    }
 
-  public double getLeftAverageDistanceInch(){
-    return ((getLeftDistanceInch()) + (getLeftBackDistanceInch())) / 2.0;
-  }
+    /**
+     * Resets the gyro angle to zero and resets odometry to the same position, but facing toward 0.
+     */
+    public void zeroGyro()
+    {
+      swerveDrive.zeroGyro();
+    }
 
-  public double getRightAverageDistanceInch(){
-    return ((getRightDistanceInch()) + (getRightBackDistanceInch())) / 2.0;
-  }
+    /**
+     * Sets the drive motors to brake/coast mode.
+     *
+     * @param brake True to set motors to brake mode, false for coast.
+     */
+    public void setMotorBrake(boolean brake)
+    {
+      swerveDrive.setMotorIdleMode(brake);
+    }
 
-  public double getAverageDistanceInch() {
-    return (getLeftAverageDistanceInch() + getRightAverageDistanceInch()) / 2.0;
-  }
+    /**
+     * Gets the current yaw angle of the robot, as reported by the imu.  CCW positive, not wrapped.
+     *
+     * @return The yaw angle
+     */
+    public Rotation2d getHeading()
+    {
+      return swerveDrive.getYaw();
+    }
 
-  /**
-   * The acceleration in the X-axis.
-   *
-   * @return The acceleration of the Romi along the X-axis in Gs
-   */
-  public double getAccelX() {
-    return m_accelerometer.getX();
-  }
+    /**
+     * Get the chassis speeds based on controller input of 2 joysticks. One for speeds in which direction. The other for
+     * the angle of the robot.
+     *
+     * @param xInput   X joystick input for the robot to move in the X direction.
+     * @param yInput   Y joystick input for the robot to move in the Y direction.
+     * @param headingX X joystick which controls the angle of the robot.
+     * @param headingY Y joystick which controls the angle of the robot.
+     * @return {@link ChassisSpeeds} which can be sent to th Swerve Drive.
+     */
+    public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double headingX, double headingY)
+    {
+      xInput = Math.pow(xInput, 3);
+      yInput = Math.pow(yInput, 3);
+      return swerveDrive.swerveController.getTargetSpeeds(xInput, yInput, headingX, headingY, getHeading().getRadians());
+    }
 
-  /**
-   * The acceleration in the Y-axis.
-   *
-   * @return The acceleration of the Romi along the Y-axis in Gs
-   */
-  public double getAccelY() {
-    return m_accelerometer.getY();
-  }
+    /**
+     * Get the chassis speeds based on controller input of 1 joystick and one angle.
+     *
+     * @param xInput X joystick input for the robot to move in the X direction.
+     * @param yInput Y joystick input for the robot to move in the Y direction.
+     * @param angle  The angle in as a {@link Rotation2d}.
+     * @return {@link ChassisSpeeds} which can be sent to th Swerve Drive.
+     */
+    public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, Rotation2d angle)
+    {
+      xInput = Math.pow(xInput, 3);
+      yInput = Math.pow(yInput, 3);
+      return swerveDrive.swerveController.getTargetSpeeds(xInput, yInput, angle.getRadians(), getHeading().getRadians());
+    }
 
-  /**
-   * The acceleration in the Z-axis.
-   *
-   * @return The acceleration of the Romi along the Z-axis in Gs
-   */
-  public double getAccelZ() {
-    return m_accelerometer.getZ();
-  }
+    /**
+     * Gets the current field-relative velocity (x, y and omega) of the robot
+     *
+     * @return A ChassisSpeeds object of the current field-relative velocity
+     */
+    public ChassisSpeeds getFieldVelocity()
+    {
+      return swerveDrive.getFieldVelocity();
+    }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
+    /**
+     * Gets the current velocity (x, y and omega) of the robot
+     *
+     * @return A {@link ChassisSpeeds} object of the current velocity
+     */
+    public ChassisSpeeds getRobotVelocity()
+    {
+      return swerveDrive.getRobotVelocity();
+    }
+
+    /**
+     * Get the {@link SwerveController} in the swerve drive.
+     *
+     * @return {@link SwerveController} from the {@link SwerveDrive}.
+     */
+    public SwerveController getSwerveController()
+    {
+      return swerveDrive.swerveController;
+    }
+
+    /**
+     * Get the {@link SwerveDriveConfiguration} object.
+     *
+     * @return The {@link SwerveDriveConfiguration} fpr the current drive.
+     */
+    public SwerveDriveConfiguration getSwerveDriveConfiguration()
+    {
+      return swerveDrive.swerveDriveConfiguration;
+    }
+
+    /**
+     * Lock the swerve drive to prevent it from moving.
+     */
+    public void lock()
+    {
+      swerveDrive.lockPose();
+    }
+
+    /**
+     * Gets the current pitch angle of the robot, as reported by the imu.
+     *
+     * @return The heading as a {@link Rotation2d} angle
+     */
+    public Rotation2d getPitch()
+    {
+      return swerveDrive.getPitch();
+    }
+
+    /**
+     * Add a fake vision reading for testing purposes.
+     */
+    public void addFakeVisionReading()
+    {
+      swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp(), true, 4);
+    }
+
+    /**
+     * Factory to fetch the PathPlanner command to follow the defined path.
+     *
+     * @param path             Path planner path to specify.
+     * @param constraints      {@link PathConstraints} for {@link com.pathplanner.lib.PathPlanner#loadPathGroup} function
+     *                         limiting velocity and acceleration.
+     * @param eventMap         {@link java.util.HashMap} of commands corresponding to path planner events given as
+     *                         strings.
+     * @param translation      The {@link PIDConstants} for the translation of the robot while following the path.
+     * @param rotation         The {@link PIDConstants} for the rotation of the robot while following the path.
+     * @param useAllianceColor Automatically transform the path based on alliance color.
+     * @return PathPlanner command to follow the given path.
+     */
+    public Command creatPathPlannerCommand(String path, PathConstraints constraints, Map<String, Command> eventMap,
+                                          PIDConstants translation, PIDConstants rotation, boolean useAllianceColor)
+    {
+      List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(path, constraints);
+  //    SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
+  //      Pose2d supplier,
+  //      Pose2d consumer- used to reset odometry at the beginning of auto,
+  //      PID constants to correct for translation error (used to create the X and Y PID controllers),
+  //      PID constants to correct for rotation error (used to create the rotation controller),
+  //      Module states consumer used to output to the drive subsystem,
+  //      Should the path be automatically mirrored depending on alliance color. Optional- defaults to true
+  //   )
+      if (autoBuilder == null)
+      {
+        autoBuilder = new SwerveAutoBuilder(
+            swerveDrive::getPose,
+            swerveDrive::resetOdometry,
+            translation,
+            rotation,
+            swerveDrive::setChassisSpeeds,
+            eventMap,
+            useAllianceColor,
+            this
+        );
+      }
+
+      return autoBuilder.fullAuto(pathGroup);
+    }
   }
-}
