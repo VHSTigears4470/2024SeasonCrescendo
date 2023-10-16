@@ -192,6 +192,7 @@
      */
     public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double headingX, double headingY)
     {
+      //Tank drive controls and calculates trajectory relative to field 
       xInput = Math.pow(xInput, 3);
       yInput = Math.pow(yInput, 3);
       return swerveDrive.swerveController.getTargetSpeeds(xInput, yInput, headingX, headingY, getHeading().getRadians());
@@ -207,6 +208,7 @@
      */
     public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, Rotation2d angle)
     {
+      //Arcade drive controls and calculates trajectory relative to field
       xInput = Math.pow(xInput, 3);
       yInput = Math.pow(yInput, 3);
       return swerveDrive.swerveController.getTargetSpeeds(xInput, yInput, angle.getRadians(), getHeading().getRadians());
@@ -275,6 +277,7 @@
      */
     public void addFakeVisionReading()
     {
+      //Basically a recalibration of the robot via vision
       swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp(), true, 4);
     }
 
