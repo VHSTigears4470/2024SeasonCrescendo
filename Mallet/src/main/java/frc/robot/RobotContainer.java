@@ -1,6 +1,8 @@
 package frc.robot;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -12,13 +14,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.*;
+import frc.robot.commands.drivebase.AbsoluteDrive;
 import frc.robot.subsystems.*;
+
+import java.io.File;
 import java.util.HashMap;
 
 public class RobotContainer {
   // INIT SUBSYSTEMS
-  private static final Drivetrain m_drivetrain = new Drivetrain();
+  private static final Drivetrain m_drivetrain = new Drivetrain(new File(Filesystem.getDeployDirectory(), "swerve/neo"));
   
   // INIT JOYSTICKS (NOTE: PLEASE RENAME TO LEFT/RIGHT)
   public static Joystick m_controller_arm = new Joystick(0);
@@ -37,6 +43,7 @@ public class RobotContainer {
 
   public RobotContainer() {
     configureButtonBindings();
+    m_drivetrain.setDefaultCommand(new AbsoluteDrive(m_drivetrain, () -> MathUtil.applyDeadband(m_controller_drive.getRawAxis(0), OperatorConstants.LEFT_X_DEADBAND), () -> MathUtil.applyDeadband(m_controller_drive.getRawAxis(1), OperatorConstants.LEFT_Y_DEADBAND), () -> m_controller_arm.getRawAxis(0), () -> m_controller_arm.getRawAxis(1), false));
     String[] autoList = {"Do Nothing"};
     SmartDashboard.putStringArray("Auto List", autoList);
     initializeAutoChooser();
@@ -56,7 +63,6 @@ public class RobotContainer {
 
   // assign button functions
   private void configureButtonBindings() {
-    m_drivetrain.setDefaultCommand(new ArcadeDrive(m_drivetrain, m_controller_drive));
     
     // Add joystick buttons to maps
     controllerButtons_drive.put("trigger", new JoystickButton(m_controller_drive, 1));
@@ -66,9 +72,6 @@ public class RobotContainer {
       controllerButtons_arm.put(Integer.toString(i), new JoystickButton(m_controller_arm, i));
       controllerButtons_drive.put(Integer.toString(i), new JoystickButton(m_controller_drive, i));
     }
-
-    //DRIVE CONTROLLER
-    controllerButtons_drive.get("8").onTrue(new ResetEncoders(m_drivetrain));
   }
 
   public Command getAutoInput() {
