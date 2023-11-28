@@ -38,7 +38,7 @@ public class RobotContainer {
 
   public RobotContainer() {
     configureButtonBindings();
-    m_drivetrain.setDefaultCommand(new AbsoluteDrive(m_drivetrain, () -> MathUtil.applyDeadband(m_xbox.getLeftY(), OperatorConstants.LEFT_X_DEADBAND), () -> MathUtil.applyDeadband(m_xbox.getLeftX(), OperatorConstants.LEFT_Y_DEADBAND), () -> m_xbox.getRightX(), () -> m_xbox.getRightY(), false));
+    m_drivetrain.setDefaultCommand(new AbsoluteDrive(m_drivetrain, () -> MathUtil.applyDeadband(m_xbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), () -> MathUtil.applyDeadband(m_xbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND), () -> m_xbox.getRightX(), () -> m_xbox.getRightY(), false));
     String[] autoList = {"Do Nothing"};
     SmartDashboard.putStringArray("Auto List", autoList);
     initializeAutoChooser();
