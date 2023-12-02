@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.drivebase.AbsoluteDrive;
+import edu.wpi.first.wpilibj.I2C;
+
 
 import java.io.File;
 import java.util.HashMap;
@@ -38,10 +40,11 @@ public class RobotContainer {
 
   public RobotContainer() {
     configureButtonBindings();
-    m_drivetrain.setDefaultCommand(new AbsoluteDrive(m_drivetrain, () -> MathUtil.applyDeadband(m_xbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), () -> MathUtil.applyDeadband(m_xbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND), () -> m_xbox.getRightX(), () -> m_xbox.getRightY(), false));
+    m_drivetrain.setDefaultCommand(new AbsoluteDrive(m_drivetrain, () -> MathUtil.applyDeadband(-m_xbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND), () -> MathUtil.applyDeadband(-m_xbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), () -> MathUtil.applyDeadband(-m_xbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND), () -> MathUtil.applyDeadband(-m_xbox.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND), false));
     String[] autoList = {"Do Nothing"};
     SmartDashboard.putStringArray("Auto List", autoList);
     initializeAutoChooser();
+    System.out.print(I2C.Port.kMXP);
   }
 
   // update shuffleboard layout

@@ -110,4 +110,8 @@ public class GyroScope extends SwerveIMU
   public void clearStickyFaults(){}
 
 
+  public void periodic() {
+    System.out.print("X: "+ offset.getX() + "--- Y: " + offset.getY() + "--- Z: " +offset.getZ());
+  }
+
 }
