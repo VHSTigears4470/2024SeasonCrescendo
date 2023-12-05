@@ -28,7 +28,7 @@
   import swervelib.parser.SwerveParser;
   import swervelib.telemetry.SwerveDriveTelemetry;
   import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
-
+  import frc.robot.Constants.Auton;
   public class Drivetrain extends SubsystemBase
   {
 
@@ -188,13 +188,13 @@
      * @param yInput   Y joystick input for the robot to move in the Y direction.
      * @param headingX X joystick which controls the angle of the robot.
      * @param headingY Y joystick which controls the angle of the robot.
-     * @return {@link ChassisSpeeds} which can be sent to th Swerve Drive.
+     * @return {@link ChassisSpeeds} which can be sent to the Swerve Drive.
      */
     public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double headingX, double headingY)
     {
       //Tank drive controls and calculates trajectory relative to field 
-      xInput = Math.pow(xInput, 3);
-      yInput = Math.pow(yInput, 3);
+      xInput = Math.pow(Auton.SPEED_SCALAR*xInput, 3);
+      yInput = Math.pow(Auton.SPEED_SCALAR*yInput, 3);
       return swerveDrive.swerveController.getTargetSpeeds(xInput, yInput, headingX, headingY, getHeading().getRadians());
     }
 
