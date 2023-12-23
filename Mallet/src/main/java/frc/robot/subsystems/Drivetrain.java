@@ -47,8 +47,8 @@
      */
     public Drivetrain(File directory)
     {
-      // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
-      SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+      // Configure the Telemetry before creating the SwerveDrive determine how much data to publish to SmartDashboard.
+      SwerveDriveTelemetry.verbosity = TelemetryVerbosity.NONE;
       try
       {
         swerveDrive = new SwerveParser(directory).createSwerveDrive();
