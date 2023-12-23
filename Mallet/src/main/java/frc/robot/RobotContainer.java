@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.drivebase.AbsoluteDrive;
+import frc.robot.commands.drivebase.AbsoluteDriveWithFocus;
 import edu.wpi.first.wpilibj.I2C;
 
 
@@ -60,7 +61,13 @@ public class RobotContainer {
   }
 
   // assign button functions
-  private void configureButtonBindings() {}
+  private void configureButtonBindings() {
+    Trigger xButton = new Trigger(m_xbox::getAButtonPressed);  
+    xButton.onTrue(new AbsoluteDriveWithFocus(m_drivetrain, 
+                    () -> MathUtil.applyDeadband(-m_xbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+                    () -> MathUtil.applyDeadband(-m_xbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), 
+                    false, "cone"));
+  }
 
   public Command getAutoInput() {
     return m_autoChooser.getSelected();
