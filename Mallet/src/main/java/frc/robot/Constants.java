@@ -34,6 +34,7 @@ public final class Constants {
         // TODO CHANGE SCALAR in gettargetspeeds
         public static final double SPEED_SCALAR = 0.8;
         public static final double MAX_ACCELERATION = 2;
+        public static final double MAX_SPEED_METERS = 2;
     }
 
     public static final class Drivebase
@@ -45,8 +46,8 @@ public final class Constants {
     public static class OperatorConstants
     {
         // Joystick Deadband
-        public static final double LEFT_X_DEADBAND = 0.01;
-        public static final double LEFT_Y_DEADBAND = 0.01;
+        public static final double LEFT_X_DEADBAND = 0.05;
+        public static final double LEFT_Y_DEADBAND = 0.05;
         public static final double RIGHT_X_DEADBAND = 0.01;
         public static final double RIGHT_Y_DEADBAND = 0.01;
 

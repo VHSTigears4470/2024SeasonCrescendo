@@ -12,7 +12,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
-    addPeriodic(m_robotContainer::updateShuffleboard, .04, .005);
+    // addPeriodic(m_robotContainer::updateShuffleboard, .04, .005);
   }
 
   //called periodically regardless of mode
