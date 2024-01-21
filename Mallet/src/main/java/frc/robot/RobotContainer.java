@@ -70,8 +70,7 @@ public class RobotContainer {
     Trigger xButton = new Trigger(m_xbox::getAButtonPressed);
     xButton.onTrue(new AbsoluteDriveWithFocus(m_drivetrain,
         () -> MathUtil.applyDeadband(-m_xbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> MathUtil.applyDeadband(-m_xbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-        false, "cone"));
+        () -> MathUtil.applyDeadband(-m_xbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), "cone"));
   }
 
   public Command getAutoInput() {
