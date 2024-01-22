@@ -41,7 +41,7 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import frc.robot.Constants.Auton;
 
-public class Drivetrain extends SubsystemBase {
+public class SwerveDriveSubsystem extends SubsystemBase {
 
   /**
    * Swerve drive object.
@@ -53,7 +53,7 @@ public class Drivetrain extends SubsystemBase {
    *
    * @param directory Directory of swerve drive config files.
    */
-  public Drivetrain(File directory) {
+  public SwerveDriveSubsystem(File directory) {
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
     // objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
@@ -74,7 +74,7 @@ public class Drivetrain extends SubsystemBase {
    * @param driveCfg      SwerveDriveConfiguration for the swerve.
    * @param controllerCfg Swerve Controller.
    */
-  public Drivetrain(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg) {
+  public SwerveDriveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg) {
     swerveDrive = new SwerveDrive(driveCfg, controllerCfg, Auton.MAX_SPEED_METERS);
   }
 
@@ -350,55 +350,4 @@ public class Drivetrain extends SubsystemBase {
   public void addFakeVisionReading() {
     swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp());
   }
-
-  /**
-   * Factory to fetch the PathPlanner command to follow the defined path.
-   *
-   * @param path             Path planner path to specify.
-   * @param constraints      {@link PathConstraints} for
-   *                         {@link com.pathplanner.lib.PathPlanner#loadPathGroup}
-   *                         function
-   *                         limiting velocity and acceleration.
-   * @param eventMap         {@link java.util.HashMap} of commands corresponding
-   *                         to path planner events given as
-   *                         strings.
-   * @param translation      The {@link PIDConstants} for the translation of the
-   *                         robot while following the path.
-   * @param rotation         The {@link PIDConstants} for the rotation of the
-   *                         robot while following the path.
-   * @param useAllianceColor Automatically transform the path based on alliance
-   *                         color.
-   * @return PathPlanner command to follow the given path.
-   */
-  // public Command creatPathPlannerCommand(String path, PathConstraints
-  // constraints, Map<String, Command> eventMap,
-  // PIDConstants translation, PIDConstants rotation, boolean useAllianceColor) {
-  // List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup(path,
-  // constraints);
-
-  // // SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
-  // // Pose2d supplier,
-  // // Pose2d consumer- used to reset odometry at the beginning of auto,
-  // // PID constants to correct for translation error (used to create the X and Y
-  // // PID controllers),
-  // // PID constants to correct for rotation error (used to create the rotation
-  // // controller),
-  // // Module states consumer used to output to the drive subsystem,
-  // // Should the path be automatically mirrored depending on alliance color.
-  // // Optional- defaults to true
-  // // )
-  // if (autoBuilder == null) {
-  // autoBuilder = new AutoBuilder(
-  // swerveDrive::getPose,
-  // swerveDrive::resetOdometry,
-  // translation,
-  // rotation,
-  // swerveDrive::setChassisSpeeds,
-  // eventMap,
-  // useAllianceColor,
-  // this);
-  // }
-
-  // return autoBuilder.fullAuto(pathGroup);
-  // }
 }

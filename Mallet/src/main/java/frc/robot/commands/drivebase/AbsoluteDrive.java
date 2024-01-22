@@ -10,7 +10,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.SwerveDriveSubsystem;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
@@ -21,7 +21,7 @@ import swervelib.math.SwerveMath;
  */
 public class AbsoluteDrive extends Command {
 
-  private final Drivetrain swerve;
+  private final SwerveDriveSubsystem swerve;
   private final DoubleSupplier vX, vY;
   private final DoubleSupplier headingHorizontal, headingVertical;
   private boolean initRotation = false;
@@ -59,7 +59,8 @@ public class AbsoluteDrive extends Command {
    *                          with no deadband. Positive is away from the alliance
    *                          wall.
    */
-  public AbsoluteDrive(Drivetrain swerve, DoubleSupplier vX, DoubleSupplier vY, DoubleSupplier headingHorizontal,
+  public AbsoluteDrive(SwerveDriveSubsystem swerve, DoubleSupplier vX, DoubleSupplier vY,
+      DoubleSupplier headingHorizontal,
       DoubleSupplier headingVertical) {
     this.swerve = swerve;
     this.vX = vX;

@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.SwerveDriveSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,7 +22,7 @@ import java.util.HashMap;
 
 public class RobotContainer {
   // INIT SUBSYSTEMS
-  private static final Drivetrain m_drivetrain = new Drivetrain(
+  private static final SwerveDriveSubsystem m_drivetrain = new SwerveDriveSubsystem(
       new File(Filesystem.getDeployDirectory(), "neo/swerve"));
 
   // INIT XBOX CONTROLLER

@@ -12,7 +12,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.SwerveDriveSubsystem;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
@@ -22,7 +22,7 @@ import swervelib.math.SwerveMath;
  * An example command that uses an example subsystem.
  */
 public class AbsoluteDriveWithFocus extends Command {
-    private final Drivetrain swerve;
+    private final SwerveDriveSubsystem swerve;
     private final DoubleSupplier vX, vY;
     private final double Kp = -0.1; // Proportional control constant
     private final double minCommand = 0.05;
@@ -51,7 +51,8 @@ public class AbsoluteDriveWithFocus extends Command {
      *               towards the left wall when
      *               looking through the driver station glass.
      */
-    public AbsoluteDriveWithFocus(Drivetrain swerve, DoubleSupplier vX, DoubleSupplier vY, String focusObject) {
+    public AbsoluteDriveWithFocus(SwerveDriveSubsystem swerve, DoubleSupplier vX, DoubleSupplier vY,
+            String focusObject) {
         this.swerve = swerve;
         this.vX = vX;
         this.vY = vY;

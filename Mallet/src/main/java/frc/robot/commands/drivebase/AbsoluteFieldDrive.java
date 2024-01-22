@@ -9,7 +9,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.SwerveDriveSubsystem;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
@@ -20,7 +20,7 @@ import swervelib.math.SwerveMath;
  */
 public class AbsoluteFieldDrive extends Command {
 
-  private final Drivetrain swerve;
+  private final SwerveDriveSubsystem swerve;
   private final DoubleSupplier vX, vY, heading;
 
   /**
@@ -44,7 +44,7 @@ public class AbsoluteFieldDrive extends Command {
    *                station glass.
    * @param heading DoubleSupplier that supplies the robot's heading angle.
    */
-  public AbsoluteFieldDrive(Drivetrain swerve, DoubleSupplier vX, DoubleSupplier vY,
+  public AbsoluteFieldDrive(SwerveDriveSubsystem swerve, DoubleSupplier vX, DoubleSupplier vY,
       DoubleSupplier heading, boolean isOpenLoop) {
     this.swerve = swerve;
     this.vX = vX;
