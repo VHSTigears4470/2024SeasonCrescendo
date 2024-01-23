@@ -30,8 +30,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.io.File;
-import java.util.List;
-import java.util.Map;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveControllerConfiguration;
@@ -39,13 +37,11 @@ import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
-import frc.robot.Constants.Auton;
+import frc.robot.Constants.PathplannerConstants;
 
 public class SwerveDriveSubsystem extends SubsystemBase {
 
-  /**
-   * Swerve drive object.
-   */
+  /** Swerve drive object. */
   private final SwerveDrive swerveDrive;
 
   /**
@@ -56,9 +52,9 @@ public class SwerveDriveSubsystem extends SubsystemBase {
   public SwerveDriveSubsystem(File directory) {
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
     // objects being created.
-    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.NONE;
     try {
-      swerveDrive = new SwerveParser(directory).createSwerveDrive(Auton.MAX_SPEED_METERS);
+      swerveDrive = new SwerveParser(directory).createSwerveDrive(PathplannerConstants.MAX_SPEED_METERS);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -75,7 +71,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
    * @param controllerCfg Swerve Controller.
    */
   public SwerveDriveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg) {
-    swerveDrive = new SwerveDrive(driveCfg, controllerCfg, Auton.MAX_SPEED_METERS);
+    swerveDrive = new SwerveDrive(driveCfg, controllerCfg, PathplannerConstants.MAX_SPEED_METERS);
   }
 
   /**
@@ -269,7 +265,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         headingX,
         headingY,
         getHeading().getRadians(),
-        Auton.MAX_SPEED_METERS);
+        PathplannerConstants.MAX_SPEED_METERS);
   }
 
   /**
@@ -289,7 +285,7 @@ public class SwerveDriveSubsystem extends SubsystemBase {
         yInput,
         angle.getRadians(),
         getHeading().getRadians(),
-        Auton.MAX_SPEED_METERS);
+        PathplannerConstants.MAX_SPEED_METERS);
   }
 
   /**

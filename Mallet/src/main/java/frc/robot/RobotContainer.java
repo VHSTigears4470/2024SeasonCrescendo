@@ -10,47 +10,53 @@ import frc.robot.subsystems.SwerveDriveSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.drivebase.AbsoluteDrive;
 import frc.robot.commands.drivebase.AbsoluteDriveWithFocus;
-import edu.wpi.first.wpilibj.I2C;
 
 import java.io.File;
 import java.util.HashMap;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+
 public class RobotContainer {
   // INIT SUBSYSTEMS
-  private static final SwerveDriveSubsystem m_drivetrain = new SwerveDriveSubsystem(
+  private static final SwerveDriveSubsystem swerveSub = new SwerveDriveSubsystem(
       new File(Filesystem.getDeployDirectory(), "neo/swerve"));
 
   // INIT XBOX CONTROLLER
-  public static XboxController m_xbox = new XboxController(0);
-
-  // INIT JOYSTICK ARRAYS
-  public static HashMap<String, Trigger> controllerButtons_arm = new HashMap<String, Trigger>();
-  public static HashMap<String, Trigger> controllerButtons_drive = new HashMap<String, Trigger>();
+  public static XboxController xbox1 = new XboxController(0);
 
   // SMARTDASHBOARD
-  // private SendableChooser<String> m_autoChooser = new
-  // SendableChooser<String>();
-  private SendableChooser<Command> m_autoChooser = new SendableChooser<Command>();
+  private SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
   // SHUFFLEBOARD
-  private ShuffleboardTab main = Shuffleboard.getTab("Driver's Tab");
+  private ShuffleboardTab shuffleDriverTab = Shuffleboard.getTab("Driver's Tab");
+
+  // Create event map for Path Planner (there should only be one)
+  public static final HashMap<String, Command> eventMap = new HashMap<>();
 
   public RobotContainer() {
+    // Configure default commands
+    swerveSub.setDefaultCommand(new AbsoluteDrive(swerveSub,
+        () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+        () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+        () -> MathUtil.applyDeadband(-xbox1.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
+        () -> MathUtil.applyDeadband(-xbox1.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND)));
+
+    // Configure controller bindings
     configureButtonBindings();
-    m_drivetrain.setDefaultCommand(new AbsoluteDrive(m_drivetrain,
-        () -> MathUtil.applyDeadband(-m_xbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> MathUtil.applyDeadband(-m_xbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> MathUtil.applyDeadband(-m_xbox.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
-        () -> MathUtil.applyDeadband(-m_xbox.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND)));
+
+    // Configure auto
     String[] autoList = { "Do Nothing" };
     SmartDashboard.putStringArray("Auto List", autoList);
     initializeAutoChooser();
-    System.out.print(I2C.Port.kMXP);
+
+    // Initialize path planner event maps
+    initializeEventMap();
   }
 
   // update shuffleboard layout
@@ -58,22 +64,25 @@ public class RobotContainer {
   }
 
   public void initializeAutoChooser() {
-    // with string chooser
-
     // with command chooser
-    m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
-    main.add("Auto Routine", m_autoChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
+    autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
+    autoChooser = AutoBuilder.buildAutoChooser();
+    shuffleDriverTab.add("Auto Routine", autoChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
+  }
+
+  public void initializeEventMap() {
+    eventMap.put("marker1", new PrintCommand("Pressed Marker 1"));
   }
 
   // assign button functions
   private void configureButtonBindings() {
-    Trigger xButton = new Trigger(m_xbox::getAButtonPressed);
-    xButton.onTrue(new AbsoluteDriveWithFocus(m_drivetrain,
-        () -> MathUtil.applyDeadband(-m_xbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> MathUtil.applyDeadband(-m_xbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), "cone"));
+    Trigger xButton = new Trigger(xbox1::getAButtonPressed);
+    xButton.onTrue(new AbsoluteDriveWithFocus(swerveSub,
+        () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+        () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), "cone"));
   }
 
   public Command getAutoInput() {
-    return m_autoChooser.getSelected();
+    return autoChooser.getSelected();
   }
 }
