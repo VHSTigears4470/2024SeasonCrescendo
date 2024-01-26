@@ -36,7 +36,7 @@ import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
-import frc.robot.Constants.PathplannerConstants;
+import frc.robot.Constants.SwerveConstants;
 
 public class SwerveSubsystem extends SubsystemBase {
 
@@ -51,11 +51,11 @@ public class SwerveSubsystem extends SubsystemBase {
   public SwerveSubsystem(File directory) {
     // Configure the Telemetry before creating the SwerveDrive to avoid
     // unnecessary objects being created.
-    SwerveDriveTelemetry.verbosity = PathplannerConstants.TELEMETRY_VERBOSITY;
+    SwerveDriveTelemetry.verbosity = SwerveConstants.TELEMETRY_VERBOSITY;
     if (RobotBase.isSimulation())
       SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try {
-      swerveDrive = new SwerveParser(directory).createSwerveDrive(PathplannerConstants.MAX_SPEED_METERS);
+      swerveDrive = new SwerveParser(directory).createSwerveDrive(SwerveConstants.MAX_SPEED_METERS);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -72,7 +72,7 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param controllerCfg Swerve Controller.
    */
   public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg) {
-    swerveDrive = new SwerveDrive(driveCfg, controllerCfg, PathplannerConstants.MAX_SPEED_METERS);
+    swerveDrive = new SwerveDrive(driveCfg, controllerCfg, SwerveConstants.MAX_SPEED_METERS);
   }
 
   /**
@@ -362,7 +362,7 @@ public class SwerveSubsystem extends SubsystemBase {
         headingX,
         headingY,
         getHeading().getRadians(),
-        PathplannerConstants.MAX_SPEED_METERS);
+        SwerveConstants.MAX_SPEED_METERS);
   }
 
   /**
@@ -382,7 +382,7 @@ public class SwerveSubsystem extends SubsystemBase {
         yInput,
         angle.getRadians(),
         getHeading().getRadians(),
-        PathplannerConstants.MAX_SPEED_METERS);
+        SwerveConstants.MAX_SPEED_METERS);
   }
 
   /**

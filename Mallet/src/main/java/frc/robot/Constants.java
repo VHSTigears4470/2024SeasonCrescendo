@@ -19,7 +19,7 @@ public final class Constants {
     public static final float K_TURN_ERROR_RANGE = 2f;
     public static final double K_DEC_TO_PI = 0.01745;
 
-    public static final class PathplannerConstants {
+    public static final class SwerveConstants {
         public static final PIDFConfig X_AUTO_PID = new PIDFConfig(0.000000005, 0, 0);
         public static final PIDFConfig Y_AUTO_PID = new PIDFConfig(0.000000005, 0, 0);
         public static final PIDFConfig ANGLE_AUTO_PID = new PIDFConfig(0.01, 0, 0.04);

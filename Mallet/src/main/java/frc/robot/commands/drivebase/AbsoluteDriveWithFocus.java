@@ -11,7 +11,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.PathplannerConstants;
+import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.SwerveSubsystem;
 import java.util.List;
 import java.util.function.DoubleSupplier;
@@ -97,7 +97,7 @@ public class AbsoluteDriveWithFocus extends Command {
         // Limit velocity to prevent tippy
         Translation2d translation = SwerveController.getTranslation2d(desiredSpeeds);
         translation = SwerveMath.limitVelocity(translation, swerve.getFieldVelocity(), swerve.getPose(),
-                PathplannerConstants.LOOP_TIME, PathplannerConstants.ROBOT_MASS, List.of(PathplannerConstants.CHASSIS),
+                SwerveConstants.LOOP_TIME, SwerveConstants.ROBOT_MASS, List.of(SwerveConstants.CHASSIS),
                 swerve.getSwerveDriveConfiguration());
 
         // Make the robot move

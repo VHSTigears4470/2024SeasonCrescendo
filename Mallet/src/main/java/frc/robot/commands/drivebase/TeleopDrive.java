@@ -13,7 +13,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
-import frc.robot.Constants.PathplannerConstants;
+import frc.robot.Constants.SwerveConstants;
 
 /**
  * An example command that uses an example subsystem.
@@ -74,7 +74,7 @@ public class TeleopDrive extends Command {
             angle += (angVelocity * (timer.get() - lastTime)) * controller.config.maxAngularVelocity;
             // Get the desired ChassisSpeeds given the desired angle and current angle.
             ChassisSpeeds correctedChassisSpeeds = controller.getTargetSpeeds(xVelocity, yVelocity, angle,
-                    swerve.getHeading().getRadians(), PathplannerConstants.MAX_SPEED_METERS);
+                    swerve.getHeading().getRadians(), SwerveConstants.MAX_SPEED_METERS);
             // Drive using given data points.
             swerve.drive(
                     SwerveController.getTranslation2d(correctedChassisSpeeds),
@@ -84,8 +84,8 @@ public class TeleopDrive extends Command {
         } else {
             // Drive using raw values.
             swerve.drive(
-                    new Translation2d(xVelocity * PathplannerConstants.MAX_SPEED_METERS,
-                            yVelocity * PathplannerConstants.MAX_SPEED_METERS),
+                    new Translation2d(xVelocity * SwerveConstants.MAX_SPEED_METERS,
+                            yVelocity * SwerveConstants.MAX_SPEED_METERS),
                     angVelocity * controller.config.maxAngularVelocity,
                     driveMode.getAsBoolean());
         }

@@ -35,7 +35,7 @@ public class Robot extends TimedRobot {
   // called continuously while robot is disabled
   @Override
   public void disabledPeriodic() {
-    if (disabledTimer.hasElapsed(Constants.PathplannerConstants.WHEEL_LOCK_TIME)) {
+    if (disabledTimer.hasElapsed(Constants.SwerveConstants.WHEEL_LOCK_TIME)) {
       m_robotContainer.setMotorBrake(false);
       disabledTimer.stop();
     }
