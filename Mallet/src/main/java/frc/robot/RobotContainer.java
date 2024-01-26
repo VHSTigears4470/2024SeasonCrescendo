@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import frc.robot.subsystems.SwerveDriveSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,7 +25,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 public class RobotContainer {
   // INIT SUBSYSTEMS
-  private static final SwerveDriveSubsystem swerveSub = new SwerveDriveSubsystem(
+  private static final SwerveSubsystem swerveSub = new SwerveSubsystem(
       new File(Filesystem.getDeployDirectory(), "neo/swerve"));
 
   // INIT XBOX CONTROLLER
@@ -42,18 +42,7 @@ public class RobotContainer {
 
   public RobotContainer() {
     // Configure default commands
-    if(RobotBase.isReal()){
-      swerveSub.setDefaultCommand(new AbsoluteDrive(swerveSub,
-          () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-          () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-          () -> MathUtil.applyDeadband(-xbox1.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
-          () -> MathUtil.applyDeadband(-xbox1.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND)));
-    }else{
-      swerveSub.setDefaultCommand(swerveSub.simDriveCommand(
-        () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-        () -> -xbox1.getRawAxis(2)));
-    }
+    setDriveMode();
 
     // Configure controller bindings
     configureButtonBindings();
@@ -92,5 +81,24 @@ public class RobotContainer {
 
   public Command getAutoInput() {
     return autoChooser.getSelected();
+  }
+
+  public void setDriveMode() {
+    if (RobotBase.isReal()) {
+      swerveSub.setDefaultCommand(new AbsoluteDrive(swerveSub,
+          () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+          () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+          () -> MathUtil.applyDeadband(-xbox1.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
+          () -> MathUtil.applyDeadband(-xbox1.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND)));
+    } else {
+      swerveSub.setDefaultCommand(swerveSub.simDriveCommand(
+          () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+          () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+          () -> -xbox1.getRawAxis(2)));
+    }
+  }
+
+  public void setMotorBrake(boolean brake) {
+    swerveSub.setMotorBrake(brake);
   }
 }
