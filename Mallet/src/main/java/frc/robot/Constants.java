@@ -32,6 +32,16 @@ public final class Constants {
         public static final double WHEEL_LOCK_TIME = 10;
     }
 
+    public static final class DifferentialConstants {
+        public static final boolean USING_DIFFERENTIAL = true;
+        public static final int FL_MOTOR_PWM = 3;
+        public static final int FR_MOTOR_PWM = 0;
+        public static final int BL_MOTOR_PWM = 2;
+        public static final int BR_MOTOR_PWM = 1;
+        public static final double FWD_SPEED_SCALAR = 0.3;
+        public static final double ROT_SPEED_SCALAR = 0.3;
+    }
+
     public static final class IntakeConstants {
         public static final boolean DEBUG = true;
 
