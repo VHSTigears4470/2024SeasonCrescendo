@@ -34,4 +34,36 @@ public final class Constants {
         public static final double RIGHT_Y_DEADBAND = 0.01;
 
     }
+    
+    public static class ElevatorConstants {
+        // Motors
+        public static final int LEAD_MOTOR_ID = 0;
+        public static final int FOLLOW_MOTOR_ID = 0;
+        public static final double GEAR_RATIO = 60;
+        public static final double TICKS_PER_REV = 42.0 * GEAR_RATIO;
+
+        // Limit Switches
+        public static final int LIMIT_SWITCH_ID = 0;
+
+        // PID
+        public static final double PID_KP = 0;
+        public static final double PID_KI = 0;
+        public static final double PID_KD = 0;
+        public static final double PID_KIZ = 0;
+        public static final double PID_KFF = 0;
+        public static final double PID_KMIN = 0;
+        public static final double PID_KMAX_OUTPUT = 0;
+        public static final double PID_KMIN_OUTPUT = 0;
+
+        // Smart Motion
+        public static final int SMART_MOTION_SLOT = 0;
+        public static final double PID_MAX_VEL = 0;
+        public static final double PID_MIN_VEL = 0;
+        public static final double PID_MAX_ACCEL = 0;
+        public static final double PID_ALLOWED_ERR = 0;
+
+        // Elevator States
+        public static enum ELEVATOR_STATES{UP, DOWN};
+    }
+
 }
