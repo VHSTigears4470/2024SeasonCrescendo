@@ -34,11 +34,21 @@ public final class Constants {
 
     public static final class IntakeConstants {
         public static final boolean DEBUG = true;
+
+        // Pneumatics
         public static final int PCM_MODULE_ID = 0;
         public static final PneumaticsModuleType MODULE_TYPE = PneumaticsModuleType.CTREPCM;
         public static final int FORWARD_CHANNEL_ID = 0;
         public static final int REVERSE_CHANNEL_ID = 1;
         public static final Value DEFAULT_POSITION = DoubleSolenoid.Value.kReverse;
+
+        // Motors
+        public static final int MOTOR_CAN = 0; // TODO: Update
+        public static final double INTAKE_VOLTAGE = 2; // unsigned, polarity set in subsystem
+        public static final double OUTPUT_VOLTAGE = 2; // unsigned, polarity set in subsystem
+
+        // Sensors
+        public static final int NOTE_BREAKBEAM_RX_CHANNEL = 0;
     }
 
     public static class OperatorConstants {
