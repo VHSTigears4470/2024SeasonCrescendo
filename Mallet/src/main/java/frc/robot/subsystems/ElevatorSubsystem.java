@@ -26,8 +26,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final SparkPIDController pidController = leadMotor.getPIDController();
 
     private final DigitalInput bottomSwitch = new DigitalInput(ElevatorConstants.LIMIT_SWITCH_ID); // Assuming Limit Switch is used to set when elevator reaches bottom
-    private double lowestPos = 0; // Highest encoder value the motor can go
-    private double highestPos = 0; // Lowest encoder value the motor can go
+    private double highestPos = 0; // Highest encoder value the motor can go
+    private double lowestPos = 0; // Lowest encoder value the motor can go
 
   /**
    * Initialize Elevator Subsystem
