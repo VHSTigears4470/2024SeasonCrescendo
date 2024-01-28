@@ -36,6 +36,8 @@ public final class Constants {
     }
     
     public static class ElevatorConstants {
+        public static final boolean IS_USING_ELEVATOR = true;
+        public static final boolean DEBUG = true;
         // Motors
         public static final int LEAD_MOTOR_ID = 0;
         public static final int FOLLOW_MOTOR_ID = 0;
