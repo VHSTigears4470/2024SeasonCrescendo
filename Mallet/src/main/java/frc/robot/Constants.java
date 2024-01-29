@@ -53,4 +53,9 @@ public final class Constants {
 
 
     }
+
+    public static class ShooterConstansts{
+        public static final int topMotor = 1; //temp value
+        public static final int bottomMotor = 2; //temp value
+        
 }
