@@ -11,8 +11,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
-import frc.robot.subsystems.SwerveDriveSubsystem;
+import frc.robot.Constants.SwerveConstants;
+import frc.robot.subsystems.SwerveSubsystem;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
@@ -22,7 +22,7 @@ import swervelib.math.SwerveMath;
  * An example command that uses an example subsystem.
  */
 public class AbsoluteDriveWithFocus extends Command {
-    private final SwerveDriveSubsystem swerve;
+    private final SwerveSubsystem swerve;
     private final DoubleSupplier vX, vY;
     private final double Kp = -0.1; // Proportional control constant
     private final double minCommand = 0.05;
@@ -51,7 +51,7 @@ public class AbsoluteDriveWithFocus extends Command {
      *               towards the left wall when
      *               looking through the driver station glass.
      */
-    public AbsoluteDriveWithFocus(SwerveDriveSubsystem swerve, DoubleSupplier vX, DoubleSupplier vY,
+    public AbsoluteDriveWithFocus(SwerveSubsystem swerve, DoubleSupplier vX, DoubleSupplier vY,
             String focusObject) {
         this.swerve = swerve;
         this.vX = vX;
@@ -97,7 +97,7 @@ public class AbsoluteDriveWithFocus extends Command {
         // Limit velocity to prevent tippy
         Translation2d translation = SwerveController.getTranslation2d(desiredSpeeds);
         translation = SwerveMath.limitVelocity(translation, swerve.getFieldVelocity(), swerve.getPose(),
-                Constants.LOOP_TIME, Constants.ROBOT_MASS, List.of(Constants.CHASSIS),
+                SwerveConstants.LOOP_TIME, SwerveConstants.ROBOT_MASS, List.of(SwerveConstants.CHASSIS),
                 swerve.getSwerveDriveConfiguration());
 
         // Make the robot move

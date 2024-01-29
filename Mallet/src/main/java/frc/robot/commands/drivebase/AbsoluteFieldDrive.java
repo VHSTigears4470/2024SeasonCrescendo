@@ -8,8 +8,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
-import frc.robot.subsystems.SwerveDriveSubsystem;
+import frc.robot.Constants.SwerveConstants;
+import frc.robot.subsystems.SwerveSubsystem;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
@@ -20,7 +20,7 @@ import swervelib.math.SwerveMath;
  */
 public class AbsoluteFieldDrive extends Command {
 
-  private final SwerveDriveSubsystem swerve;
+  private final SwerveSubsystem swerve;
   private final DoubleSupplier vX, vY, heading;
 
   /**
@@ -44,7 +44,7 @@ public class AbsoluteFieldDrive extends Command {
    *                station glass.
    * @param heading DoubleSupplier that supplies the robot's heading angle.
    */
-  public AbsoluteFieldDrive(SwerveDriveSubsystem swerve, DoubleSupplier vX, DoubleSupplier vY,
+  public AbsoluteFieldDrive(SwerveSubsystem swerve, DoubleSupplier vX, DoubleSupplier vY,
       DoubleSupplier heading, boolean isOpenLoop) {
     this.swerve = swerve;
     this.vX = vX;
@@ -69,7 +69,7 @@ public class AbsoluteFieldDrive extends Command {
     // Limit velocity to prevent tippy
     Translation2d translation = SwerveController.getTranslation2d(desiredSpeeds);
     translation = SwerveMath.limitVelocity(translation, swerve.getFieldVelocity(), swerve.getPose(),
-        Constants.LOOP_TIME, Constants.ROBOT_MASS, List.of(Constants.CHASSIS),
+        SwerveConstants.LOOP_TIME, SwerveConstants.ROBOT_MASS, List.of(SwerveConstants.CHASSIS),
         swerve.getSwerveDriveConfiguration());
     // SmartDashboard.putNumber("LimitedTranslation", translation.getX());
     // SmartDashboard.putString("Translation", translation.toString());
