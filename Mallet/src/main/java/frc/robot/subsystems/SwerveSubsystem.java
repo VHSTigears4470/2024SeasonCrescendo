@@ -18,10 +18,14 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
-
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -35,13 +39,17 @@ import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
-
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.SwerveConstants;
 
 public class SwerveSubsystem extends SubsystemBase {
 
   /** Swerve drive object. */
   private final SwerveDrive swerveDrive;
+
+  // Shuffleboard
+  private ShuffleboardTab shuffleDebugTab;
+  private GenericEntry entry_swerveHeading;
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -63,6 +71,7 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via
                                              // angle. Ex. Xbox Controller
     setupPathPlanner();
+    initializeShuffleboard();
   }
 
   /**
@@ -430,8 +439,25 @@ public class SwerveSubsystem extends SubsystemBase {
     return swerveDrive.getPitch();
   }
 
+  private void initializeShuffleboard() {
+    if (IntakeConstants.DEBUG) {
+      shuffleDebugTab = Shuffleboard.getTab("Debug Tab");
+      entry_swerveHeading = shuffleDebugTab.getLayout("Swerve", BuiltInLayouts.kList)
+          .add("Swerve Heading", 0)
+          .withWidget(BuiltInWidgets.kGyro)
+          .getEntry();
+    }
+  }
+
+  private void updateShuffleboard() {
+    if (IntakeConstants.DEBUG) {
+      entry_swerveHeading.setValue(swerveDrive.getOdometryHeading());
+    }
+  }
+
   @Override
   public void periodic() {
+    updateShuffleboard();
   }
 
   @Override

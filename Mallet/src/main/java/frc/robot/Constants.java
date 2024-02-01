@@ -13,8 +13,14 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public final class Constants {
+    public static final class RobotContainerConstants {
+        public static final int XBOX_1_ID = 0;
+    }
+
     public static final class SwerveConstants {
         public static final boolean USING_SWERVE = false;
+        public static final boolean DEBUG = false;
+
         public static final PIDFConfig X_AUTO_PID = new PIDFConfig(0.000000005, 0, 0);
         public static final PIDFConfig Y_AUTO_PID = new PIDFConfig(0.000000005, 0, 0);
         public static final PIDFConfig ANGLE_AUTO_PID = new PIDFConfig(0.01, 0, 0.04);
