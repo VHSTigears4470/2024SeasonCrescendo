@@ -64,30 +64,30 @@ public final class Constants {
         public static final boolean IS_USING_ELEVATOR = true;
         public static final boolean DEBUG = true;
         // Motors
-        public static final int LEAD_MOTOR_ID = 0;
-        public static final int FOLLOW_MOTOR_ID = 0;
+        public static final int LEAD_MOTOR_ID = 0; // TODO: Update
+        public static final int FOLLOW_MOTOR_ID = 0; // TODO: Update
         public static final double GEAR_RATIO = 60;
-        public static final double TICKS_PER_REV = 42.0 * GEAR_RATIO;
+        public static final double TICKS_ENCODER = 42.0;
+        public static final double TICKS_PER_REV = TICKS_ENCODER * GEAR_RATIO;
 
         // Limit Switches
-        public static final int LIMIT_SWITCH_ID = 0;
+        public static final int LIMIT_SWITCH_ID = 0; // TODO: Update
 
         // PID
-        public static final double PID_KP = 0;
-        public static final double PID_KI = 0;
-        public static final double PID_KD = 0;
-        public static final double PID_KIZ = 0;
-        public static final double PID_KFF = 0;
-        public static final double PID_KMIN = 0;
-        public static final double PID_KMAX_OUTPUT = 0;
-        public static final double PID_KMIN_OUTPUT = 0;
+        public static final double PID_KP = 0; // TODO: Update
+        public static final double PID_KI = 0; // TODO: Update
+        public static final double PID_KD = 0; // TODO: Update
+        public static final double PID_KIZ = 0; // TODO: Update
+        public static final double PID_KFF = 0; // TODO: Update
+        public static final double PID_KMAX_OUTPUT = 0; // TODO: Update
+        public static final double PID_KMIN_OUTPUT = 0; // TODO: Update
 
         // Smart Motion
-        public static final int SMART_MOTION_SLOT = 0;
-        public static final double PID_MAX_VEL = 0;
-        public static final double PID_MIN_VEL = 0;
-        public static final double PID_MAX_ACCEL = 0;
-        public static final double PID_ALLOWED_ERR = 0;
+        public static final int SMART_MOTION_ID = 0; // TODO: Update
+        public static final double SMART_MOTION_MAX_VEL = 0; // TODO: Update
+        public static final double SMART_MOTION_MIN_VEL = 0; // TODO: Update
+        public static final double SMART_MOTION_MAX_ACC = 0; // TODO: Update
+        public static final double SMART_MOTION_ALLOWED_ERR = 0; // TODO: Update
 
         // Elevator States
         public static enum ELEVATOR_STATES{UP, DOWN};
