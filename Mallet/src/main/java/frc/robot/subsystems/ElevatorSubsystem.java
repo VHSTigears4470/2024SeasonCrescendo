@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.ElevatorConstants.ELEVATOR_STATES;
@@ -101,12 +102,24 @@ public class ElevatorSubsystem extends SubsystemBase {
         leadMotor.setVoltage(0);
   }
 
+  public Command maintainStateCommand(){
+    return run(() -> {
+      maintainState();
+    });
+  }
+
   // Increments position of the elevator and positive for inc amount assumes upwards
   public void incrementPos(double incAmt){
     // Check to make sure the incAmt won't cause the elevator to go out of bounds
     if(encoder.getPosition() + incAmt > highestPos || encoder.getPosition() + incAmt < lowestPos)
       incAmt = 0;
     desiredPos += incAmt;
+  }
+
+  public Command incrementPosCommand(double incAmt){
+    return runOnce(() -> {
+      incrementPos(incAmt);
+    });
   }
 
   // Stops motors in case of emergency
@@ -121,6 +134,12 @@ public class ElevatorSubsystem extends SubsystemBase {
       desiredPos = highestPos;
     else if(desiredState == ELEVATOR_STATES.DOWN)
       desiredPos = lowestPos;
+  }
+
+  public Command setDesiredStateCommand(ELEVATOR_STATES desirdState){
+    return runOnce(() -> {
+      setDesiredState(desirdState);
+    });
   }
 
   // Returns the desired position of the motor
