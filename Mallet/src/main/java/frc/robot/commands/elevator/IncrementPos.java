@@ -14,6 +14,7 @@ public class IncrementPos extends Command {
 
   private final ElevatorSubsystem elevator;
   private final double incAmt;
+
   public IncrementPos(ElevatorSubsystem elevator, double incAmt) {
     this.elevator = elevator;
     this.incAmt = incAmt;
@@ -22,8 +23,7 @@ public class IncrementPos extends Command {
 
   @Override
   public void initialize() {
-    elevator.incrementPos(incAmt);
-    elevator.maintainState();
+    elevator.changePosition(incAmt);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

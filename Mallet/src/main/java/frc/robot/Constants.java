@@ -59,38 +59,72 @@ public final class Constants {
         public static final double RIGHT_Y_DEADBAND = 0.01;
 
     }
-    
+
     public static class ElevatorConstants {
         public static final boolean IS_USING_ELEVATOR = true;
         public static final boolean DEBUG = true;
+
         // Motors
         public static final int LEAD_MOTOR_ID = 0; // TODO: Update
         public static final int FOLLOW_MOTOR_ID = 0; // TODO: Update
-        public static final double GEAR_RATIO = 60;
-        public static final double TICKS_ENCODER = 42.0;
-        public static final double TICKS_PER_REV = TICKS_ENCODER * GEAR_RATIO;
+        private static final double GEAR_RADIUS = 1;
+        private static final double GEAR_CIRCUMFRENCE = 2 * Math.PI * GEAR_RADIUS;
+        private static final double GEAR_RATIO = 60;
+        public static final double CONVERSION_RATIO = GEAR_CIRCUMFRENCE / GEAR_RATIO;
 
-        // Limit Switches
-        public static final int LIMIT_SWITCH_ID = 0; // TODO: Update
+        // Sensors
+        public static final int BOTTOM_BREAKBEAM_CHANNEL_ID = 0; // TODO: Update
 
         // PID
-        public static final double PID_KP = 0; // TODO: Update
-        public static final double PID_KI = 0; // TODO: Update
-        public static final double PID_KD = 0; // TODO: Update
-        public static final double PID_KIZ = 0; // TODO: Update
-        public static final double PID_KFF = 0; // TODO: Update
-        public static final double PID_KMAX_OUTPUT = 0; // TODO: Update
-        public static final double PID_KMIN_OUTPUT = 0; // TODO: Update
+        public static final double PID_KP = 0.001; // TODO: Tune
+        public static final double PID_KI = 0; // TODO: Tune
+        public static final double PID_KD = 0; // TODO: Tune
+        public static final double PID_KIZ = 0.005; // TODO: Tune
+        public static final double PID_KFF = 0.00035; // TODO: Tune
+        public static final double PID_KMAX_OUTPUT = 2; // TODO: Tune
+        public static final double PID_KMIN_OUTPUT = -2; // TODO: Tune
 
         // Smart Motion
-        public static final int SMART_MOTION_ID = 0; // TODO: Update
-        public static final double SMART_MOTION_MAX_VEL = 0; // TODO: Update
-        public static final double SMART_MOTION_MIN_VEL = 0; // TODO: Update
-        public static final double SMART_MOTION_MAX_ACC = 0; // TODO: Update
-        public static final double SMART_MOTION_ALLOWED_ERR = 0; // TODO: Update
+
+        public static final int SM_ID = 0; // TODO: Update
+        // Elevator maximum inches per second
+        private static final double SM_MAX_INCHES_VEL = 6;
+        // Convert to revolutions and then modify for gear ratio
+        private static final double SM_MAX_RPS_VEL = SM_MAX_INCHES_VEL / GEAR_CIRCUMFRENCE
+                * GEAR_RATIO;
+        // Elevator maximum revolutions per minute
+        public static final double SM_MAX_RPM_VEL = SM_MAX_RPS_VEL * 60; // TODO: Update
+
+        // Elevator minimum inches per second
+        private static final double SM_MIN_INCHES_OUTPUT_VEL = 0;
+        // Convert to revolutions and then modify for gear ratio
+        private static final double SM_MIN_RPS_OUTPUT_VEL = SM_MIN_INCHES_OUTPUT_VEL / GEAR_CIRCUMFRENCE
+                * GEAR_RATIO;
+        // Elevator minimum revolutions per minute
+        public static final double SM_MIN_RPM_OUTPUT_VEL = SM_MIN_RPS_OUTPUT_VEL * 60; // TODO: Update
+
+        // Elevator inches acceleration
+        private static final double SM_INCHES_ACC = 10;
+        // Convert to revolutions and then modify for gear ratio
+        private static final double SM_RPS_ACC = SM_INCHES_ACC / GEAR_CIRCUMFRENCE
+                * GEAR_RATIO;
+        // Elevator inches acceleration
+        public static final double SM_MAX_RPM_ACC = SM_RPS_ACC * 60; // TODO: Update
+
+        public static final double SM_ALLOWED_ERR = 0; // TODO: Update
 
         // Elevator States
-        public static enum ELEVATOR_STATES{UP, DOWN};
+        public static final double LOW_INIT_HEIGHT = 0;
+        public static final double HIGH_INIT_HEIGHT = 30;
+
+        public static enum ELEVATOR_STATE {
+            UP, DOWN
+        };
+
+        // Tolerances
+        public static final double HIGH_LOW_OFFSET = 0; // Distance in inches for PID to maintain from breakbeams
+        public static final double POSITION_TOLERANCE = 1; // Distance in inches for PID to be considered "at the
+                                                           // position"
     }
 
 }
