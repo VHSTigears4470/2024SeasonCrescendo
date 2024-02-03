@@ -60,8 +60,10 @@ public final class Constants {
         // Pneumatics
         public static final int PCM_MODULE_ID = 0;
         public static final PneumaticsModuleType MODULE_TYPE = PneumaticsModuleType.CTREPCM;
-        public static final int INTAKE_FORWARD_CHANNEL_ID = 0;
-        public static final int INTAKE_REVERSE_CHANNEL_ID = 1;
+        public static final int LEFT_INTAKE_FORWARD_CHANNEL_ID = 0;
+        public static final int LEFT_INTAKE_REVERSE_CHANNEL_ID = 1;
+        public static final int RIGHT_INTAKE_FORWARD_CHANNEL_ID = 0;
+        public static final int RIGHT_INTAKE_REVERSE_CHANNEL_ID = 1;
         public static final int NOTES_FORWARD_CHANNEL_ID = 0;
         public static final int NOTES_REVERSE_CHANNEL_ID = 1;
         public static final Value INTAKE_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse;
@@ -72,7 +74,7 @@ public final class Constants {
         public static final int FRONT_MOTOR_ID = 0; // TODO: Update
         public static final int BACK_MOTOR_ID = 1; 
         public static final double INTAKE_VOLTAGE = 2; // unsigned, polarity set in subsystem
-        public static final double SHOOT_OUTPUT_VOLTAGE = 2; // unsigned, polarity set in subsystem
+        public static final double SPEAKER_OUTPUT_VOLTAGE = 2; // unsigned, polarity set in subsystem
         public static final double AMP_OUTPUT_VOLTAGE = 2; // unsigned, polarity set in subsystem
         public static final double NOTE_OUTPUT_VOLTAGE = 2;// unsigned, polarity set in subsystem
 
