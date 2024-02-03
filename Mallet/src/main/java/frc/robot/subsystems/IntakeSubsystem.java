@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.IntakeConstants;
@@ -21,11 +21,16 @@ import frc.robot.Constants.IntakeConstants;
 public class IntakeSubsystem extends SubsystemBase {
     // Variables for intake pneumatics deployment and retractaction
     private final Compressor compressor;
-    private final DoubleSolenoid doubleSolenoid;
+    private final DoubleSolenoid rightIntakePositionSolenoid;
+    private final DoubleSolenoid leftIntakePositionSolenoid;
+    private final DoubleSolenoid notePusherSolenoid;
 
+    
     // Variables for intake motors
-    private final CANSparkMax motor;
-    private final RelativeEncoder encoder;
+    private final CANSparkMax backMotor;
+    private final CANSparkMax frontMotor;
+    private final RelativeEncoder backEncoder;
+    private final RelativeEncoder frontEncoder;
 
     // Variables for sensors
     private final DigitalInput noteBreakbeam;
@@ -39,42 +44,181 @@ public class IntakeSubsystem extends SubsystemBase {
     public IntakeSubsystem() {
         // Pneumatics initialization
         compressor = new Compressor(IntakeConstants.PCM_MODULE_ID, IntakeConstants.MODULE_TYPE);
-        doubleSolenoid = new DoubleSolenoid(IntakeConstants.PCM_MODULE_ID, IntakeConstants.MODULE_TYPE,
-                IntakeConstants.REVERSE_CHANNEL_ID,
-                IntakeConstants.FORWARD_CHANNEL_ID);
-        doubleSolenoid.set(IntakeConstants.DEFAULT_POSITION);
+        rightIntakePositionSolenoid = new DoubleSolenoid(IntakeConstants.PCM_MODULE_ID, IntakeConstants.MODULE_TYPE,
+                IntakeConstants.RIGHT_INTAKE_REVERSE_CHANNEL_ID,
+                IntakeConstants.RIGHT_INTAKE_FORWARD_CHANNEL_ID);
+        rightIntakePositionSolenoid.set(IntakeConstants.INTAKE_DEFAULT_POSITION);
+        leftIntakePositionSolenoid = new DoubleSolenoid(IntakeConstants.PCM_MODULE_ID, IntakeConstants.MODULE_TYPE,
+                IntakeConstants.LEFT_INTAKE_REVERSE_CHANNEL_ID,
+                IntakeConstants.LEFT_INTAKE_FORWARD_CHANNEL_ID);
+        leftIntakePositionSolenoid.set(IntakeConstants.INTAKE_DEFAULT_POSITION);
+        notePusherSolenoid = new DoubleSolenoid(IntakeConstants.PCM_MODULE_ID, IntakeConstants.MODULE_TYPE,
+                IntakeConstants.NOTES_REVERSE_CHANNEL_ID,
+                IntakeConstants.NOTES_FORWARD_CHANNEL_ID); //Update Later
+        notePusherSolenoid.set(IntakeConstants.PISTON_DEFAULT_POSITION);
 
         // Motor initialization
-        motor = new CANSparkMax(IntakeConstants.MOTOR_CAN, MotorType.kBrushless);
-        encoder = motor.getEncoder();
-        motor.setIdleMode(IdleMode.kBrake);
-        motor.setInverted(false);
-        encoder.setPosition(0);
-
+        backMotor = new CANSparkMax(IntakeConstants.FRONT_MOTOR_ID, MotorType.kBrushless);
+        backEncoder = backMotor.getEncoder();
+        backMotor.setIdleMode(IdleMode.kBrake);
+        backMotor.setInverted(false);
+        backEncoder.setPosition(0);
+        
+        frontMotor = new CANSparkMax(IntakeConstants.FRONT_MOTOR_ID, MotorType.kBrushless);
+        frontEncoder = frontMotor.getEncoder();
+        frontMotor.setIdleMode(IdleMode.kBrake);
+        frontMotor.setInverted(false);
+        frontEncoder.setPosition(0);
+        backMotor.follow(frontMotor);
         // Sensor initialization
         noteBreakbeam = new DigitalInput(IntakeConstants.NOTE_BREAKBEAM_RX_CHANNEL);
 
         initializeShuffleboard();
     }
 
+    /*** Pivots the inake to the retracted ready for intaking */
+    public void retractIntake() {
+        leftIntakePositionSolenoid.set(DoubleSolenoid.Value.kReverse);
+        rightIntakePositionSolenoid.set(DoubleSolenoid.Value.kReverse);
+    }
+
+    /**
+     * Pivots the inake to the retracted ready for intaking
+     * @return Command for retracting the intake that runs once
+     */
+    public Command retractIntakeCommand(){
+        return runOnce(() -> {
+            retractIntake();
+        });
+    }
+
+    /*** Sets the feeder pistons ready for intaking */
+    public void retractPusher() {
+        notePusherSolenoid.set(DoubleSolenoid.Value.kReverse);
+    }
+
+    /**
+     * Sets the feeder pistons ready for intaking
+     * @return Command for retracting the pusher that runs once
+     */
+    public Command retractPusherCommand(){
+        return runOnce(() -> {
+            retractPusher();
+        });
+    }
+
+    
+    /*** Pivots the intake to the ground, ready for intaking */
+    public void extendIntake() {
+        leftIntakePositionSolenoid.set(DoubleSolenoid.Value.kForward);
+        rightIntakePositionSolenoid.set(DoubleSolenoid.Value.kForward);
+    }
+
+    /**
+     * Pivots the intake to the ground, ready for intaking
+     * @return Command for pivoting the intake to the ground
+     */
+    public Command extendIntakeCommand(){
+        return runOnce(() -> {
+            extendIntake();
+        });
+    }
+
+    /*** Feeds the note into the intake */
+    public void extendPusher() {
+        notePusherSolenoid.set(DoubleSolenoid.Value.kForward);
+    }
+
+    /**
+     * Feeds the note into the intake
+     * @return Command for feeding the note into the intake
+     */
+    public Command extendPusherCommand(){
+        return runOnce(() -> {
+            extendPusher();
+        });
+    }
+
+    /*** Set intake motors to the speed for intaking notes */
     public void setIntakeVoltage() {
         if (noteBreakbeam.get()) {
             setZeroVoltage();
-
         } else {
-            motor.setVoltage(IntakeConstants.INTAKE_VOLTAGE);
+            frontMotor.setVoltage(IntakeConstants.INTAKE_VOLTAGE);
         }
-
     }
 
-    public void setOutputVoltage() {
-        motor.setVoltage(IntakeConstants.OUTPUT_VOLTAGE);
+    /**
+     * Set intake motors to the speed for intaking notes
+     * @return Command for intaking notes
+     */
+    public Command setIntakeVoltageCommand(){
+        return run(() -> {
+            setIntakeVoltage();
+        });
     }
 
+    /*** Set intake motors to the speed for shooting the note to the speaker notes */
+    public void setSpeakerOutputVoltage() {
+        frontMotor.setVoltage(IntakeConstants.SPEAKER_OUTPUT_VOLTAGE);
+    }
+
+    /**
+     * Set intake motors to the speed for shooting notes to the speaker
+     * @return Command for shooting notes to the speaker
+     */
+    public Command setSpeakerOutputVoltageCommand(){
+        return run(() -> {
+            setSpeakerOutputVoltage();
+        });
+    }
+
+    /*** Set intake motors to the speed for shooting the note to the amp */
+    public void setAmpOutputVoltage() {
+        frontMotor.setVoltage(IntakeConstants.AMP_OUTPUT_VOLTAGE);
+    }
+
+    /**
+     * Set intake motors to the speed for shooting notes to the amp
+     * @return Command for shooting notes to the amp
+     */
+    public Command setAmpOutputVoltageCommand(){
+        return run(() -> {
+            setAmpOutputVoltage();
+        });
+    }
+
+    /*** Set intake motors to the speed for outputting notes */
+    public void setNoteOutputVoltage() {
+        frontMotor.setVoltage(IntakeConstants.NOTE_OUTPUT_VOLTAGE);
+    }
+
+    /**
+     * Set intake motors to the speed for shooting notes to the amp
+     * @return Command for shooting notes to the amp
+     */
+    public Command setNoteOutputVoltageCommand(){
+        return run(() -> {
+            setNoteOutputVoltage();
+        });
+    }
+
+    /*** Stops motors */
     public void setZeroVoltage() {
-        motor.setVoltage(0);
+        frontMotor.setVoltage(0);
     }
 
+    /**
+     * Stops motors
+     * @return Command for stopping the motors
+     */
+    public Command setZeroVoltageCommand(){
+        return run(() -> {
+            setZeroVoltage();
+        });
+    }
+
+    /*** Inits Shuffleboard */
     private void initializeShuffleboard() {
         if (IntakeConstants.DEBUG) {
             shuffleDebugTab = Shuffleboard.getTab("Debug Tab");
@@ -93,6 +237,7 @@ public class IntakeSubsystem extends SubsystemBase {
         }
     }
 
+    /*** Updates Shuffleboard */
     private void updateShuffleboard() {
         if (IntakeConstants.DEBUG) {
             entry_compressorPressure.setDouble(compressor.getPressure());

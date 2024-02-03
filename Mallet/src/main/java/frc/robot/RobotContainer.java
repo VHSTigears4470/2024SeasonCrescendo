@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.subsystems.DifferentialSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,6 +32,7 @@ public class RobotContainer {
   // INIT SUBSYSTEMS
   private static SwerveSubsystem swerveSub;
   private static DifferentialSubsystem differentialSub;
+  private static IntakeSubsystem intakeSub;
 
   // INIT XBOX CONTROLLER
   public static CommandXboxController xbox1;
@@ -94,6 +96,7 @@ public class RobotContainer {
   }
 
   public void initializeOtherVars() {
+    intakeSub = new IntakeSubsystem();
     xbox1 = new CommandXboxController(RobotContainerConstants.XBOX_1_ID);
   }
 
