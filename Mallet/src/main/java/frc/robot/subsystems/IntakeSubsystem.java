@@ -21,11 +21,15 @@ import frc.robot.Constants.IntakeConstants;
 public class IntakeSubsystem extends SubsystemBase {
     // Variables for intake pneumatics deployment and retractaction
     private final Compressor compressor;
-    private final DoubleSolenoid doubleSolenoid;
+    private final DoubleSolenoid intakePositionSolenoid;
+    private final DoubleSolenoid notePusherSolenoid;
 
+    
     // Variables for intake motors
-    private final CANSparkMax motor;
-    private final RelativeEncoder encoder;
+    private final CANSparkMax backMotor;
+    private final CANSparkMax frontMotor;
+    private final RelativeEncoder backEncoder;
+    private final RelativeEncoder frontEncoder;
 
     // Variables for sensors
     private final DigitalInput noteBreakbeam;
@@ -39,40 +43,72 @@ public class IntakeSubsystem extends SubsystemBase {
     public IntakeSubsystem() {
         // Pneumatics initialization
         compressor = new Compressor(IntakeConstants.PCM_MODULE_ID, IntakeConstants.MODULE_TYPE);
-        doubleSolenoid = new DoubleSolenoid(IntakeConstants.PCM_MODULE_ID, IntakeConstants.MODULE_TYPE,
-                IntakeConstants.REVERSE_CHANNEL_ID,
-                IntakeConstants.FORWARD_CHANNEL_ID);
-        doubleSolenoid.set(IntakeConstants.DEFAULT_POSITION);
+        intakePositionSolenoid = new DoubleSolenoid(IntakeConstants.PCM_MODULE_ID, IntakeConstants.MODULE_TYPE,
+                IntakeConstants.INTAKE_REVERSE_CHANNEL_ID,
+                IntakeConstants.INTAKE_FORWARD_CHANNEL_ID);
+        intakePositionSolenoid.set(IntakeConstants.INTAKE_DEFAULT_POSITION);
+        notePusherSolenoid = new DoubleSolenoid(IntakeConstants.PCM_MODULE_ID, IntakeConstants.MODULE_TYPE,
+                IntakeConstants.NOTES_REVERSE_CHANNEL_ID,
+                IntakeConstants.NOTES_FORWARD_CHANNEL_ID); //Update Later
+        notePusherSolenoid.set(IntakeConstants.PISTON_DEFAULT_POSITION);
 
         // Motor initialization
-        motor = new CANSparkMax(IntakeConstants.MOTOR_CAN, MotorType.kBrushless);
-        encoder = motor.getEncoder();
-        motor.setIdleMode(IdleMode.kBrake);
-        motor.setInverted(false);
-        encoder.setPosition(0);
-
+        backMotor = new CANSparkMax(IntakeConstants.FRONT_MOTOR_ID, MotorType.kBrushless);
+        backEncoder = backMotor.getEncoder();
+        backMotor.setIdleMode(IdleMode.kBrake);
+        backMotor.setInverted(false);
+        backEncoder.setPosition(0);
+        
+        frontMotor = new CANSparkMax(IntakeConstants.FRONT_MOTOR_ID, MotorType.kBrushless);
+        frontEncoder = frontMotor.getEncoder();
+        frontMotor.setIdleMode(IdleMode.kBrake);
+        frontMotor.setInverted(false);
+        frontEncoder.setPosition(0);
+        backMotor.follow(frontMotor);
         // Sensor initialization
         noteBreakbeam = new DigitalInput(IntakeConstants.NOTE_BREAKBEAM_RX_CHANNEL);
 
         initializeShuffleboard();
     }
 
+    private void retractIntake() {
+        intakePositionSolenoid.set(DoubleSolenoid.Value.kReverse);
+    }
+    private void retractPusher() {
+        notePusherSolenoid.set(DoubleSolenoid.Value.kReverse);
+    }
+
+    private void extendIntake() {
+        intakePositionSolenoid.set(DoubleSolenoid.Value.kForward);
+    }
+
+    private void extendPusher() {
+        notePusherSolenoid.set(DoubleSolenoid.Value.kForward);
+    }
+
     public void setIntakeVoltage() {
         if (noteBreakbeam.get()) {
             setZeroVoltage();
-
         } else {
-            motor.setVoltage(IntakeConstants.INTAKE_VOLTAGE);
+            frontMotor.setVoltage(IntakeConstants.INTAKE_VOLTAGE);
         }
 
     }
 
-    public void setOutputVoltage() {
-        motor.setVoltage(IntakeConstants.OUTPUT_VOLTAGE);
+    public void setShootOutputVoltage() {
+        frontMotor.setVoltage(IntakeConstants.SHOOT_OUTPUT_VOLTAGE);
+    }
+
+    public void setAmpOutputVoltage() {
+        frontMotor.setVoltage(IntakeConstants.AMP_OUTPUT_VOLTAGE);
+    }
+
+    public void setNoteOutputVoltage() {
+        frontMotor.setVoltage(IntakeConstants.NOTE_OUTPUT_VOLTAGE);
     }
 
     public void setZeroVoltage() {
-        motor.setVoltage(0);
+        frontMotor.setVoltage(0);
     }
 
     private void initializeShuffleboard() {

@@ -60,17 +60,29 @@ public final class Constants {
         // Pneumatics
         public static final int PCM_MODULE_ID = 0;
         public static final PneumaticsModuleType MODULE_TYPE = PneumaticsModuleType.CTREPCM;
-        public static final int FORWARD_CHANNEL_ID = 0;
-        public static final int REVERSE_CHANNEL_ID = 1;
-        public static final Value DEFAULT_POSITION = DoubleSolenoid.Value.kReverse;
+        public static final int INTAKE_FORWARD_CHANNEL_ID = 0;
+        public static final int INTAKE_REVERSE_CHANNEL_ID = 1;
+        public static final int NOTES_FORWARD_CHANNEL_ID = 0;
+        public static final int NOTES_REVERSE_CHANNEL_ID = 1;
+        public static final Value INTAKE_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse;
+        public static final Value PISTON_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse; //Need to change later for piston
+
 
         // Motors
-        public static final int MOTOR_CAN = 0; // TODO: Update
+        public static final int FRONT_MOTOR_ID = 0; // TODO: Update
+        public static final int BACK_MOTOR_ID = 1; 
         public static final double INTAKE_VOLTAGE = 2; // unsigned, polarity set in subsystem
-        public static final double OUTPUT_VOLTAGE = 2; // unsigned, polarity set in subsystem
+        public static final double SHOOT_OUTPUT_VOLTAGE = 2; // unsigned, polarity set in subsystem
+        public static final double AMP_OUTPUT_VOLTAGE = 2; // unsigned, polarity set in subsystem
+        public static final double NOTE_OUTPUT_VOLTAGE = 2;// unsigned, polarity set in subsystem
+
 
         // Sensors
         public static final int NOTE_BREAKBEAM_RX_CHANNEL = 0;
+
+
+        //Piston
+        public static final int PISTON_ID = 0;
     }
 
     public static class OperatorConstants {
