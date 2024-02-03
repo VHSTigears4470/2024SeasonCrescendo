@@ -89,27 +89,24 @@ public final class Constants {
         public static final int SM_ID = 0; // TODO: Update
         // Elevator maximum inches per second
         private static final double SM_MAX_INCHES_VEL = 6;
-        // Convert to revolutions and then modify for gear ratio
-        private static final double SM_MAX_RPS_VEL = SM_MAX_INCHES_VEL / GEAR_CIRCUMFRENCE
-                * GEAR_RATIO;
-        // Elevator maximum revolutions per minute
-        public static final double SM_MAX_RPM_VEL = SM_MAX_RPS_VEL * 60; // TODO: Update
+        // Elevator maximum revolutions per minute. Convert to revolutions and then
+        // modify for gear ratio
+        public static final double SM_MAX_RPM_VEL = SM_MAX_INCHES_VEL / GEAR_CIRCUMFRENCE
+                * GEAR_RATIO * 60;
 
         // Elevator minimum inches per second
         private static final double SM_MIN_INCHES_OUTPUT_VEL = 0;
-        // Convert to revolutions and then modify for gear ratio
-        private static final double SM_MIN_RPS_OUTPUT_VEL = SM_MIN_INCHES_OUTPUT_VEL / GEAR_CIRCUMFRENCE
-                * GEAR_RATIO;
-        // Elevator minimum revolutions per minute
-        public static final double SM_MIN_RPM_OUTPUT_VEL = SM_MIN_RPS_OUTPUT_VEL * 60; // TODO: Update
+        // Elevator minimum revolutions per minute. Convert to revolutions and then
+        // modify for gear ratio
+        public static final double SM_MIN_RPM_OUTPUT_VEL = SM_MIN_INCHES_OUTPUT_VEL / GEAR_CIRCUMFRENCE
+                * GEAR_RATIO * 60;
 
-        // Elevator inches acceleration
+        // Elevator inches acceleration per second
         private static final double SM_INCHES_ACC = 10;
-        // Convert to revolutions and then modify for gear ratio
-        private static final double SM_RPS_ACC = SM_INCHES_ACC / GEAR_CIRCUMFRENCE
-                * GEAR_RATIO;
-        // Elevator inches acceleration
-        public static final double SM_MAX_RPM_ACC = SM_RPS_ACC * 60; // TODO: Update
+        // Elevator inches acceleration per minute. Convert to revolutions and then
+        // modify for gear ratio
+        public static final double SM_MAX_RPM_ACC = SM_INCHES_ACC / GEAR_CIRCUMFRENCE
+                * GEAR_RATIO * 60;
 
         public static final double SM_ALLOWED_ERR = 0; // TODO: Update
 
