@@ -60,8 +60,9 @@ public final class Constants {
 
     }
 
-    public static class ShooterConstants{
-        public static final int TOP_MOTOR = 1; //temp value
-        public static final int BOTTOM_MOTOR = 2; //temp value
-    }   
+    public static class ShooterConstants {
+        // Motors
+        public static final int TOP_MOTOR_CAN = 1; // temp value
+        public static final int BOTTOM_MOTOR_CAN = 2; // temp value
+    }
 }
