@@ -8,14 +8,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 /**
- * An example command that uses an example subsystem.
+ * Increments or decrements the elevator height by incAmt.
  */
-public class IncrementPos extends Command {
+public class ElevatorChangePosition extends Command {
 
   private final ElevatorSubsystem elevator;
   private final double incAmt;
 
-  public IncrementPos(ElevatorSubsystem elevator, double incAmt) {
+  public ElevatorChangePosition(ElevatorSubsystem elevator, double incAmt) {
     this.elevator = elevator;
     this.incAmt = incAmt;
     addRequirements(elevator);

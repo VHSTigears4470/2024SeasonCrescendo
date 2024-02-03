@@ -9,14 +9,14 @@ import frc.robot.Constants.ElevatorConstants.ELEVATOR_STATE;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 /**
- * An example command that uses an example subsystem.
+ * Sets height to desired up or down state.
  */
-public class SetDesiredState extends Command {
+public class ElevatorSetHeightState extends Command {
 
   private final ElevatorSubsystem elevator;
   private final ELEVATOR_STATE desiredState;
 
-  public SetDesiredState(ElevatorSubsystem elevator, ELEVATOR_STATE desiredState) {
+  public ElevatorSetHeightState(ElevatorSubsystem elevator, ELEVATOR_STATE desiredState) {
     this.elevator = elevator;
     this.desiredState = desiredState;
     addRequirements(elevator);
