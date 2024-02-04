@@ -160,4 +160,9 @@ public final class Constants {
                                                            // position"
     }
 
+    public static class LimelightConstants{
+        public static final boolean DEBUG = true;
+        public static final int DEFAULT_PIPELINE_INDEX = 0;
+    }
+
 }
