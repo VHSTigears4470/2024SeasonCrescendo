@@ -61,8 +61,9 @@ public final class Constants {
     }
 
     public static class ShooterConstants {
+        public static final boolean DEBUG = true;
         // Motors
-        public static final int TOP_MOTOR_CAN = 1; // temp value
-        public static final int BOTTOM_MOTOR_CAN = 2; // temp value
+        public static final int FLYWHEEL_ID = 1; // TODO: Update
+        public static final int FEEDER_ID = 2; // TODO: Update
     }
 }
