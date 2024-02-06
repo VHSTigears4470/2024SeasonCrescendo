@@ -6,8 +6,11 @@ import frc.robot.subsystems.ShooterSubsystem;
 
 public class ShootCommand extends Command {
   private final ShooterSubsystem shooterSubsystem;
+  private double flywheelVoltage;
+  private double feederVoltage;
   private double desiredVoltage;
-  private double voltage;
+  private double incrementVoltage;
+  private double feederTime;
   private Timer timer;
 
   /**
@@ -19,6 +22,10 @@ public class ShootCommand extends Command {
     this.shooterSubsystem = shooterSubsystem;
     this.desiredVoltage = desiredVoltage;
     timer = new Timer();
+    flywheelVoltage = 0;
+    feederVoltage = 4;
+    feederTime = 1;
+    incrementVoltage = 0;
     addRequirements(shooterSubsystem);
   }
 
@@ -27,28 +34,33 @@ public class ShootCommand extends Command {
   public void initialize() {
     shooterSubsystem.moveFlywheel(desiredVoltage);
     timer.reset();
-    timer.start();
+    timer.stop();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute(){
-    if(timer.get() >= 1){
-        shooterSubsystem.moveFlywheel(1);
+    if(flywheelVoltage < desiredVoltage){
+      flywheelVoltage += incrementVoltage;
+    }else{
+      shooterSubsystem.moveFeeder(feederVoltage);
+      timer.start();
     }
+    shooterSubsystem.moveFlywheel(flywheelVoltage);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    voltage = 0;
-    timer.stop();
+    flywheelVoltage = 0;
     shooterSubsystem.stop();
+    timer.reset();
+    timer.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return timer.get() >= 2;
+    return timer.get() >= feederTime;
   }
 }
