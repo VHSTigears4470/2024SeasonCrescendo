@@ -40,7 +40,7 @@ public final class Constants {
     }
 
     public static final class DifferentialConstants {
-        public static final boolean USING_DIFFERENTIAL = true;
+        public static final boolean USING_DIFFERENTIAL = false;
         public static final boolean DEBUG = true;
 
         // PWM Motors
@@ -55,6 +55,7 @@ public final class Constants {
     }
 
     public static final class IntakeConstants {
+        public static final boolean IS_USING_INTAKE = false;
         public static final boolean DEBUG = true;
 
         // Pneumatics
@@ -67,23 +68,21 @@ public final class Constants {
         public static final int NOTES_FORWARD_CHANNEL_ID = 0;
         public static final int NOTES_REVERSE_CHANNEL_ID = 1;
         public static final Value INTAKE_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse;
-        public static final Value PISTON_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse; //Need to change later for piston
-
+        public static final Value PISTON_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse; // Need to change later for
+                                                                                           // piston
 
         // Motors
         public static final int FRONT_MOTOR_ID = 0; // TODO: Update
-        public static final int BACK_MOTOR_ID = 1; 
+        public static final int BACK_MOTOR_ID = 1;
         public static final double INTAKE_VOLTAGE = 2; // unsigned, polarity set in subsystem
         public static final double SPEAKER_OUTPUT_VOLTAGE = 2; // unsigned, polarity set in subsystem
         public static final double AMP_OUTPUT_VOLTAGE = 2; // unsigned, polarity set in subsystem
         public static final double NOTE_OUTPUT_VOLTAGE = 2;// unsigned, polarity set in subsystem
 
-
         // Sensors
         public static final int NOTE_BREAKBEAM_RX_CHANNEL = 0;
 
-
-        //Piston
+        // Piston
         public static final int PISTON_ID = 0;
     }
 
@@ -101,8 +100,8 @@ public final class Constants {
         public static final boolean DEBUG = true;
 
         // Motors
-        public static final int LEAD_MOTOR_ID = 0; // TODO: Update
-        public static final int FOLLOW_MOTOR_ID = 0; // TODO: Update
+        public static final int LEAD_MOTOR_ID = 5; // TODO: Update
+        public static final int FOLLOW_MOTOR_ID = 6; // TODO: Update
         private static final double GEAR_RADIUS = 1;
         private static final double GEAR_CIRCUMFRENCE = 2 * Math.PI * GEAR_RADIUS;
         private static final double GEAR_RATIO = 60;
@@ -112,13 +111,14 @@ public final class Constants {
         public static final int BOTTOM_BREAKBEAM_CHANNEL_ID = 0; // TODO: Update
 
         // PID
-        public static final double PID_KP = 0.001; // TODO: Tune
+        public static final double PID_KP = 0.00000007015; // TODO: Tune
         public static final double PID_KI = 0; // TODO: Tune
-        public static final double PID_KD = 0; // TODO: Tune
+        public static final double PID_KD = 0.0000000; // TODO: Tune
         public static final double PID_KIZ = 0.005; // TODO: Tune
-        public static final double PID_KFF = 0.00035; // TODO: Tune
-        public static final double PID_KMAX_OUTPUT = 2; // TODO: Tune
-        public static final double PID_KMIN_OUTPUT = -2; // TODO: Tune
+        public static final double PID_KFF = 0.00031; // TODO: Tune
+        // Must have both pos/neg for both directions
+        public static final double PID_KMAX_OUTPUT = 5; // TODO: Tune
+        public static final double PID_KMIN_OUTPUT = -5; // TODO: Tune
 
         // Smart Motion
 

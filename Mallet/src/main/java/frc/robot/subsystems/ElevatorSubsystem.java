@@ -39,6 +39,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private ShuffleboardTab shuffleDriverTab;
   private GenericEntry entry_breakBeam;
   private GenericEntry entry_encoder;
+  private GenericEntry entry_desiredPosition;
   // PID Entries
   private GenericEntry entry_pid_kp;
   private GenericEntry entry_pid_ki;
@@ -46,14 +47,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   private GenericEntry entry_pid_kiz;
   private GenericEntry entry_pid_kff;
   private GenericEntry entry_pid_max_output;
-  private GenericEntry entry_pid_min_output;
-  // Smart Motion Entries
-  private GenericEntry entry_smart_motion_max_vel;
-  private GenericEntry entry_smart_motion_min_vel;
-  private GenericEntry entry_smart_motion_max_acc;
   private GenericEntry entry_smart_motion_allowed_err;
   private GenericEntry entry_smart_motion_pos;
-  private GenericEntry entry_smart_motion_slot;
   // Driver Tab
   private GenericEntry entry_elevatorState;
 
@@ -101,13 +96,16 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void changePosition(double amt) {
     double tempPos = desiredReferencePosition + amt;
     if (tempPos < lowestPos) {
-      tempPos = lowestPos;
+      desiredReferencePosition = lowestPos;
+    } else {
+      desiredReferencePosition = tempPos;
     }
+
     pidController.setReference(tempPos, ControlType.kSmartMotion);
   }
 
   public Command changePositionCommand(double amt) {
-    return runOnce(() -> {
+    return run(() -> {
       changePosition(amt);
     });
   }
@@ -117,12 +115,12 @@ public class ElevatorSubsystem extends SubsystemBase {
    * limit to home to breakbeam
    */
   public void changePositionIgnoreSoftLimit(double amt) {
-    double tempPos = desiredReferencePosition + amt;
-    pidController.setReference(tempPos, ControlType.kSmartMotion);
+    desiredReferencePosition += amt;
+    pidController.setReference(desiredReferencePosition, ControlType.kSmartMotion);
   }
 
   public Command changePositionCommandIgnoreSoftLimit(double amt) {
-    return runOnce(() -> {
+    return run(() -> {
       changePositionIgnoreSoftLimit(amt);
     });
   }
@@ -170,7 +168,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   // Init Shuffleboard
   private void initalizeShuffleboard() {
-    shuffleDebugTab = Shuffleboard.getTab("Driver's Tab");
+    shuffleDriverTab = Shuffleboard.getTab("Driver's Tab");
     entry_elevatorState = shuffleDriverTab.getLayout("Elevator", BuiltInLayouts.kList)
         .add("Elevator Height State", "Down").withWidget(BuiltInWidgets.kTextView).getEntry();
     if (ElevatorConstants.DEBUG) {
@@ -209,34 +207,14 @@ public class ElevatorSubsystem extends SubsystemBase {
           .add("Max Output", ElevatorConstants.PID_KMAX_OUTPUT)
           .withWidget(BuiltInWidgets.kTextView)
           .getEntry();
-      entry_pid_min_output = shuffleDebugTab.getLayout("Elevator PID", BuiltInLayouts.kList)
-          .add("Min Output", ElevatorConstants.PID_KMIN_OUTPUT)
-          .withWidget(BuiltInWidgets.kTextView)
-          .getEntry();
 
       // Smart Motion
-      entry_smart_motion_max_vel = shuffleDebugTab.getLayout("Elevator PID", BuiltInLayouts.kList)
-          .add("Max Vel", ElevatorConstants.SM_MAX_RPM_VEL)
-          .withWidget(BuiltInWidgets.kTextView)
-          .getEntry();
-      entry_smart_motion_max_vel = shuffleDebugTab.getLayout("Elevator PID", BuiltInLayouts.kList)
-          .add("Min Vel", ElevatorConstants.SM_MIN_RPM_OUTPUT_VEL)
-          .withWidget(BuiltInWidgets.kTextView)
-          .getEntry();
-      entry_smart_motion_max_acc = shuffleDebugTab.getLayout("Elevator PID", BuiltInLayouts.kList)
-          .add("Min Accel", ElevatorConstants.SM_MAX_RPM_ACC)
-          .withWidget(BuiltInWidgets.kTextView)
-          .getEntry();
       entry_smart_motion_allowed_err = shuffleDebugTab.getLayout("Elevator PID", BuiltInLayouts.kList)
           .add("Allowed Error", ElevatorConstants.SM_ALLOWED_ERR)
           .withWidget(BuiltInWidgets.kTextView)
           .getEntry();
       entry_smart_motion_pos = shuffleDebugTab.getLayout("Elevator PID", BuiltInLayouts.kList)
           .add("Position", encoder.getPosition())
-          .withWidget(BuiltInWidgets.kTextView)
-          .getEntry();
-      entry_smart_motion_slot = shuffleDebugTab.getLayout("Elevator PID", BuiltInLayouts.kList)
-          .add("Slot ID", 0)
           .withWidget(BuiltInWidgets.kTextView)
           .getEntry();
     }
@@ -250,21 +228,15 @@ public class ElevatorSubsystem extends SubsystemBase {
       entry_encoder.setDouble(encoder.getPosition());
       entry_smart_motion_pos.setDouble(desiredReferencePosition);
 
-      int slotId = (int) entry_smart_motion_slot.getInteger(0);
+      int slotId = ElevatorConstants.SM_ID;
       pidController.setP(entry_pid_kp.getDouble(pidController.getP(slotId)), slotId);
       pidController.setI(entry_pid_ki.getDouble(pidController.getI(slotId)), slotId);
       pidController.setD(entry_pid_kd.getDouble(pidController.getD(slotId)), slotId);
       pidController.setIZone(entry_pid_kiz.getDouble(pidController.getIZone(slotId)), slotId);
       pidController.setFF(entry_pid_kff.getDouble(pidController.getFF(slotId)), slotId);
-      pidController.setOutputRange(entry_pid_min_output.getDouble(pidController.getOutputMin(slotId)),
+      pidController.setOutputRange(ElevatorConstants.PID_KMIN_OUTPUT,
           entry_pid_max_output.getDouble(pidController.getOutputMax(slotId)), slotId);
 
-      pidController.setSmartMotionMaxVelocity(
-          entry_smart_motion_max_vel.getDouble(pidController.getSmartMotionMaxVelocity(slotId)), slotId);
-      pidController.setSmartMotionMinOutputVelocity(
-          entry_smart_motion_min_vel.getDouble(pidController.getSmartMotionMinOutputVelocity(slotId)), slotId);
-      pidController.setSmartMotionMaxAccel(
-          entry_smart_motion_max_acc.getDouble(pidController.getSmartMotionMaxAccel(slotId)), slotId);
       pidController.setSmartMotionAllowedClosedLoopError(
           entry_smart_motion_allowed_err.getDouble(pidController.getSmartMotionAllowedClosedLoopError(slotId)), slotId);
     }
