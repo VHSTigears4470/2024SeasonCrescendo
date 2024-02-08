@@ -202,7 +202,7 @@ public class IntakeSubsystem extends SubsystemBase {
             setNoteOutputVoltage();
         });
     }
-
+    
     /*** Stops motors */
     public void setZeroVoltage() {
         frontMotor.setVoltage(0);
