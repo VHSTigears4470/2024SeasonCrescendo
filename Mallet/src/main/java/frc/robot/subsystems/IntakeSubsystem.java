@@ -15,7 +15,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.robot.Constants.ElevatorConstants.ELEVATOR_STATE;
+import frc.robot.Constants.IntakeConstants.INTAKE_POSITION_STATE;
 import frc.robot.Constants.IntakeConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -24,6 +25,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private final DoubleSolenoid rightIntakePositionSolenoid;
     private final DoubleSolenoid leftIntakePositionSolenoid;
     private final DoubleSolenoid notePusherSolenoid;
+
 
     
     // Variables for intake motors
@@ -101,11 +103,6 @@ public class IntakeSubsystem extends SubsystemBase {
      * Sets the feeder pistons ready for intaking
      * @return Command for retracting the pusher that runs once
      */
-    public Command retractPusherCommand(){
-        return runOnce(() -> {
-            retractPusher();
-        });
-    }
 
     
     /*** Pivots the intake to the ground, ready for intaking */

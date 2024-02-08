@@ -56,6 +56,7 @@ public final class Constants {
 
     public static final class IntakeConstants {
         public static final boolean DEBUG = true;
+        
 
         // Pneumatics
         public static final int PCM_MODULE_ID = 0;
@@ -85,6 +86,9 @@ public final class Constants {
 
         //Piston
         public static final int PISTON_ID = 0;
+        public static enum INTAKE_POSITION_STATE {
+            RETRACTED, UNRETRACTED
+        };
     }
 
     public static class OperatorConstants {
