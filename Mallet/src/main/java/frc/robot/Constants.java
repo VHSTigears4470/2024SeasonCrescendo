@@ -67,23 +67,21 @@ public final class Constants {
         public static final int NOTES_FORWARD_CHANNEL_ID = 0;
         public static final int NOTES_REVERSE_CHANNEL_ID = 1;
         public static final Value INTAKE_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse;
-        public static final Value PISTON_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse; //Need to change later for piston
-
+        public static final Value PISTON_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse; // Need to change later for
+                                                                                           // piston
 
         // Motors
         public static final int FRONT_MOTOR_ID = 0; // TODO: Update
-        public static final int BACK_MOTOR_ID = 1; 
+        public static final int BACK_MOTOR_ID = 1;
         public static final double INTAKE_VOLTAGE = 2; // unsigned, polarity set in subsystem
         public static final double SPEAKER_OUTPUT_VOLTAGE = 2; // unsigned, polarity set in subsystem
         public static final double AMP_OUTPUT_VOLTAGE = 2; // unsigned, polarity set in subsystem
         public static final double NOTE_OUTPUT_VOLTAGE = 2;// unsigned, polarity set in subsystem
 
-
         // Sensors
         public static final int NOTE_BREAKBEAM_RX_CHANNEL = 0;
 
-
-        //Piston
+        // Piston
         public static final int PISTON_ID = 0;
     }
 
@@ -160,9 +158,25 @@ public final class Constants {
                                                            // position"
     }
 
-    public static class LimelightConstants{
+    public static class NoteLLConstants {
+        public static final boolean IS_USING_NOTE_LIMELIGHT = true;
         public static final boolean DEBUG = true;
         public static final int DEFAULT_PIPELINE_INDEX = 0;
+
+        // Use NOTES.ordinal to get its index, or in other words list the names in the
+        // same order as pipelines in the limelight
+        public static enum NOTE_LL_INDEX {
+            NOTES
+        }
+
+        public static final int NOTES_PIPELINE_INDEX = 0;
+
+    }
+
+    public static class OdometryLLConstants {
+        public static final boolean IS_USING_ODOM_LIMELIGHT = false;
+        public static final boolean DEBUG = true;
+        public static final int DEFAULT_PIPELINE_INDEX = 1;
     }
 
 }

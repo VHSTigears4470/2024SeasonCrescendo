@@ -11,9 +11,9 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.LimelightConstants;
+import frc.robot.Constants.NoteLLConstants;
 
-public class Limelight extends SubsystemBase{
+public class NoteLimelight extends SubsystemBase {
 
     // Shuffleboard
     private ShuffleboardTab shuffleDebugTab;
@@ -24,14 +24,10 @@ public class Limelight extends SubsystemBase{
     private NetworkTableInstance instance;
     private NetworkTableEntry pipelineIndex;
 
-    // Map to link the pipeline's name to an index
-    private HashMap<String, Integer> piplelineMap;
-
-    public Limelight(){
+    public NoteLimelight() {
         // Init all the pipelines
-        piplelineMap = new HashMap<String, Integer>();
         // Default pipeline
-        pipelineIndex.setDouble(LimelightConstants.DEFAULT_PIPELINE_INDEX);
+        pipelineIndex.setDouble(NoteLLConstants.DEFAULT_PIPELINE_INDEX);
 
         // Init all the network tables
         instance = NetworkTableInstance.getDefault();
@@ -42,73 +38,49 @@ public class Limelight extends SubsystemBase{
     }
 
     /**
-     * Changes the pipeline index. Will not change if index is not valid
+     * Changes the pipeline index.
+     * 
      * @param index is the pipeline index to switch to
-    */
-    public void setPipeline(int index){
-        if(piplelineMap.containsValue(index)){
-            pipelineIndex.setDouble(0);
-        }
-    }
-
-    /**
-     * Changes the pipeline index. Will not change if name is not valid
-     * @param pipelineName is the pipeline name to switch to
-    */
-    public void setPipeline(String pipelineName){
-        if(piplelineMap.containsKey(pipelineName)){
-            pipelineIndex.setDouble(0);
-        }
-    }
-
-    /**
-     * Method to get the selected pipeline's name
-     * @return Returns the pipeline name
-    */
-    public String getPipelineName(){
-        int index = (int)pipelineIndex.getInteger(LimelightConstants.DEFAULT_PIPELINE_INDEX);
-        for(String key : piplelineMap.keySet()){
-            if(piplelineMap.get(key) == index){
-                return key;
-            }
-        }
-        return null;
+     */
+    public void setPipeline(int index) {
+        pipelineIndex.setDouble(0);
     }
 
     /**
      * Method to get the selected pipeline's index
+     * 
      * @return Returns the pipeline index
-    */
-    public int getPipelineIndex(){
-        return (int)pipelineIndex.getInteger(LimelightConstants.DEFAULT_PIPELINE_INDEX);
+     */
+    public int getPipelineIndex() {
+        return (int) pipelineIndex.getInteger(NoteLLConstants.DEFAULT_PIPELINE_INDEX);
     }
 
-/*** Inits Shuffleboard */
+    /*** Inits Shuffleboard */
     private void initializeShuffleboard() {
-        if (LimelightConstants.DEBUG) {
+        if (NoteLLConstants.DEBUG) {
             shuffleDebugTab = Shuffleboard.getTab("Debug Tab");
             entry_pipelineName = shuffleDebugTab.getLayout("Limelight", BuiltInLayouts.kList)
-                .add("Limelight Name", getPipelineName())
-                .withWidget(BuiltInWidgets.kTextView)
-                .getEntry();
+                    .add("Limelight Name", getPipelineName())
+                    .withWidget(BuiltInWidgets.kTextView)
+                    .getEntry();
         }
     }
 
     /*** Updates Shuffleboard */
     private void updateShuffleboard() {
-        if (LimelightConstants.DEBUG) {
+        if (NoteLLConstants.DEBUG) {
             entry_pipelineName.setString(getPipelineName());
         }
     }
 
     @Override
-    public void periodic(){
+    public void periodic() {
         // This method will be called once per scheduler run
         updateShuffleboard();
     }
 
     @Override
-    public void simulationPeriodic(){
+    public void simulationPeriodic() {
         // This method will be called once per scheduler run during simulation
     }
 }
