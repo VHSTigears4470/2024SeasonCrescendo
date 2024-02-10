@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.subsystems.DifferentialSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -17,10 +18,13 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.DifferentialConstants;
+import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.RobotContainerConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.Constants.ElevatorConstants.ELEVATOR_STATE;
 import frc.robot.commands.differential.ArcadeDrive;
 import frc.robot.commands.drivebase.AbsoluteDrive;
 import frc.robot.commands.drivebase.AbsoluteDriveWithFocus;
@@ -35,6 +39,7 @@ public class RobotContainer {
   private static SwerveSubsystem swerveSub;
   private static DifferentialSubsystem differentialSub;
   private static IntakeSubsystem intakeSub;
+  private static ElevatorSubsystem elevatorSub;
   private static ShooterSubsystem shooterSub;
 
   // INIT XBOX CONTROLLER
@@ -59,11 +64,11 @@ public class RobotContainer {
 
     configureButtonBindings();
 
-    // Configure auto
-    initializeAutoChooser();
-
     // Initialize Shuffleboard
     initializeShuffleboard();
+
+    // Configure auto
+    initializeAutoChooser();
 
     // Initialize path planner event maps
     initializeEventMap();
@@ -99,7 +104,12 @@ public class RobotContainer {
   }
 
   public void initializeOtherVars() {
-    intakeSub = new IntakeSubsystem();
+    if (IntakeConstants.IS_USING_INTAKE) {
+      intakeSub = new IntakeSubsystem();
+    }
+    if (ElevatorConstants.IS_USING_ELEVATOR) {
+      elevatorSub = new ElevatorSubsystem();
+    }
     xbox1 = new CommandXboxController(RobotContainerConstants.XBOX_1_ID);
     if (ShooterConstants.IS_USING_SHOOTER) {
       shooterSub = new ShooterSubsystem();
@@ -109,7 +119,9 @@ public class RobotContainer {
   public void initializeAutoChooser() {
     // with command chooser
     autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
-    autoChooser = AutoBuilder.buildAutoChooser();
+    if (SwerveConstants.USING_SWERVE) {
+      autoChooser = AutoBuilder.buildAutoChooser();
+    }
     shuffleDriverTab.add("Auto Routine", autoChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
   }
 
@@ -119,9 +131,18 @@ public class RobotContainer {
 
   // assign button functions
   private void configureButtonBindings() {
-    xbox1.a().onTrue(new AbsoluteDriveWithFocus(swerveSub,
-        () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), "cone"));
+    if (SwerveConstants.USING_SWERVE) {
+      xbox1.a().onTrue(new AbsoluteDriveWithFocus(swerveSub,
+          () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+          () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), "cone"));
+    }
+
+    if (ElevatorConstants.IS_USING_ELEVATOR) {
+      xbox1.rightTrigger().whileTrue(elevatorSub.changePositionCommandIgnoreSoftLimit(0.1));
+      xbox1.leftTrigger().whileTrue(elevatorSub.changePositionCommandIgnoreSoftLimit(-0.1));
+      xbox1.a().whileTrue(elevatorSub.setHeightStateCommand(ELEVATOR_STATE.UP));
+      xbox1.b().whileTrue(elevatorSub.setHeightStateCommand(ELEVATOR_STATE.DOWN));
+    }
   }
 
   public Command getAutoInput() {
@@ -129,7 +150,9 @@ public class RobotContainer {
   }
 
   public void setMotorBrake(boolean brake) {
-    swerveSub.setMotorBrake(brake);
+    if (SwerveConstants.USING_SWERVE) {
+      swerveSub.setMotorBrake(brake);
+    }
   }
 
   public void initializeShuffleboard() {
