@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.subsystems.DifferentialSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.DifferentialConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.RobotContainerConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.differential.ArcadeDrive;
 import frc.robot.commands.drivebase.AbsoluteDrive;
@@ -33,6 +35,7 @@ public class RobotContainer {
   private static SwerveSubsystem swerveSub;
   private static DifferentialSubsystem differentialSub;
   private static IntakeSubsystem intakeSub;
+  private static ShooterSubsystem shooterSub;
 
   // INIT XBOX CONTROLLER
   public static CommandXboxController xbox1;
@@ -98,6 +101,9 @@ public class RobotContainer {
   public void initializeOtherVars() {
     intakeSub = new IntakeSubsystem();
     xbox1 = new CommandXboxController(RobotContainerConstants.XBOX_1_ID);
+    if (ShooterConstants.IS_USING_SHOOTER) {
+      shooterSub = new ShooterSubsystem();
+    }
   }
 
   public void initializeAutoChooser() {

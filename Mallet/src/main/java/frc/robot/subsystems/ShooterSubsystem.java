@@ -42,11 +42,11 @@ public class ShooterSubsystem extends SubsystemBase {
     feederMotor.setVoltage(-voltage);
   }
 
-  public void moveFlywheel(double voltage){
+  public void moveFlywheel(double voltage) {
     flywheelMotor.set(voltage);
   }
 
-  public void moveFeeder(double voltage){
+  public void moveFeeder(double voltage) {
     feederMotor.set(voltage);
   }
 
