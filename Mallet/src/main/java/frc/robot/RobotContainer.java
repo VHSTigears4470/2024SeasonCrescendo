@@ -29,6 +29,7 @@ import frc.robot.commands.differential.ArcadeDrive;
 import frc.robot.commands.drivebase.AbsoluteDrive;
 import frc.robot.commands.drivebase.AbsoluteDriveWithFocus;
 import frc.robot.commands.shooter.MoveFeeder;
+import frc.robot.commands.shooter.MoveFlywheel;
 
 import java.io.File;
 import java.util.HashMap;
@@ -56,10 +57,11 @@ public class RobotContainer {
   public static final HashMap<String, Command> eventMap = new HashMap<>();
 
   public RobotContainer() {
-    // Initialize drive system (swerve or differential)
-    initializeDriveMode();
 
     initializeOtherVars();
+
+    // Initialize drive system (swerve or differential)
+    initializeDriveMode();
 
     // Configure default commands
 
@@ -78,6 +80,7 @@ public class RobotContainer {
   public void initializeDriveMode() {
     if (DifferentialConstants.USING_DIFFERENTIAL) {
       differentialSub = new DifferentialSubsystem();
+      differentialSub.setDefaultCommand(new ArcadeDrive(differentialSub, xbox1));
     } else {
       differentialSub = null;
     }
@@ -92,7 +95,6 @@ public class RobotContainer {
             () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
             () -> MathUtil.applyDeadband(-xbox1.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
             () -> MathUtil.applyDeadband(-xbox1.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND)));
-        differentialSub.setDefaultCommand(new ArcadeDrive(differentialSub, xbox1));
       } else {
         swerveSub.setDefaultCommand(swerveSub.simDriveCommand(
             () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
@@ -148,8 +150,8 @@ public class RobotContainer {
     if (ShooterConstants.IS_USING_SHOOTER) {
       xbox1.leftBumper().whileTrue(new MoveFeeder(shooterSub, ShooterConstants.FEEDER_IN_VOLTAGE));
       xbox1.leftTrigger().whileTrue(new MoveFeeder(shooterSub, ShooterConstants.FEEDER_OUT_VOLTAGE));
-      xbox1.rightBumper().whileTrue(new MoveFeeder(shooterSub, ShooterConstants.FLYWHEEL_IN_VOLTAGE));
-      xbox1.rightTrigger().whileTrue(new MoveFeeder(shooterSub, ShooterConstants.FLYWHEEL_OUT_VOLTAGE));
+      xbox1.rightBumper().whileTrue(new MoveFlywheel(shooterSub, ShooterConstants.FLYWHEEL_IN_VOLTAGE));
+      xbox1.rightTrigger().whileTrue(new MoveFlywheel(shooterSub, ShooterConstants.FLYWHEEL_OUT_VOLTAGE));
     }
   }
 

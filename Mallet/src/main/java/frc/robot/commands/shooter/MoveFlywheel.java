@@ -17,7 +17,7 @@ public class MoveFlywheel extends Command {
     shooterSub = shooter;
     voltage = vol;
 
-    addRequirements(shooterSub);
+    // addRequirements(shooterSub);
   }
 
   // Called when the command is initially scheduled.

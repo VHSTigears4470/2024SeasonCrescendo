@@ -40,7 +40,7 @@ public final class Constants {
     }
 
     public static final class DifferentialConstants {
-        public static final boolean USING_DIFFERENTIAL = true;
+        public static final boolean USING_DIFFERENTIAL = false;
         public static final boolean DEBUG = true;
 
         // PWM Motors
@@ -99,13 +99,13 @@ public final class Constants {
         public static final boolean IS_USING_SHOOTER = true;
         public static final boolean DEBUG = true;
         // Motors
-        public static final int FLYWHEEL_ID = 1; // TODO: Update
-        public static final int FEEDER_ID = 2; // TODO: Update
+        public static final int FLYWHEEL_ID = 5; // TODO: Update
+        public static final int FEEDER_ID = 4; // TODO: Update
 
-        public static final double FLYWHEEL_OUT_VOLTAGE = 2;
-        public static final double FLYWHEEL_IN_VOLTAGE = 1;
-        public static final double FEEDER_OUT_VOLTAGE = 1;
-        public static final double FEEDER_IN_VOLTAGE = .5;
+        public static final double FLYWHEEL_OUT_VOLTAGE = 12;
+        public static final double FLYWHEEL_IN_VOLTAGE = -.5;
+        public static final double FEEDER_OUT_VOLTAGE = 12;
+        public static final double FEEDER_IN_VOLTAGE = -.3;
     }
 
     public static class ElevatorConstants {
