@@ -13,6 +13,6 @@ public class DefaultPosition extends SequentialCommandGroup {
                 elevatorSubsystem.setHeightStateCommand(ElevatorConstants.ELEVATOR_STATE.DOWN),
                 intakeSubsystem.retractIntakeCommand(),
                 intakeSubsystem.setZeroVoltageCommand(),
-                intakeSubsystem.retractPusher());
+                intakeSubsystem.retractPusherCommand());
     }
 }

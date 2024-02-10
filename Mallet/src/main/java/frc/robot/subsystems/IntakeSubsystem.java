@@ -101,8 +101,12 @@ public class IntakeSubsystem extends SubsystemBase {
 
     /**
      * Sets the feeder pistons ready for intaking
-     * @return Command for retracting the pusher that runs once
-     */
+     * @return Command for retracting the pusher that runs once*/
+     public Command retractPusherCommand(){
+        return runOnce(() -> {
+            retractPusher();
+        });
+    }
 
     
     /*** Pivots the intake to the ground, ready for intaking */
@@ -210,7 +214,7 @@ public class IntakeSubsystem extends SubsystemBase {
      * @return Command for stopping the motors
      */
     public Command setZeroVoltageCommand(){
-        return run(() -> {
+        return runOnce(() -> {
             setZeroVoltage();
         });
     }
