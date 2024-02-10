@@ -11,6 +11,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -47,6 +48,9 @@ public class SwerveSubsystem extends SubsystemBase {
   /** Swerve drive object. */
   private final SwerveDrive swerveDrive;
 
+  /** Swerve pose estimator */
+  // private final SwerveDrivePoseEstimator swervePoseEstimator;
+
   // Shuffleboard
   private ShuffleboardTab shuffleDebugTab;
   private GenericEntry entry_swerveHeading;
@@ -63,7 +67,12 @@ public class SwerveSubsystem extends SubsystemBase {
     if (RobotBase.isSimulation())
       SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try {
+
+      // TODO create gyro class for rotation 2D, set gyro angle based on path planner,
+      // give it to estimator, get module positions from YAGSL, get initial Pose2D
+      // from pathplanner
       swerveDrive = new SwerveParser(directory).createSwerveDrive(SwerveConstants.MAX_SPEED_METERS);
+      // swervePoseEstimator = new SwerveDrivePoseEstimator(getKinematics(), );
     } catch (Exception e) {
       throw new RuntimeException(e);
     }

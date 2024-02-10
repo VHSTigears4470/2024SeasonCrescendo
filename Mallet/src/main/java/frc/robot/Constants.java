@@ -161,22 +161,37 @@ public final class Constants {
     public static class NoteLLConstants {
         public static final boolean IS_USING_NOTE_LIMELIGHT = true;
         public static final boolean DEBUG = true;
-        public static final int DEFAULT_PIPELINE_INDEX = 0;
+
+        public static final String LIMELIGHT_NAME = "";
+        public static final NOTE_LL_PIPELINE DEFAULT_PIPELINE = NOTE_LL_PIPELINE.NOTES;
 
         // Use NOTES.ordinal to get its index, or in other words list the names in the
         // same order as pipelines in the limelight
-        public static enum NOTE_LL_INDEX {
-            NOTES
+        public static enum NOTE_LL_PIPELINE {
+            NOTES;
+
+            @Override
+            public String toString() {
+                return this.name();
+            }
         }
-
-        public static final int NOTES_PIPELINE_INDEX = 0;
-
     }
 
     public static class OdometryLLConstants {
         public static final boolean IS_USING_ODOM_LIMELIGHT = false;
         public static final boolean DEBUG = true;
-        public static final int DEFAULT_PIPELINE_INDEX = 1;
+
+        public static final String LIMELIGHT_NAME = "limelight-odometry";
+        public static final ODOM_LL_PIPELINE DEFAULT_PIPELINE = ODOM_LL_PIPELINE.APRIL;
+
+        public static enum ODOM_LL_PIPELINE {
+            APRIL;
+
+            @Override
+            public String toString() {
+                return this.name();
+            }
+        }
     }
 
 }
