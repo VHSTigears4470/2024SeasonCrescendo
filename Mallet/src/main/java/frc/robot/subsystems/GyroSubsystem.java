@@ -5,6 +5,9 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -82,6 +85,27 @@ public class GyroSubsystem extends SubsystemBase {
         return gScope.getYaw();
     }
 
+    // Returns the angles from 0 (inclusive) - 360 (not inclusive) degrees
+    public double getAngle(){
+        return gScope.getAngle();
+    }
+
+    public double getAngleAdjustment(){
+        return gScope.getAngleAdjustment();
+    }
+
+    public Rotation2d getRotation2d(){
+        return gScope.getRotation2d();
+    }
+
+    public Rotation3d getRotation3d(){
+        return gScope.getRotation3d();
+    }
+
+    public void setAngleAdjustment(double offset){
+        gScope.setAngleAdjustment(offset);
+    }
+
     // Returns the current status of the gyro
     public boolean isCalibrating() {
         return gScope.isCalibrating();
@@ -89,14 +113,6 @@ public class GyroSubsystem extends SubsystemBase {
 
     public boolean isConnected() {
         return gScope.isConnected();
-    }
-
-    // to be used to basically calibrate the bot
-    // WARNING DO NOT TOUCH GYRO FOR THE NEXT 30-60 SECONDS AFTER
-    // RESETTING THE GYRO, THIS IS TO ENSURE THERE IS NO
-    // ISSUES WITH THE ANGLES OR ANYTHING
-    public void calibrateGyro() {
-        gScope.calibrate();
     }
 
     // This method will be called once per scheduler run
