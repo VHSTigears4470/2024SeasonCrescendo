@@ -125,13 +125,21 @@ public class ElevatorSubsystem extends SubsystemBase {
     return runOnce(() -> {
       changePositionIgnoreSoftLimit(amt);
     });
-    
+
   }
 
   /*** Stops motors in case of emergency */
   public void emergencyStop() {
     leadMotor.stopMotor();
     followMotor.stopMotor();
+  }
+
+  /*** Sets elevator to desired height */
+  public void setPosition(double height) {
+    double tempPos = desiredReferencePosition;
+    if (tempPos < lowestPos) {
+      tempPos = lowestPos;
+    }
   }
 
   /*** Sets the elevator to the desired state */

@@ -6,21 +6,22 @@ package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeSubsystem;
+
 /**
  * Increments or decrements the elevator height by incAmt.
  */
-public class IntakeExtend extends Command {
-  
+public class IntakeRetractIntake extends Command {
+
   private final IntakeSubsystem intake;
 
-  public IntakeExtend(IntakeSubsystem intake){
+  public IntakeRetractIntake(IntakeSubsystem intake) {
     this.intake = intake;
     addRequirements(intake);
   }
 
   @Override
   public void initialize() {
-    intake.extendIntake();
+    intake.retractIntake();
   }
 
   @Override
