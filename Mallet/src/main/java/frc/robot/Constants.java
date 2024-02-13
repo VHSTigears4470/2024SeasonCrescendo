@@ -109,6 +109,7 @@ public final class Constants {
 
         // Sensors
         public static final int BOTTOM_BREAKBEAM_CHANNEL_ID = 0; // TODO: Update
+        public static final int TOP_BREAKBEAM_CHANNEL_ID = 0; // TODO: Update
 
         // PID
         public static final double PID_KP = 0.00000007015; // TODO: Tune

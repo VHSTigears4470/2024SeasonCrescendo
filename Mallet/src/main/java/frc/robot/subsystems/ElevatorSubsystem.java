@@ -30,6 +30,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final SparkPIDController pidController;
 
   private final DigitalInput bottomBreakBeam; // Assuming Limit Switch is used to set when elevator reaches bottom
+  private final DigitalInput topBreakBeam; // Assuming Limit Switch is used to set when elevator reaches top
   private double highestPos; // Highest encoder value the motor can go
   private double lowestPos; // Lowest encoder value the motor can go
   private double desiredReferencePosition; // Desired position the motor should go to
@@ -72,6 +73,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // Init sensors
     bottomBreakBeam = new DigitalInput(ElevatorConstants.BOTTOM_BREAKBEAM_CHANNEL_ID);
+    topBreakBeam = new DigitalInput(ElevatorConstants.TOP_BREAKBEAM_CHANNEL_ID);
 
     // Init PID
     pidController.setP(ElevatorConstants.PID_KP);
@@ -97,17 +99,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     double tempPos = desiredReferencePosition + amt;
     if (tempPos < lowestPos) {
       desiredReferencePosition = lowestPos;
+    } else if (tempPos > highestPos) {
+      desiredReferencePosition = highestPos;
     } else {
       desiredReferencePosition = tempPos;
     }
-
-    pidController.setReference(tempPos, ControlType.kSmartMotion);
-  }
-
-  public Command changePositionCommand(double amt) {
-    return run(() -> {
-      changePosition(amt);
-    });
+    pidController.setReference(desiredReferencePosition, ControlType.kSmartMotion);
   }
 
   /***
@@ -117,12 +114,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void changePositionIgnoreSoftLimit(double amt) {
     desiredReferencePosition += amt;
     pidController.setReference(desiredReferencePosition, ControlType.kSmartMotion);
-  }
-
-  public Command changePositionCommandIgnoreSoftLimit(double amt) {
-    return run(() -> {
-      changePositionIgnoreSoftLimit(amt);
-    });
   }
 
   /*** Stops motors in case of emergency */
@@ -143,12 +134,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     pidController.setReference(desiredReferencePosition, ControlType.kSmartMotion);
   }
 
-  public Command setHeightStateCommand(ELEVATOR_STATE desiredState) {
-    return runOnce(() -> {
-      setHeightState(desiredState);
-    });
-  }
-
   /*** Returns the desired position of the motor */
   public double getDesiredReferencePosition() {
     return desiredReferencePosition;
@@ -164,6 +149,10 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public boolean getBottomBreakbeam() {
     return bottomBreakBeam.get();
+  }
+
+  public boolean getTopBreakbeam() {
+    return topBreakBeam.get();
   }
 
   // Init Shuffleboard
