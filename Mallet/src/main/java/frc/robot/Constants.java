@@ -18,7 +18,7 @@ public final class Constants {
     }
 
     public static final class SwerveConstants {
-        public static final boolean USING_SWERVE = false;
+        public static final boolean USING_SWERVE = true;
         public static final boolean DEBUG = false;
 
         public static final PIDFConfig X_AUTO_PID = new PIDFConfig(0.000000005, 0, 0);
@@ -40,7 +40,7 @@ public final class Constants {
     }
 
     public static final class DifferentialConstants {
-        public static final boolean USING_DIFFERENTIAL = true;
+        public static final boolean USING_DIFFERENTIAL = false;
         public static final boolean DEBUG = true;
 
         // PWM Motors
@@ -95,7 +95,7 @@ public final class Constants {
     }
 
     public static class ElevatorConstants {
-        public static final boolean IS_USING_ELEVATOR = true;
+        public static final boolean IS_USING_ELEVATOR = false;
         public static final boolean DEBUG = true;
 
         // Motors
@@ -159,7 +159,7 @@ public final class Constants {
     }
 
     public static class NoteLLConstants {
-        public static final boolean IS_USING_NOTE_LIMELIGHT = true;
+        public static final boolean IS_USING_NOTE_LIMELIGHT = false;
         public static final boolean DEBUG = true;
 
         public static final String LIMELIGHT_NAME = "";

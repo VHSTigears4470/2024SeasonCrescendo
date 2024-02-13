@@ -14,6 +14,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -349,6 +350,19 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public void setMotorBrake(boolean brake) {
     swerveDrive.setMotorIdleMode(brake);
+  }
+  
+  public void setPosition(Pose2d pose, Rotation3d rotation){
+    resetOdometry(pose);
+    swerveDrive.setGyroOffset(rotation);
+  }
+
+  /**
+   * Gets the SwerveDrivePoseEstimator
+   * @return The SwerveDrivePoseEstimator
+   */
+  public SwerveDrivePoseEstimator getSwerveDrivePoseEstimator(){
+      return swerveDrive.swerveDrivePoseEstimator;
   }
 
   /**

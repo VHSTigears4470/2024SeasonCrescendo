@@ -84,10 +84,18 @@ public class RobotContainer {
             () -> MathUtil.applyDeadband(-xbox1.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND)));
         differentialSub.setDefaultCommand(new ArcadeDrive(differentialSub, xbox1));
       } else {
-        swerveSub.setDefaultCommand(swerveSub.simDriveCommand(
+        // swerveSub.setDefaultCommand(swerveSub.simDriveCommand(
+        //     () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+        //     () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+        //     () -> -xbox1.getRawAxis(2)));
+
+        swerveSub.setDefaultCommand(new AbsoluteDrive(swerveSub,
             () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
             () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-            () -> -xbox1.getRawAxis(2)));
+            () -> MathUtil.applyDeadband(-xbox1.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
+            () -> MathUtil.applyDeadband(-xbox1.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND)));
+        differentialSub.setDefaultCommand(new ArcadeDrive(differentialSub, xbox1)
+        );
       }
     } else {
       swerveSub = null;
@@ -102,6 +110,9 @@ public class RobotContainer {
   public void initializeAutoChooser() {
     // with command chooser
     autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
+    // if(SwerveConstants.USING_SWERVE){
+    //   autoChooser.addOption("Sample Path", swerveSub.getAutonomousCommand("SamplePath", false));
+    // }
     autoChooser = AutoBuilder.buildAutoChooser();
     shuffleDriverTab.add("Auto Routine", autoChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
   }
