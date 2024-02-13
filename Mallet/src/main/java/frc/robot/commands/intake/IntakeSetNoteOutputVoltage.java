@@ -1,17 +1,18 @@
 package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class IntakeSetNoteOutputVoltage extends Command {
 private final IntakeSubsystem intake;
 
-  public IntakeSetNoteOutputVoltage(IntakeSubsystem intake){
+  public IntakeSetNoteOutputVoltage(IntakeSubsystem intake, WaitCommand waitCommand, IntakeExtendPusher intakeExtendPusher, WaitCommand waitCommand2, IntakeSetZeroVoltage intakeSetZeroVoltage, IntakeRetractPusher intakeRetractPusher){
     this.intake = intake;
     addRequirements(intake);
   }
 
-  @Override
+@Override
   public void initialize() {
     intake.setNoteOutputVoltage();
   }
