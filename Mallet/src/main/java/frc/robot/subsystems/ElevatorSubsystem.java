@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.ElevatorConstants.ELEVATOR_STATE;
@@ -104,12 +103,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     pidController.setReference(tempPos, ControlType.kSmartMotion);
   }
 
-  public Command changePositionCommand(double amt) {
-    return run(() -> {
-      changePosition(amt);
-    });
-  }
-
   /***
    * Change position of elevator in inches by amt (+ up, - down), ignores soft
    * limit to home to breakbeam
@@ -119,16 +112,18 @@ public class ElevatorSubsystem extends SubsystemBase {
     pidController.setReference(desiredReferencePosition, ControlType.kSmartMotion);
   }
 
-  public Command changePositionCommandIgnoreSoftLimit(double amt) {
-    return run(() -> {
-      changePositionIgnoreSoftLimit(amt);
-    });
-  }
-
   /*** Stops motors in case of emergency */
   public void emergencyStop() {
     leadMotor.stopMotor();
     followMotor.stopMotor();
+  }
+
+  /*** Sets elevator to desired height */
+  public void setPosition(double height) {
+    double tempPos = desiredReferencePosition;
+    if (tempPos < lowestPos) {
+      tempPos = lowestPos;
+    }
   }
 
   /*** Sets the elevator to the desired state */
@@ -141,12 +136,6 @@ public class ElevatorSubsystem extends SubsystemBase {
       desiredReferencePosition = lowestPos;
     }
     pidController.setReference(desiredReferencePosition, ControlType.kSmartMotion);
-  }
-
-  public Command setHeightStateCommand(ELEVATOR_STATE desiredState) {
-    return runOnce(() -> {
-      setHeightState(desiredState);
-    });
   }
 
   /*** Returns the desired position of the motor */

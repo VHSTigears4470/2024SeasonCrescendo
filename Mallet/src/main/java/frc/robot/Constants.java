@@ -74,7 +74,7 @@ public final class Constants {
         // Motors
         public static final int FRONT_MOTOR_ID = 0; // TODO: Update
         public static final int BACK_MOTOR_ID = 1;
-        public static final double INTAKE_VOLTAGE = 2; // unsigned, polarity set in subsystem
+        public static final double NOTE_INTAKE_VOLTAGE = 2; // unsigned, polarity set in subsystem
         public static final double SPEAKER_OUTPUT_VOLTAGE = 2; // unsigned, polarity set in subsystem
         public static final double AMP_OUTPUT_VOLTAGE = 2; // unsigned, polarity set in subsystem
         public static final double NOTE_OUTPUT_VOLTAGE = 2;// unsigned, polarity set in subsystem
@@ -83,7 +83,12 @@ public final class Constants {
         public static final int NOTE_BREAKBEAM_RX_CHANNEL = 0;
 
         // Piston
+        // Piston
         public static final int PISTON_ID = 0;
+
+        public static enum INTAKE_POSITION_STATE {
+            RETRACTED, UNRETRACTED
+        };
     }
 
     public static class OperatorConstants {
