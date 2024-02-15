@@ -56,7 +56,6 @@ public final class Constants {
 
     public static final class IntakeConstants {
         public static final boolean DEBUG = true;
-        
 
         // Pneumatics
         public static final int PCM_MODULE_ID = 0;
@@ -68,24 +67,23 @@ public final class Constants {
         public static final int NOTES_FORWARD_CHANNEL_ID = 0;
         public static final int NOTES_REVERSE_CHANNEL_ID = 1;
         public static final Value INTAKE_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse;
-        public static final Value PISTON_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse; //Need to change later for piston
-
+        public static final Value PISTON_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse; // Need to change later for
+                                                                                           // piston
 
         // Motors
         public static final int FRONT_MOTOR_ID = 0; // TODO: Update
-        public static final int BACK_MOTOR_ID = 1; 
-        public static final double INTAKE_VOLTAGE = 2; // unsigned, polarity set in subsystem
+        public static final int BACK_MOTOR_ID = 1;
+        public static final double NOTE_INTAKE_VOLTAGE = 2; // unsigned, polarity set in subsystem
         public static final double SPEAKER_OUTPUT_VOLTAGE = 2; // unsigned, polarity set in subsystem
         public static final double AMP_OUTPUT_VOLTAGE = 2; // unsigned, polarity set in subsystem
         public static final double NOTE_OUTPUT_VOLTAGE = 2;// unsigned, polarity set in subsystem
 
-
         // Sensors
         public static final int NOTE_BREAKBEAM_RX_CHANNEL = 0;
 
-
-        //Piston
+        // Piston
         public static final int PISTON_ID = 0;
+
         public static enum INTAKE_POSITION_STATE {
             RETRACTED, UNRETRACTED
         };

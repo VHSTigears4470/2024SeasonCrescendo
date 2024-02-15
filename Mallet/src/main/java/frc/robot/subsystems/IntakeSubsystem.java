@@ -97,7 +97,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     /*** Set intake motors to the speed for intaking notes */
     public void setIntakeVoltage() {
-        frontMotor.setVoltage(IntakeConstants.INTAKE_VOLTAGE);
+        frontMotor.setVoltage(IntakeConstants.NOTE_INTAKE_VOLTAGE);
     }
 
     /***
@@ -112,9 +112,9 @@ public class IntakeSubsystem extends SubsystemBase {
         frontMotor.setVoltage(IntakeConstants.AMP_OUTPUT_VOLTAGE);
     }
 
-    /*** Set intake motors to the speed for outputting notes */
-    public void setNoteOutputVoltage() {
-        frontMotor.setVoltage(IntakeConstants.NOTE_OUTPUT_VOLTAGE);
+    /*** Set intake motors to the speed for intaking notes */
+    public void setNoteIntakeVoltage() {
+        frontMotor.setVoltage(IntakeConstants.NOTE_INTAKE_VOLTAGE);
     }
 
     /*** Stops motors */

@@ -3,17 +3,20 @@ package frc.robot.commands.intake;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class IntakeRetractPusher extends Command {
-private final IntakeSubsystem intake;
+/**
+ * Sets intakes spinning at voltage for sucking in notes.
+ */
+public class IntakeSetIntakeVoltage extends Command {
+  private final IntakeSubsystem intake;
 
-  public IntakeRetractPusher(IntakeSubsystem intake){
+  public IntakeSetIntakeVoltage(IntakeSubsystem intake) {
     this.intake = intake;
     addRequirements(intake);
   }
 
   @Override
   public void initialize() {
-    intake.retractPusher();
+    intake.setNoteIntakeVoltage();
   }
 
   @Override

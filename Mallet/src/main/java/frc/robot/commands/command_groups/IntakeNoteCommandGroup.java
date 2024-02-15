@@ -1,27 +1,23 @@
 package frc.robot.commands.command_groups;
 
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ElevatorConstants.ELEVATOR_STATE;
 import frc.robot.commands.elevator.ElevatorSetHeightState;
-import frc.robot.commands.intake.IntakeExtendPusher;
-import frc.robot.commands.intake.IntakeRetractPusher;
-import frc.robot.commands.intake.IntakeSetNoteOutputVoltage;
-import frc.robot.commands.intake.IntakeSetZeroVoltage;
+import frc.robot.commands.intake.IntakePositionExtend;
+import frc.robot.commands.intake.IntakePusherRetract;
+import frc.robot.commands.intake.IntakeSetIntakeVoltageEndWithBreakbeam;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class IntakeNoteCommandGroup extends SequentialCommandGroup {
     public IntakeNoteCommandGroup(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem) {
+        // TODO: precondition to do nothing if a note is already in the intake
         addCommands(
-                new IntakeRetractPusher(intakeSubsystem),
-                new ElevatorSetHeightState(elevatorSubsystem, ELEVATOR_STATE.DOWN),
-                new IntakeSetNoteOutputVoltage(intakeSubsystem,
-                new WaitCommand(0.5),
-                new IntakeExtendPusher(intakeSubsystem),
-                new WaitCommand(0.5),
-                new IntakeSetZeroVoltage(intakeSubsystem),
-                new IntakeRetractPusher(intakeSubsystem)));
-                
+                new ParallelCommandGroup(
+                        new IntakePusherRetract(intakeSubsystem),
+                        new IntakePositionExtend(intakeSubsystem),
+                        new ElevatorSetHeightState(elevatorSubsystem, ELEVATOR_STATE.DOWN),
+                        new IntakeSetIntakeVoltageEndWithBreakbeam(intakeSubsystem)));
     }
 }

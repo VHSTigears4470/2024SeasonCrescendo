@@ -1,20 +1,27 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class IntakeSetNoteOutputVoltage extends Command {
-private final IntakeSubsystem intake;
+/**
+ * Increments or decrements the elevator height by incAmt.
+ */
+public class IntakePositionExtend extends Command {
 
-  public IntakeSetNoteOutputVoltage(IntakeSubsystem intake, WaitCommand waitCommand, IntakeExtendPusher intakeExtendPusher, WaitCommand waitCommand2, IntakeSetZeroVoltage intakeSetZeroVoltage, IntakeRetractPusher intakeRetractPusher){
+  private final IntakeSubsystem intake;
+
+  public IntakePositionExtend(IntakeSubsystem intake) {
     this.intake = intake;
     addRequirements(intake);
   }
 
-@Override
+  @Override
   public void initialize() {
-    intake.setNoteOutputVoltage();
+    intake.extendIntake();
   }
 
   @Override
@@ -31,4 +38,5 @@ private final IntakeSubsystem intake;
   public boolean isFinished() {
     return true;
   }
+
 }
