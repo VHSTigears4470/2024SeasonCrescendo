@@ -26,6 +26,8 @@ import frc.robot.Constants.ElevatorConstants.ELEVATOR_STATE;
 import frc.robot.commands.differential.ArcadeDrive;
 import frc.robot.commands.drivebase.AbsoluteDrive;
 import frc.robot.commands.drivebase.AbsoluteDriveWithFocus;
+import frc.robot.commands.elevator.ElevatorChangePositionIgnoreSoftLimit;
+import frc.robot.commands.elevator.ElevatorSetHeightState;
 
 import java.io.File;
 import java.util.HashMap;
@@ -132,10 +134,10 @@ public class RobotContainer {
     }
 
     if (ElevatorConstants.IS_USING_ELEVATOR) {
-      xbox1.rightTrigger().whileTrue(elevatorSub.changePositionCommandIgnoreSoftLimit(0.1));
-      xbox1.leftTrigger().whileTrue(elevatorSub.changePositionCommandIgnoreSoftLimit(-0.1));
-      xbox1.a().whileTrue(elevatorSub.setHeightStateCommand(ELEVATOR_STATE.UP));
-      xbox1.b().whileTrue(elevatorSub.setHeightStateCommand(ELEVATOR_STATE.DOWN));
+      xbox1.rightTrigger().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, 0.1));
+      xbox1.leftTrigger().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, -0.1));
+      xbox1.a().whileTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.UP));
+      xbox1.b().whileTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.DOWN));
     }
   }
 
