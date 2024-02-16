@@ -151,9 +151,10 @@ public final class Constants {
         // Elevator States
         public static final double LOW_INIT_HEIGHT = 0;
         public static final double HIGH_INIT_HEIGHT = 30;
+        public static final double CLIMB_INIT_HEIGHT = 15; // TODO: Update
 
         public static enum ELEVATOR_STATE {
-            UP, DOWN
+            UP, DOWN, CLIMB
         };
 
         // Tolerances
