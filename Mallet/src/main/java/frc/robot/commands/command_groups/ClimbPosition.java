@@ -15,4 +15,4 @@ public class ClimbPosition extends SequentialCommandGroup {
                         new IntakePositionRetract(intakeSubsystem),
                         new ElevatorSetHeightState(elevatorSubsystem, ElevatorConstants.ELEVATOR_STATE.CLIMB)));
     }
-}
+ } 
