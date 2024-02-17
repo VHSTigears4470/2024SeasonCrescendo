@@ -44,7 +44,7 @@ public class RobotContainer {
   public static CommandXboxController xbox1;
 
   // SMARTDASHBOARD
-  private SendableChooser<Command> autoChooser = new SendableChooser<Command>();
+  private SendableChooser<Command> autoChooser;
 
   // SHUFFLEBOARD
   private ShuffleboardTab shuffleDriverTab;
@@ -98,10 +98,14 @@ public class RobotContainer {
             () -> -xbox1.getRawAxis(2)));
 
         // swerveSub.setDefaultCommand(new AbsoluteDrive(swerveSub,
-        //     () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-        //     () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-        //     () -> MathUtil.applyDeadband(-xbox1.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
-        //     () -> MathUtil.applyDeadband(-xbox1.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND)));
+        // () -> MathUtil.applyDeadband(-xbox1.getLeftY(),
+        // OperatorConstants.LEFT_Y_DEADBAND),
+        // () -> MathUtil.applyDeadband(-xbox1.getLeftX(),
+        // OperatorConstants.LEFT_X_DEADBAND),
+        // () -> MathUtil.applyDeadband(-xbox1.getRightX(),
+        // OperatorConstants.RIGHT_X_DEADBAND),
+        // () -> MathUtil.applyDeadband(-xbox1.getRightY(),
+        // OperatorConstants.RIGHT_Y_DEADBAND)));
         // differentialSub.setDefaultCommand(new ArcadeDrive(differentialSub, xbox1));
       }
     } else {
@@ -120,12 +124,11 @@ public class RobotContainer {
   }
 
   public void initializeAutoChooser() {
-    // autoChooser = AutoBuilder.buildAutoChooser();
-    // with command chooser
-    // autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
-    if(SwerveConstants.USING_SWERVE){
-      // autoChooser.setDefaultOption("Sample Path", swerveSub.getAutonomousCommand("New Auto"));
-    }
+    autoChooser = new SendableChooser<Command>();
+    autoChooser.setDefaultOption("Do nothing", new WaitCommand(0));
+    // Add Pathplanner autos
+    autoChooser.addOption("New Auto", swerveSub.getAutonomousCommand("New Auto"));
+
     shuffleDriverTab.add("Auto Routine", autoChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
   }
 
@@ -149,8 +152,8 @@ public class RobotContainer {
     }
   }
 
-  public Command getAutoInput() {
-    return swerveSub.getAutonomousCommand("New Auto");//autoChooser.getSelected();
+  public Command getAutonomousCommand() {
+    return autoChooser.getSelected();
   }
 
   public void setMotorBrake(boolean brake) {
