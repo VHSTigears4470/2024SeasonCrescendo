@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.DeadbandCommandXboxController;
 import frc.robot.Constants.DifferentialConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IntakeConstants;
@@ -41,7 +41,7 @@ public class RobotContainer {
   private static ElevatorSubsystem elevatorSub;
 
   // INIT XBOX CONTROLLER
-  public static CommandXboxController xbox1;
+  public static DeadbandCommandXboxController xbox1;
 
   // SMARTDASHBOARD
   private SendableChooser<Command> autoChooser;
@@ -86,16 +86,17 @@ public class RobotContainer {
 
       if (RobotBase.isReal()) {
         swerveSub.setDefaultCommand(new AbsoluteDrive(swerveSub,
-            () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-            () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-            () -> MathUtil.applyDeadband(-xbox1.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
-            () -> MathUtil.applyDeadband(-xbox1.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND)));
+            () -> -xbox1.getLeftY(),
+            () -> -xbox1.getLeftX(),
+            () -> -xbox1.getRightX(),
+            () -> -xbox1.getRightY()));
         // differentialSub.setDefaultCommand(new ArcadeDrive(differentialSub, xbox1));
       } else {
         swerveSub.setDefaultCommand(swerveSub.simDriveCommand(
-            () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-            () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-            () -> -xbox1.getRawAxis(2)));
+            () -> -xbox1.getLeftY(),
+            () -> -xbox1.getLeftX(),
+            () -> -xbox1.getRightX(),
+            () -> -xbox1.getRightY()));
 
         // swerveSub.setDefaultCommand(new AbsoluteDrive(swerveSub,
         // () -> MathUtil.applyDeadband(-xbox1.getLeftY(),
@@ -120,7 +121,8 @@ public class RobotContainer {
     if (ElevatorConstants.IS_USING_ELEVATOR) {
       elevatorSub = new ElevatorSubsystem();
     }
-    xbox1 = new CommandXboxController(RobotContainerConstants.XBOX_1_ID);
+    xbox1 = new DeadbandCommandXboxController(RobotContainerConstants.XBOX_1_ID,
+        RobotContainerConstants.XBOX_1_DEADBAND);
   }
 
   public void initializeAutoChooser() {

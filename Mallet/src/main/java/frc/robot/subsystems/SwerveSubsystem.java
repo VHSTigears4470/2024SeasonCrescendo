@@ -153,12 +153,12 @@ public class SwerveSubsystem extends SubsystemBase {
   /**
    * Get the path follower with events.
    *
-   * @param pathName       PathPlanner path name.
+   * @param pathName PathPlanner path name.
    * @return {@link AutoBuilder#followPath(PathPlannerPath)} path command.
    */
-  public Command getAutonomousCommand(String pathName)
-  {
-    // Create a path following command using AutoBuilder. This will also trigger event markers.
+  public Command getAutonomousCommand(String pathName) {
+    // Create a path following command using AutoBuilder. This will also trigger
+    // event markers.
     return new PathPlannerAuto(pathName);
   }
 
@@ -267,9 +267,36 @@ public class SwerveSubsystem extends SubsystemBase {
     // correction for this kind of control.
     return run(() -> {
       // Make the robot move
-      driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(translationX.getAsDouble(),
+      driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(
+          translationX.getAsDouble(),
           translationY.getAsDouble(),
           rotation.getAsDouble() * Math.PI,
+          swerveDrive.getYaw().getRadians(),
+          swerveDrive.getMaximumVelocity()));
+    });
+  }
+
+  /**
+   * Command to drive the robot using translative values and heading as a
+   * setpoint.
+   *
+   * @param translationX Translation in the X direction.
+   * @param translationY Translation in the Y direction.
+   * @param RotationX    Rotation as a value between [-1, 1] converted to radians.
+   * @param RotationY    Rotation as a value between [-1, 1] converted to radians.
+   * @return Drive command.
+   */
+  public Command simDriveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier RotationX,
+      DoubleSupplier RotationY) {
+    swerveDrive.setHeadingCorrection(true); // Normally you would want heading
+    // correction for this kind of control.
+    return run(() -> {
+      // Make the robot move
+      driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(
+          translationX.getAsDouble(),
+          translationY.getAsDouble(),
+          RotationX.getAsDouble(),
+          RotationY.getAsDouble(),
           swerveDrive.getYaw().getRadians(),
           swerveDrive.getMaximumVelocity()));
     });
@@ -364,18 +391,19 @@ public class SwerveSubsystem extends SubsystemBase {
   public void setMotorBrake(boolean brake) {
     swerveDrive.setMotorIdleMode(brake);
   }
-  
-  public void setPosition(Pose2d pose, Rotation3d rotation){
+
+  public void setPosition(Pose2d pose, Rotation3d rotation) {
     resetOdometry(pose);
     swerveDrive.setGyroOffset(rotation);
   }
 
   /**
    * Gets the SwerveDrivePoseEstimator
+   * 
    * @return The SwerveDrivePoseEstimator
    */
-  public SwerveDrivePoseEstimator getSwerveDrivePoseEstimator(){
-      return swerveDrive.swerveDrivePoseEstimator;
+  public SwerveDrivePoseEstimator getSwerveDrivePoseEstimator() {
+    return swerveDrive.swerveDrivePoseEstimator;
   }
 
   /**
