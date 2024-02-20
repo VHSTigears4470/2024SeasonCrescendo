@@ -12,9 +12,9 @@ import frc.robot.commands.intake.IntakePositionRetract;
 public class ClimbPosition extends SequentialCommandGroup {
     public ClimbPosition(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem) {
         addCommands(
-            new ParallelCommandGroup(
-                new SequentialCommandGroup(new WaitCommand(.7), 
-                    new IntakePositionRetract(intakeSubsystem)),
-                new ElevatorSetHeightState(elevatorSubsystem, ElevatorConstants.ELEVATOR_STATE.DOWN)));
+                new ParallelCommandGroup(
+                        new SequentialCommandGroup(new WaitCommand(.7),
+                                new IntakePositionRetract(intakeSubsystem)),
+                        new ElevatorSetHeightState(elevatorSubsystem, ElevatorConstants.ELEVATOR_STATE.CLIMB)));
     }
 }

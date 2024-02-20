@@ -127,35 +127,22 @@ public final class Constants {
         public static final double PID_KMIN_OUTPUT = -5; // TODO: Tune
 
         // Smart Motion
-
         public static final int SM_ID = 0; // TODO: Update
-        // Elevator maximum inches per second
-        private static final double SM_MAX_INCHES_VEL = 6;
-        // Elevator maximum revolutions per minute. Convert to revolutions and then
-        // modify for gear ratio
+        private static final double SM_MAX_INCHES_VEL = 6; // Elevator maximum inches per second
         public static final double SM_MAX_RPM_VEL = SM_MAX_INCHES_VEL / GEAR_CIRCUMFRENCE
-                * GEAR_RATIO * 60;
-
-        // Elevator minimum inches per second
-        private static final double SM_MIN_INCHES_OUTPUT_VEL = 0;
-        // Elevator minimum revolutions per minute. Convert to revolutions and then
-        // modify for gear ratio
+                * GEAR_RATIO * 60; // Elevator maximum revolutions per minute -> revolutions -> gear ratio
+        private static final double SM_MIN_INCHES_OUTPUT_VEL = 0; // Elevator minimum inches per second
         public static final double SM_MIN_RPM_OUTPUT_VEL = SM_MIN_INCHES_OUTPUT_VEL / GEAR_CIRCUMFRENCE
-                * GEAR_RATIO * 60;
-
-        // Elevator inches acceleration per second
-        private static final double SM_INCHES_ACC = 10;
-        // Elevator inches acceleration per minute. Convert to revolutions and then
-        // modify for gear ratio
+                * GEAR_RATIO * 60; // Elevator minimum revolutions per minute -> revolutions -> gear ratio
+        private static final double SM_INCHES_ACC = 10; // Elevator inches acceleration per second
         public static final double SM_MAX_RPM_ACC = SM_INCHES_ACC / GEAR_CIRCUMFRENCE
-                * GEAR_RATIO * 60;
-
+                * GEAR_RATIO * 60; // Elevator inches acceleration per minute -> revolutions -> gear ratio
         public static final double SM_ALLOWED_ERR = 0; // TODO: Update
 
         // Elevator States
         public static final double LOW_INIT_HEIGHT = 0;
         public static final double HIGH_INIT_HEIGHT = 30;
-        public static final double CLIMB_INIT_HEIGHT = 15; // TODO: Update
+        public static final double CLIMB_HEIGHT = 15; // TODO: Update
 
         public static enum ELEVATOR_STATE {
             UP, DOWN, CLIMB

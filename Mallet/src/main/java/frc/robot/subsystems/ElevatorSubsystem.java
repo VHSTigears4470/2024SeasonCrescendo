@@ -39,7 +39,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   private ShuffleboardTab shuffleDriverTab;
   private GenericEntry entry_breakBeam;
   private GenericEntry entry_encoder;
-  private GenericEntry entry_desiredPosition;
   // PID Entries
   private GenericEntry entry_pid_kp;
   private GenericEntry entry_pid_ki;
@@ -137,6 +136,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     } else if (desiredState == ELEVATOR_STATE.DOWN) {
       currState = desiredState;
       desiredReferencePosition = lowestPos;
+    } else if (desiredState == ELEVATOR_STATE.CLIMB) {
+      currState = desiredState;
+      desiredReferencePosition = ElevatorConstants.CLIMB_HEIGHT;
     }
     pidController.setReference(desiredReferencePosition, ControlType.kSmartMotion);
   }
