@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -48,11 +49,24 @@ public class OdomLimelight extends SubsystemBase {
     // We suspect that red and blue need to be used because pose estimator specifies
     // "everything except april tags and auton are based on blue"
     // So using red will get us coordinates as if we were blue
+    /**
+     * Returns the Pose2D reported by the limelight, null if none
+     * @return The Pose2D reported by the limelight, null if none
+     */
     public Pose2d getPose2D() {
-        if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-            return LimelightHelpers.getBotPose2d_wpiRed(OdometryLLConstants.LIMELIGHT_NAME);
+        // Checks if there is a target or not
+        if(LimelightHelpers.getTV(OdometryLLConstants.LIMELIGHT_NAME)) {
+            return LimelightHelpers.getBotPose2d_wpiBlue(OdometryLLConstants.LIMELIGHT_NAME);
         }
-        return LimelightHelpers.getBotPose2d_wpiBlue(OdometryLLConstants.LIMELIGHT_NAME);
+        return null;
+    }
+
+    /**
+     * Returns the time the pose was captured in seconds
+     * @return The time the pose was captured in seconds
+     */
+    public double getLatency() {
+        return Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline(OdometryLLConstants.LIMELIGHT_NAME)/1000.0) - (LimelightHelpers.getLatency_Capture(OdometryLLConstants.LIMELIGHT_NAME)/1000.0);
     }
 
     /*** Inits Shuffleboard */
