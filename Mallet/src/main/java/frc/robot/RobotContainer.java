@@ -33,6 +33,7 @@ import java.io.File;
 import java.util.HashMap;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 public class RobotContainer {
   // INIT SUBSYSTEMS
@@ -66,11 +67,11 @@ public class RobotContainer {
     // Initialize Shuffleboard
     initializeShuffleboard();
 
+    // Initialize path planner command names
+    initializeCommandNames();
+
     // Configure auto
     initializeAutoChooser();
-
-    // Initialize path planner event maps
-    initializeEventMap();
   }
 
   public void initializeDriveMode() {
@@ -121,8 +122,8 @@ public class RobotContainer {
     shuffleDriverTab.add("Auto Routine", autoChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
   }
 
-  public void initializeEventMap() {
-    eventMap.put("marker1", new PrintCommand("Pressed Marker 1"));
+  public void initializeCommandNames() {
+    NamedCommands.registerCommand("test1", new PrintCommand("Test 1 Triggered"));
   }
 
   // assign button functions
