@@ -94,6 +94,37 @@ public class SwerveSubsystem extends SubsystemBase {
     initializeShuffleboard();
   }
 
+    /**
+   * Initialize {@link SwerveDrive} with the directory provided.
+   *
+   * @param directory Directory of swerve drive config files.
+   * @param limelightRobotPose Supplier for Robot Pose
+   * @param limeightTimestamp Supplier for Timestamp Pose was taken
+   */
+  public SwerveSubsystem(File directory, Supplier<Pose2d> limelightRobotPose, DoubleSupplier limelightTimestamp) {
+    // Configure the Telemetry before creating the SwerveDrive to avoid
+    // unnecessary objects being created.
+    SwerveDriveTelemetry.verbosity = SwerveConstants.TELEMETRY_VERBOSITY;
+    if (RobotBase.isSimulation())
+      SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+    try {
+
+      // TODO create gyro class for rotation 2D, set gyro angle based on path planner,
+      // give it to estimator, get module positions from YAGSL, get initial Pose2D
+      // from pathplanner
+      swerveDrive = new SwerveParser(directory).createSwerveDrive(SwerveConstants.MAX_SPEED_METERS);
+      // swervePoseEstimator = new SwerveDrivePoseEstimator(getKinematics(), );
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+
+    swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via
+                                             // angle. Ex. Xbox Controller
+    setupPathPlanner();
+    initializeShuffleboard();
+    setupVisionMeasurement(limelightRobotPose, limelightTimestamp);
+  }
+
   /**
    * Construct the swerve drive.
    *
@@ -104,6 +135,18 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive = new SwerveDrive(driveCfg, controllerCfg, SwerveConstants.MAX_SPEED_METERS);
   }
 
+  /**
+   * Construct the swerve drive.
+   *
+   * @param driveCfg      SwerveDriveConfiguration for the swerve.
+   * @param controllerCfg Swerve Controller.
+   * @param limelightRobotPose Supplier for Robot Pose
+   * @param limeightTimestamp Supplier for Timestamp Pose was taken
+   */
+  public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg, Supplier<Pose2d> limelightRobotPose, DoubleSupplier limelightTimestamp) {
+    swerveDrive = new SwerveDrive(driveCfg, controllerCfg, SwerveConstants.MAX_SPEED_METERS);
+    setupVisionMeasurement(limelightRobotPose, limelightTimestamp);
+  }
   /**
    * Setup AutoBuilder for PathPlanner.
    */
