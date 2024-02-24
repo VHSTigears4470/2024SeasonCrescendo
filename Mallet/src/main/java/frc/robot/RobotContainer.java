@@ -23,6 +23,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.RobotContainerConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.ElevatorConstants.ELEVATOR_STATE;
+import frc.robot.commands.command_groups.*;
 import frc.robot.commands.differential.ArcadeDrive;
 import frc.robot.commands.drivebase.AbsoluteDrive;
 import frc.robot.commands.drivebase.AbsoluteDriveWithFocus;
@@ -33,6 +34,7 @@ import java.io.File;
 import java.util.HashMap;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 public class RobotContainer {
   // INIT SUBSYSTEMS
@@ -66,11 +68,11 @@ public class RobotContainer {
     // Initialize Shuffleboard
     initializeShuffleboard();
 
+    // Initialize path planner command names
+    initializeCommandNames();
+
     // Configure auto
     initializeAutoChooser();
-
-    // Initialize path planner event maps
-    initializeEventMap();
   }
 
   public void initializeDriveMode() {
@@ -121,8 +123,14 @@ public class RobotContainer {
     shuffleDriverTab.add("Auto Routine", autoChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
   }
 
-  public void initializeEventMap() {
-    eventMap.put("marker1", new PrintCommand("Pressed Marker 1"));
+  public void initializeCommandNames() {
+    NamedCommands.registerCommand("test1", new PrintCommand("Test 1 Triggered"));
+    NamedCommands.registerCommand("Climb Position", new ClimbPosition(intakeSub, elevatorSub));
+    NamedCommands.registerCommand("Default Position", new DefaultPosition(intakeSub, elevatorSub));
+    NamedCommands.registerCommand("Intake Note", new IntakeNoteCommandGroup(intakeSub, elevatorSub));
+    NamedCommands.registerCommand("Robot Climb", new RobotClimbCommandGroup(intakeSub, elevatorSub));
+    NamedCommands.registerCommand("Shoot Amp", new ShootAmpCommandGroup(intakeSub, elevatorSub));
+    NamedCommands.registerCommand("Shoot Speaker", new ShootSpeakerCommandGroup(intakeSub, elevatorSub));
   }
 
   // assign button functions
