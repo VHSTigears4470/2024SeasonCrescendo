@@ -22,12 +22,13 @@ public class Robot extends LoggedRobot {
   // runs only when the robot is first started
   @Override
   public void robotInit() {
-    Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
+    Logger.recordMetadata("ProjectName", "Crescendo2024"); // Set a metadata value
 
     if (isReal()) {
+      new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
+
       Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
       Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-      new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
     } else {
       setUseTiming(false); // Run as fast as possible
       String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
