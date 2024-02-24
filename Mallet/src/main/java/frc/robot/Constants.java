@@ -15,10 +15,11 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 public final class Constants {
     public static final class RobotContainerConstants {
         public static final int XBOX_1_ID = 0;
+        public static final double XBOX_1_DEADBAND = 0.2;
     }
 
     public static final class SwerveConstants {
-        public static final boolean USING_SWERVE = false;
+        public static final boolean USING_SWERVE = true;
         public static final boolean DEBUG = false;
 
         public static final PIDFConfig X_AUTO_PID = new PIDFConfig(0.000000005, 0, 0);
@@ -83,7 +84,6 @@ public final class Constants {
         public static final int NOTE_BREAKBEAM_RX_CHANNEL = 0;
 
         // Piston
-        // Piston
         public static final int PISTON_ID = 0;
 
         public static enum INTAKE_POSITION_STATE {
@@ -101,7 +101,7 @@ public final class Constants {
     }
 
     public static class ElevatorConstants {
-        public static final boolean IS_USING_ELEVATOR = true;
+        public static final boolean IS_USING_ELEVATOR = false;
         public static final boolean DEBUG = true;
 
         // Motors
@@ -152,6 +152,42 @@ public final class Constants {
         public static final double HIGH_LOW_OFFSET = 0; // Distance in inches for PID to maintain from breakbeams
         public static final double POSITION_TOLERANCE = 1; // Distance in inches for PID to be considered "at the
                                                            // position"
+    }
+
+    public static class NoteLLConstants {
+        public static final boolean IS_USING_NOTE_LIMELIGHT = false;
+        public static final boolean DEBUG = true;
+
+        public static final String LIMELIGHT_NAME = "";
+        public static final NOTE_LL_PIPELINE DEFAULT_PIPELINE = NOTE_LL_PIPELINE.NOTES;
+
+        // Use NOTES.ordinal to get its index, or in other words list the names in the
+        // same order as pipelines in the limelight
+        public static enum NOTE_LL_PIPELINE {
+            NOTES;
+
+            @Override
+            public String toString() {
+                return this.name();
+            }
+        }
+    }
+
+    public static class OdometryLLConstants {
+        public static final boolean IS_USING_ODOM_LIMELIGHT = false;
+        public static final boolean DEBUG = true;
+
+        public static final String LIMELIGHT_NAME = "limelight-odometry";
+        public static final ODOM_LL_PIPELINE DEFAULT_PIPELINE = ODOM_LL_PIPELINE.APRIL;
+
+        public static enum ODOM_LL_PIPELINE {
+            APRIL;
+
+            @Override
+            public String toString() {
+                return this.name();
+            }
+        }
     }
 
 }

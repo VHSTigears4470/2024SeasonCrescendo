@@ -10,12 +10,18 @@ import com.pathplanner.lib.util.ReplanningConfig;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
@@ -31,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.io.File;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
@@ -39,6 +46,7 @@ import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
+import frc.robot.Robot;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.SwerveConstants;
 
@@ -47,9 +55,16 @@ public class SwerveSubsystem extends SubsystemBase {
   /** Swerve drive object. */
   private final SwerveDrive swerveDrive;
 
+  /** Swerve pose estimator */
+  // private final SwerveDrivePoseEstimator swervePoseEstimator;
+
   // Shuffleboard
   private ShuffleboardTab shuffleDebugTab;
   private GenericEntry entry_swerveHeading;
+
+  // Limelight Pose
+  private Supplier<Pose2d> limelightRobotPose;
+  private DoubleSupplier limelightTimestamp;
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -63,7 +78,12 @@ public class SwerveSubsystem extends SubsystemBase {
     if (RobotBase.isSimulation())
       SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try {
+
+      // TODO create gyro class for rotation 2D, set gyro angle based on path planner,
+      // give it to estimator, get module positions from YAGSL, get initial Pose2D
+      // from pathplanner
       swerveDrive = new SwerveParser(directory).createSwerveDrive(SwerveConstants.MAX_SPEED_METERS);
+      // swervePoseEstimator = new SwerveDrivePoseEstimator(getKinematics(), );
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -72,6 +92,37 @@ public class SwerveSubsystem extends SubsystemBase {
                                              // angle. Ex. Xbox Controller
     setupPathPlanner();
     initializeShuffleboard();
+  }
+
+    /**
+   * Initialize {@link SwerveDrive} with the directory provided.
+   *
+   * @param directory Directory of swerve drive config files.
+   * @param limelightRobotPose Supplier for Robot Pose
+   * @param limeightTimestamp Supplier for Timestamp Pose was taken
+   */
+  public SwerveSubsystem(File directory, Supplier<Pose2d> limelightRobotPose, DoubleSupplier limelightTimestamp) {
+    // Configure the Telemetry before creating the SwerveDrive to avoid
+    // unnecessary objects being created.
+    SwerveDriveTelemetry.verbosity = SwerveConstants.TELEMETRY_VERBOSITY;
+    if (RobotBase.isSimulation())
+      SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+    try {
+
+      // TODO create gyro class for rotation 2D, set gyro angle based on path planner,
+      // give it to estimator, get module positions from YAGSL, get initial Pose2D
+      // from pathplanner
+      swerveDrive = new SwerveParser(directory).createSwerveDrive(SwerveConstants.MAX_SPEED_METERS);
+      // swervePoseEstimator = new SwerveDrivePoseEstimator(getKinematics(), );
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+
+    swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via
+                                             // angle. Ex. Xbox Controller
+    setupPathPlanner();
+    initializeShuffleboard();
+    setupVisionMeasurement(limelightRobotPose, limelightTimestamp);
   }
 
   /**
@@ -84,6 +135,18 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive = new SwerveDrive(driveCfg, controllerCfg, SwerveConstants.MAX_SPEED_METERS);
   }
 
+  /**
+   * Construct the swerve drive.
+   *
+   * @param driveCfg      SwerveDriveConfiguration for the swerve.
+   * @param controllerCfg Swerve Controller.
+   * @param limelightRobotPose Supplier for Robot Pose
+   * @param limeightTimestamp Supplier for Timestamp Pose was taken
+   */
+  public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg, Supplier<Pose2d> limelightRobotPose, DoubleSupplier limelightTimestamp) {
+    swerveDrive = new SwerveDrive(driveCfg, controllerCfg, SwerveConstants.MAX_SPEED_METERS);
+    setupVisionMeasurement(limelightRobotPose, limelightTimestamp);
+  }
   /**
    * Setup AutoBuilder for PathPlanner.
    */
@@ -137,6 +200,18 @@ public class SwerveSubsystem extends SubsystemBase {
     // Create a path following command using AutoBuilder. This will also trigger
     // event markers.
     return AutoBuilder.followPath(path);
+  }
+
+  /**
+   * Get the path follower with events.
+   *
+   * @param pathName PathPlanner path name.
+   * @return {@link AutoBuilder#followPath(PathPlannerPath)} path command.
+   */
+  public Command getAutonomousCommand(String pathName) {
+    // Create a path following command using AutoBuilder. This will also trigger
+    // event markers.
+    return new PathPlannerAuto(pathName);
   }
 
   /**
@@ -244,9 +319,36 @@ public class SwerveSubsystem extends SubsystemBase {
     // correction for this kind of control.
     return run(() -> {
       // Make the robot move
-      driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(translationX.getAsDouble(),
+      driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(
+          translationX.getAsDouble(),
           translationY.getAsDouble(),
           rotation.getAsDouble() * Math.PI,
+          swerveDrive.getYaw().getRadians(),
+          swerveDrive.getMaximumVelocity()));
+    });
+  }
+
+  /**
+   * Command to drive the robot using translative values and heading as a
+   * setpoint.
+   *
+   * @param translationX Translation in the X direction.
+   * @param translationY Translation in the Y direction.
+   * @param RotationX    Rotation as a value between [-1, 1] converted to radians.
+   * @param RotationY    Rotation as a value between [-1, 1] converted to radians.
+   * @return Drive command.
+   */
+  public Command simDriveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier RotationX,
+      DoubleSupplier RotationY) {
+    swerveDrive.setHeadingCorrection(true); // Normally you would want heading
+    // correction for this kind of control.
+    return run(() -> {
+      // Make the robot move
+      driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(
+          translationX.getAsDouble(),
+          translationY.getAsDouble(),
+          RotationX.getAsDouble(),
+          RotationY.getAsDouble(),
           swerveDrive.getYaw().getRadians(),
           swerveDrive.getMaximumVelocity()));
     });
@@ -259,6 +361,39 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public void driveFieldOriented(ChassisSpeeds velocity) {
     swerveDrive.driveFieldOriented(velocity);
+  }
+
+  /**
+   * Adds a vision measurement to the swerve
+   * @param robotPose Pose of robot
+   * @param timestamp Time the pose was taken in seconds
+   */
+  public void addVisionMeasurement(Pose2d robotPose, double timestamp) {
+    // Checks if limelight has an id or not
+    if(robotPose != null){
+      swerveDrive.addVisionMeasurement(robotPose, timestamp);
+    }
+  }
+
+  /**
+   * Updates the vision measurement, should be called after setupVisionMeasurement has been called 
+   */
+  public void updateVisionMeasurement() {
+    // Checks if limelight has an id or not
+    if(limelightRobotPose != null && limelightTimestamp != null){
+      swerveDrive.addVisionMeasurement(limelightRobotPose.get(), limelightTimestamp.getAsDouble());
+    }
+  }
+
+  /**
+   * Sets up the vision measurement for swerve; after calling this function, 
+   * use updateVisionMeasurement, note addVisionMeasurement 
+   * @param robotPose Supplier for the pose of the robot
+   * @param timestamp Supplier for the time the pose was taken in seconds
+   */
+  public void setupVisionMeasurement(Supplier<Pose2d> robotPose, DoubleSupplier timestamp) {
+    limelightRobotPose = robotPose;
+    limelightTimestamp = timestamp;
   }
 
   /**
@@ -298,16 +433,6 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   /**
-   * Gets the current pose (position and rotation) of the robot, as reported by
-   * odometry.
-   *
-   * @return The robot's pose
-   */
-  public Pose2d getPose() {
-    return swerveDrive.getPose();
-  }
-
-  /**
    * Set chassis speeds with closed-loop velocity control.
    *
    * @param chassisSpeeds Chassis Speeds to set.
@@ -342,6 +467,20 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.setMotorIdleMode(brake);
   }
 
+  public void setPosition(Pose2d pose, Rotation3d rotation) {
+    resetOdometry(pose);
+    swerveDrive.setGyroOffset(rotation);
+  }
+
+  /**
+   * Gets the SwerveDrivePoseEstimator
+   * 
+   * @return The SwerveDrivePoseEstimator
+   */
+  public SwerveDrivePoseEstimator getSwerveDrivePoseEstimator() {
+    return swerveDrive.swerveDrivePoseEstimator;
+  }
+
   /**
    * Gets the current yaw angle of the robot, as reported by the imu. CCW
    * positive, not wrapped.
@@ -350,6 +489,16 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public Rotation2d getHeading() {
     return swerveDrive.getYaw();
+  }
+
+  /**
+   * Gets the current pose (position and rotation) of the robot, as reported by
+   * odometry.
+   *
+   * @return The robot's pose
+   */
+  public Pose2d getPose() {
+    return swerveDrive.getPose();
   }
 
   /**
@@ -451,7 +600,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   private void updateShuffleboard() {
     if (IntakeConstants.DEBUG) {
-      entry_swerveHeading.setValue(swerveDrive.getOdometryHeading());
+      // entry_swerveHeading.setValue(swerveDrive.getOdometryHeading());
     }
   }
 
