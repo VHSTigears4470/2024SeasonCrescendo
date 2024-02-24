@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.DriveWithXboxCommand;
 
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj.XboxController;
