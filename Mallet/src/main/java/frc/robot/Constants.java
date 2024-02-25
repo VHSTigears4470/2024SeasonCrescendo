@@ -37,6 +37,8 @@ public final class Constants {
         public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
         public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
         public static final double WHEEL_LOCK_TIME = 10;
+
+        public static final double SWERVE_AUTO_VELOCITY = 1;
     }
 
     public static final class DifferentialConstants {

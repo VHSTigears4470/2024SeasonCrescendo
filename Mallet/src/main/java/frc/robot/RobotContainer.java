@@ -125,12 +125,17 @@ public class RobotContainer {
 
   public void initializeCommandNames() {
     NamedCommands.registerCommand("test1", new PrintCommand("Test 1 Triggered"));
-    NamedCommands.registerCommand("Climb Position", new ClimbPosition(intakeSub, elevatorSub));
-    NamedCommands.registerCommand("Default Position", new DefaultPosition(intakeSub, elevatorSub));
-    NamedCommands.registerCommand("Intake Note", new IntakeNoteCommandGroup(intakeSub, elevatorSub));
-    NamedCommands.registerCommand("Robot Climb", new RobotClimbCommandGroup(intakeSub, elevatorSub));
-    NamedCommands.registerCommand("Shoot Amp", new ShootAmpCommandGroup(intakeSub, elevatorSub));
-    NamedCommands.registerCommand("Shoot Speaker", new ShootSpeakerCommandGroup(intakeSub, elevatorSub));
+    if(Constants.IntakeConstants.IS_USING_INTAKE && Constants.ElevatorConstants.IS_USING_ELEVATOR){
+      NamedCommands.registerCommand("Climb Position", new ClimbPosition(intakeSub, elevatorSub));
+      NamedCommands.registerCommand("Default Position", new DefaultPosition(intakeSub, elevatorSub));
+      NamedCommands.registerCommand("Intake Note", new IntakeNoteCommandGroup(intakeSub, elevatorSub));
+      NamedCommands.registerCommand("Robot Climb", new RobotClimbCommandGroup(intakeSub, elevatorSub));
+      NamedCommands.registerCommand("Shoot Amp", new ShootAmpCommandGroup(intakeSub, elevatorSub));
+      NamedCommands.registerCommand("Shoot Speaker", new ShootSpeakerCommandGroup(intakeSub, elevatorSub));
+    }
+    if(Constants.IntakeConstants.IS_USING_INTAKE && Constants.SwerveConstants.USING_SWERVE){
+      NamedCommands.registerCommand("Drive Till Have Note", new DriveTillHaveNote(intakeSub, swerveSub));
+    }
   }
 
   // assign button functions
