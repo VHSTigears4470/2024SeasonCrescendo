@@ -37,10 +37,12 @@ public final class Constants {
         public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
         public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
         public static final double WHEEL_LOCK_TIME = 10;
+
+        public static final double SWERVE_AUTO_VELOCITY = 1;
     }
 
     public static final class DifferentialConstants {
-        public static final boolean USING_DIFFERENTIAL = true;
+        public static final boolean USING_DIFFERENTIAL = false;
         public static final boolean DEBUG = true;
 
         // PWM Motors
@@ -55,6 +57,7 @@ public final class Constants {
     }
 
     public static final class IntakeConstants {
+        public static final boolean IS_USING_INTAKE = false;
         public static final boolean DEBUG = true;
 
         // Pneumatics
@@ -82,6 +85,7 @@ public final class Constants {
         public static final int NOTE_BREAKBEAM_RX_CHANNEL = 0;
 
         // Piston
+        // Piston
         public static final int PISTON_ID = 0;
 
         public static enum INTAKE_POSITION_STATE {
@@ -103,8 +107,8 @@ public final class Constants {
         public static final boolean DEBUG = true;
 
         // Motors
-        public static final int LEAD_MOTOR_ID = 0; // TODO: Update
-        public static final int FOLLOW_MOTOR_ID = 0; // TODO: Update
+        public static final int LEAD_MOTOR_ID = 5; // TODO: Update
+        public static final int FOLLOW_MOTOR_ID = 6; // TODO: Update
         private static final double GEAR_RADIUS = 1;
         private static final double GEAR_CIRCUMFRENCE = 2 * Math.PI * GEAR_RADIUS;
         private static final double GEAR_RATIO = 60;
@@ -112,46 +116,35 @@ public final class Constants {
 
         // Sensors
         public static final int BOTTOM_BREAKBEAM_CHANNEL_ID = 0; // TODO: Update
+        public static final int TOP_BREAKBEAM_CHANNEL_ID = 0; // TODO: Update
 
         // PID
-        public static final double PID_KP = 0.001; // TODO: Tune
+        public static final double PID_KP = 0.00000007015; // TODO: Tune
         public static final double PID_KI = 0; // TODO: Tune
-        public static final double PID_KD = 0; // TODO: Tune
+        public static final double PID_KD = 0.0000000; // TODO: Tune
         public static final double PID_KIZ = 0.005; // TODO: Tune
-        public static final double PID_KFF = 0.00035; // TODO: Tune
-        public static final double PID_KMAX_OUTPUT = 2; // TODO: Tune
-        public static final double PID_KMIN_OUTPUT = -2; // TODO: Tune
+        public static final double PID_KFF = 0.00031; // TODO: Tune
+        // Must have both pos/neg for both directions
+        public static final double PID_KMAX_OUTPUT = 5; // TODO: Tune
+        public static final double PID_KMIN_OUTPUT = -5; // TODO: Tune
 
         // Smart Motion
-
         public static final int SM_ID = 0; // TODO: Update
-        // Elevator maximum inches per second
-        private static final double SM_MAX_INCHES_VEL = 6;
-        // Elevator maximum revolutions per minute. Convert to revolutions and then
-        // modify for gear ratio
+        private static final double SM_MAX_INCHES_VEL = 6; // Elevator maximum inches per second
         public static final double SM_MAX_RPM_VEL = SM_MAX_INCHES_VEL / GEAR_CIRCUMFRENCE
-                * GEAR_RATIO * 60;
-
-        // Elevator minimum inches per second
-        private static final double SM_MIN_INCHES_OUTPUT_VEL = 0;
-        // Elevator minimum revolutions per minute. Convert to revolutions and then
-        // modify for gear ratio
+                * GEAR_RATIO * 60; // Elevator maximum revolutions per minute -> revolutions -> gear ratio
+        private static final double SM_MIN_INCHES_OUTPUT_VEL = 0; // Elevator minimum inches per second
         public static final double SM_MIN_RPM_OUTPUT_VEL = SM_MIN_INCHES_OUTPUT_VEL / GEAR_CIRCUMFRENCE
-                * GEAR_RATIO * 60;
-
-        // Elevator inches acceleration per second
-        private static final double SM_INCHES_ACC = 10;
-        // Elevator inches acceleration per minute. Convert to revolutions and then
-        // modify for gear ratio
+                * GEAR_RATIO * 60; // Elevator minimum revolutions per minute -> revolutions -> gear ratio
+        private static final double SM_INCHES_ACC = 10; // Elevator inches acceleration per second
         public static final double SM_MAX_RPM_ACC = SM_INCHES_ACC / GEAR_CIRCUMFRENCE
-                * GEAR_RATIO * 60;
-
+                * GEAR_RATIO * 60; // Elevator inches acceleration per minute -> revolutions -> gear ratio
         public static final double SM_ALLOWED_ERR = 0; // TODO: Update
 
         // Elevator States
         public static final double LOW_INIT_HEIGHT = 0;
         public static final double HIGH_INIT_HEIGHT = 30;
-        public static final double CLIMB_INIT_HEIGHT = 15; // TODO: Update
+        public static final double CLIMB_HEIGHT = 15; // TODO: Update
 
         public static enum ELEVATOR_STATE {
             UP, DOWN, CLIMB

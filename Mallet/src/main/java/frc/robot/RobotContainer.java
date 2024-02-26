@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.subsystems.DifferentialSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -16,23 +17,31 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.DifferentialConstants;
+import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.RobotContainerConstants;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.Constants.ElevatorConstants.ELEVATOR_STATE;
+import frc.robot.commands.command_groups.*;
 import frc.robot.commands.differential.ArcadeDrive;
 import frc.robot.commands.drivebase.AbsoluteDrive;
 import frc.robot.commands.drivebase.AbsoluteDriveWithFocus;
+import frc.robot.commands.elevator.ElevatorChangePositionIgnoreSoftLimit;
+import frc.robot.commands.elevator.ElevatorSetHeightState;
 
 import java.io.File;
 import java.util.HashMap;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 public class RobotContainer {
   // INIT SUBSYSTEMS
   private static SwerveSubsystem swerveSub;
   private static DifferentialSubsystem differentialSub;
   private static IntakeSubsystem intakeSub;
+  private static ElevatorSubsystem elevatorSub;
 
   // INIT XBOX CONTROLLER
   public static CommandXboxController xbox1;
@@ -56,14 +65,14 @@ public class RobotContainer {
 
     configureButtonBindings();
 
-    // Configure auto
-    initializeAutoChooser();
-
     // Initialize Shuffleboard
     initializeShuffleboard();
 
-    // Initialize path planner event maps
-    initializeEventMap();
+    // Initialize path planner command names
+    initializeCommandNames();
+
+    // Configure auto
+    initializeAutoChooser();
   }
 
   public void initializeDriveMode() {
@@ -96,26 +105,53 @@ public class RobotContainer {
   }
 
   public void initializeOtherVars() {
-    intakeSub = new IntakeSubsystem();
+    if (IntakeConstants.IS_USING_INTAKE) {
+      intakeSub = new IntakeSubsystem();
+    }
+    if (ElevatorConstants.IS_USING_ELEVATOR) {
+      elevatorSub = new ElevatorSubsystem();
+    }
     xbox1 = new CommandXboxController(RobotContainerConstants.XBOX_1_ID);
   }
 
   public void initializeAutoChooser() {
     // with command chooser
     autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
-    autoChooser = AutoBuilder.buildAutoChooser();
+    if (SwerveConstants.USING_SWERVE) {
+      autoChooser = AutoBuilder.buildAutoChooser();
+    }
     shuffleDriverTab.add("Auto Routine", autoChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
   }
 
-  public void initializeEventMap() {
-    eventMap.put("marker1", new PrintCommand("Pressed Marker 1"));
+  public void initializeCommandNames() {
+    NamedCommands.registerCommand("test1", new PrintCommand("Test 1 Triggered"));
+    if(Constants.IntakeConstants.IS_USING_INTAKE && Constants.ElevatorConstants.IS_USING_ELEVATOR){
+      NamedCommands.registerCommand("Climb Position", new ClimbPosition(intakeSub, elevatorSub));
+      NamedCommands.registerCommand("Default Position", new DefaultPosition(intakeSub, elevatorSub));
+      NamedCommands.registerCommand("Intake Note", new IntakeNoteCommandGroup(intakeSub, elevatorSub));
+      NamedCommands.registerCommand("Robot Climb", new RobotClimbCommandGroup(intakeSub, elevatorSub));
+      NamedCommands.registerCommand("Shoot Amp", new ShootAmpCommandGroup(intakeSub, elevatorSub));
+      NamedCommands.registerCommand("Shoot Speaker", new ShootSpeakerCommandGroup(intakeSub, elevatorSub));
+    }
+    if(Constants.IntakeConstants.IS_USING_INTAKE && Constants.SwerveConstants.USING_SWERVE){
+      NamedCommands.registerCommand("Drive Till Have Note", new DriveTillHaveNote(intakeSub, swerveSub));
+    }
   }
 
   // assign button functions
   private void configureButtonBindings() {
-    xbox1.a().onTrue(new AbsoluteDriveWithFocus(swerveSub,
-        () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-        () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), "cone"));
+    if (SwerveConstants.USING_SWERVE) {
+      xbox1.a().onTrue(new AbsoluteDriveWithFocus(swerveSub,
+          () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+          () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), "cone"));
+    }
+
+    if (ElevatorConstants.IS_USING_ELEVATOR) {
+      xbox1.rightTrigger().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, 0.1));
+      xbox1.leftTrigger().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, -0.1));
+      xbox1.a().whileTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.UP));
+      xbox1.b().whileTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.DOWN));
+    }
   }
 
   public Command getAutoInput() {
@@ -123,7 +159,9 @@ public class RobotContainer {
   }
 
   public void setMotorBrake(boolean brake) {
-    swerveSub.setMotorBrake(brake);
+    if (SwerveConstants.USING_SWERVE) {
+      swerveSub.setMotorBrake(brake);
+    }
   }
 
   public void initializeShuffleboard() {
