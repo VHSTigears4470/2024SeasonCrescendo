@@ -29,7 +29,7 @@ public final class Constants {
         // TODO CHANGE SCALAR in gettargetspeeds
 
         // SWERVE
-        public static final TelemetryVerbosity TELEMETRY_VERBOSITY = TelemetryVerbosity.NONE;
+        public static final TelemetryVerbosity TELEMETRY_VERBOSITY = TelemetryVerbosity.MACHINE;
         public static final double SPEED_SCALAR = 0.8;
         public static final double MAX_ACCELERATION = 2;
         public static final double MAX_SPEED_METERS = 2;
