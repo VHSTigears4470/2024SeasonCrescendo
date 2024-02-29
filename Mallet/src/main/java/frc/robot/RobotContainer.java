@@ -160,7 +160,7 @@ public class RobotContainer {
         xbox2.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
 
         xbox2.leftTrigger().whileTrue(new ShootAmpCommandGroup(intakeSub, elevatorSub));
-        xbox2.leftTrigger().whileTrue(new ShootSpeakerCommandGroup(intakeSub, elevatorSub));
+        xbox2.rightTrigger().whileTrue(new ShootSpeakerCommandGroup(intakeSub, elevatorSub));
 
         xbox1.x().whileTrue(new IntakeNoteCommandGroup(intakeSub, elevatorSub));
         xbox2.x().whileTrue(new IntakeNoteCommandGroup(intakeSub, elevatorSub));
