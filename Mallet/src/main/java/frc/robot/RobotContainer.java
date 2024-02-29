@@ -29,6 +29,11 @@ import frc.robot.commands.drivebase.AbsoluteDrive;
 import frc.robot.commands.drivebase.AbsoluteDriveWithFocus;
 import frc.robot.commands.elevator.ElevatorChangePositionIgnoreSoftLimit;
 import frc.robot.commands.elevator.ElevatorSetHeightState;
+import frc.robot.commands.intake.IntakeSetAmpVoltage;
+import frc.robot.commands.intake.IntakeSetIntakeVoltage;
+import frc.robot.commands.intake.IntakeSetIntakeVoltageEndWithBreakbeam;
+import frc.robot.commands.intake.IntakeSetSpeakerVoltage;
+import frc.robot.commands.intake.IntakeSetZeroVoltage;
 
 import java.io.File;
 import java.util.HashMap;
@@ -44,8 +49,8 @@ public class RobotContainer {
   private static ElevatorSubsystem elevatorSub;
 
   // INIT XBOX CONTROLLER
-  public static CommandXboxController xbox1; //Driver
-  public static CommandXboxController xbox2; //Operator
+  public static CommandXboxController xbox1; // Driver
+  public static CommandXboxController xbox2; // Operator
 
   // SMARTDASHBOARD
   private SendableChooser<Command> autoChooser = new SendableChooser<Command>();
@@ -126,7 +131,7 @@ public class RobotContainer {
 
   public void initializeCommandNames() {
     NamedCommands.registerCommand("test1", new PrintCommand("Test 1 Triggered"));
-    if(Constants.IntakeConstants.IS_USING_INTAKE && Constants.ElevatorConstants.IS_USING_ELEVATOR){
+    if (Constants.IntakeConstants.IS_USING_INTAKE && Constants.ElevatorConstants.IS_USING_ELEVATOR) {
       NamedCommands.registerCommand("Climb Position", new ClimbPosition(intakeSub, elevatorSub));
       NamedCommands.registerCommand("Default Position", new DefaultPosition(intakeSub, elevatorSub));
       NamedCommands.registerCommand("Intake Note", new IntakeNoteCommandGroup(intakeSub, elevatorSub));
@@ -134,8 +139,9 @@ public class RobotContainer {
       NamedCommands.registerCommand("Shoot Amp", new ShootAmpCommandGroup(intakeSub, elevatorSub));
       NamedCommands.registerCommand("Shoot Speaker", new ShootSpeakerCommandGroup(intakeSub, elevatorSub));
     }
-    if(Constants.IntakeConstants.IS_USING_INTAKE && Constants.SwerveConstants.USING_SWERVE){
-      NamedCommands.registerCommand("Drive Till Have Note", new DriveTillHaveNote(intakeSub, swerveSub));
+    if (Constants.IntakeConstants.IS_USING_INTAKE && Constants.SwerveConstants.USING_SWERVE) {
+      // NamedCommands.registerCommand("Drive Till Have Note", new
+      // DriveTillHaveNote(intakeSub, swerveSub));
     }
   }
 
@@ -165,6 +171,13 @@ public class RobotContainer {
         xbox1.x().whileTrue(new IntakeNoteCommandGroup(intakeSub, elevatorSub));
         xbox2.x().whileTrue(new IntakeNoteCommandGroup(intakeSub, elevatorSub));
       }
+    }
+    if (IntakeConstants.IS_USING_INTAKE) {
+      // Testing ONLY
+      xbox1.leftTrigger().whileTrue(new IntakeSetIntakeVoltage(intakeSub)).onFalse(new IntakeSetZeroVoltage(intakeSub));
+      xbox1.rightTrigger().whileTrue(new IntakeSetSpeakerVoltage(intakeSub))
+          .onFalse(new IntakeSetZeroVoltage(intakeSub));
+      xbox1.rightBumper().whileTrue(new IntakeSetAmpVoltage(intakeSub)).onFalse(new IntakeSetZeroVoltage(intakeSub));
     }
   }
 

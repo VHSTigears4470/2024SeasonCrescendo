@@ -57,7 +57,7 @@ public final class Constants {
     }
 
     public static final class IntakeConstants {
-        public static final boolean IS_USING_INTAKE = false;
+        public static final boolean IS_USING_INTAKE = true;
         public static final boolean DEBUG = true;
 
         // Pneumatics
@@ -65,21 +65,24 @@ public final class Constants {
         public static final PneumaticsModuleType MODULE_TYPE = PneumaticsModuleType.CTREPCM;
         public static final int LEFT_INTAKE_FORWARD_CHANNEL_ID = 0;
         public static final int LEFT_INTAKE_REVERSE_CHANNEL_ID = 1;
-        public static final int RIGHT_INTAKE_FORWARD_CHANNEL_ID = 0;
-        public static final int RIGHT_INTAKE_REVERSE_CHANNEL_ID = 1;
-        public static final int NOTES_FORWARD_CHANNEL_ID = 0;
-        public static final int NOTES_REVERSE_CHANNEL_ID = 1;
+        public static final int RIGHT_INTAKE_FORWARD_CHANNEL_ID = 2;
+        public static final int RIGHT_INTAKE_REVERSE_CHANNEL_ID = 3;
+        public static final int NOTES_FORWARD_CHANNEL_ID = 4;
+        public static final int NOTES_REVERSE_CHANNEL_ID = 5;
         public static final Value INTAKE_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse;
         public static final Value PISTON_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse; // Need to change later for
                                                                                            // piston
 
         // Motors
-        public static final int FRONT_MOTOR_ID = 0; // TODO: Update
-        public static final int BACK_MOTOR_ID = 1;
-        public static final double NOTE_INTAKE_VOLTAGE = 2; // unsigned, polarity set in subsystem
-        public static final double SPEAKER_OUTPUT_VOLTAGE = 2; // unsigned, polarity set in subsystem
-        public static final double AMP_OUTPUT_VOLTAGE = 2; // unsigned, polarity set in subsystem
-        public static final double NOTE_OUTPUT_VOLTAGE = 2;// unsigned, polarity set in subsystem
+        public static final int TOP_MOTOR_ID = 9; // TODO: Update
+        public static final int BOT_MOTOR_ID = 10;
+        public static final boolean DIRECTION_INVERTED = true; // Inverts both motors together (ex. specifies sucking
+                                                               // direction)
+        public static final boolean BOT_FOLLOW_INVERTED = false; // Inverts the bot motor to top motor
+        public static final double NOTE_INTAKE_VOLTAGE = 4; // unsigned, polarity set in subsystem
+        public static final double SPEAKER_OUTPUT_VOLTAGE = 12; // unsigned, polarity set in subsystem
+        public static final double AMP_OUTPUT_VOLTAGE = 8; // unsigned, polarity set in subsystem
+        public static final double NOTE_OUTPUT_VOLTAGE = 3;// unsigned, polarity set in subsystem
 
         // Sensors
         public static final int NOTE_BREAKBEAM_RX_CHANNEL = 0;
@@ -103,7 +106,7 @@ public final class Constants {
     }
 
     public static class ElevatorConstants {
-        public static final boolean IS_USING_ELEVATOR = true;
+        public static final boolean IS_USING_ELEVATOR = false;
         public static final boolean DEBUG = true;
 
         // Motors

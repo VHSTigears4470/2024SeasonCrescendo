@@ -24,10 +24,10 @@ public class IntakeSubsystem extends SubsystemBase {
     private final DoubleSolenoid notePusherSolenoid;
 
     // Variables for intake motors
-    private final CANSparkMax backMotor;
-    private final CANSparkMax frontMotor;
-    private final RelativeEncoder backEncoder;
-    private final RelativeEncoder frontEncoder;
+    private final CANSparkMax botMotor;
+    private final CANSparkMax topMotor;
+    private final RelativeEncoder botEncoder;
+    private final RelativeEncoder topEncoder;
 
     // Variables for sensors
     private final DigitalInput noteBreakbeam;
@@ -55,18 +55,19 @@ public class IntakeSubsystem extends SubsystemBase {
         notePusherSolenoid.set(IntakeConstants.PISTON_DEFAULT_POSITION);
 
         // Motor initialization
-        backMotor = new CANSparkMax(IntakeConstants.FRONT_MOTOR_ID, MotorType.kBrushless);
-        backEncoder = backMotor.getEncoder();
-        backMotor.setIdleMode(IdleMode.kBrake);
-        backMotor.setInverted(false);
-        backEncoder.setPosition(0);
+        botMotor = new CANSparkMax(IntakeConstants.BOT_MOTOR_ID, MotorType.kBrushless);
+        botEncoder = botMotor.getEncoder();
+        botMotor.setIdleMode(IdleMode.kBrake);
+        botMotor.setInverted(false);
+        botEncoder.setPosition(0);
 
-        frontMotor = new CANSparkMax(IntakeConstants.FRONT_MOTOR_ID, MotorType.kBrushless);
-        frontEncoder = frontMotor.getEncoder();
-        frontMotor.setIdleMode(IdleMode.kBrake);
-        frontMotor.setInverted(false);
-        frontEncoder.setPosition(0);
-        backMotor.follow(frontMotor);
+        topMotor = new CANSparkMax(IntakeConstants.TOP_MOTOR_ID, MotorType.kBrushless);
+        topEncoder = topMotor.getEncoder();
+        topMotor.setIdleMode(IdleMode.kBrake);
+        topMotor.setInverted(IntakeConstants.DIRECTION_INVERTED);
+        topEncoder.setPosition(0);
+        botMotor.follow(topMotor, IntakeConstants.BOT_FOLLOW_INVERTED);
+
         // Sensor initialization
         noteBreakbeam = new DigitalInput(IntakeConstants.NOTE_BREAKBEAM_RX_CHANNEL);
 
@@ -97,29 +98,29 @@ public class IntakeSubsystem extends SubsystemBase {
 
     /*** Set intake motors to the speed for intaking notes */
     public void setIntakeVoltage() {
-        frontMotor.setVoltage(IntakeConstants.NOTE_INTAKE_VOLTAGE);
+        topMotor.setVoltage(-IntakeConstants.NOTE_INTAKE_VOLTAGE); // Negative for intaking
     }
 
     /***
      * Set intake motors to the speed for shooting the note to the speaker notes
      */
     public void setSpeakerOutputVoltage() {
-        frontMotor.setVoltage(IntakeConstants.SPEAKER_OUTPUT_VOLTAGE);
+        topMotor.setVoltage(IntakeConstants.SPEAKER_OUTPUT_VOLTAGE);
     }
 
     /*** Set intake motors to the speed for shooting the note to the amp */
     public void setAmpOutputVoltage() {
-        frontMotor.setVoltage(IntakeConstants.AMP_OUTPUT_VOLTAGE);
+        topMotor.setVoltage(IntakeConstants.AMP_OUTPUT_VOLTAGE);
     }
 
     /*** Set intake motors to the speed for intaking notes */
     public void setNoteIntakeVoltage() {
-        frontMotor.setVoltage(IntakeConstants.NOTE_INTAKE_VOLTAGE);
+        topMotor.setVoltage(IntakeConstants.NOTE_INTAKE_VOLTAGE);
     }
 
     /*** Stops motors */
     public void setZeroVoltage() {
-        frontMotor.setVoltage(0);
+        topMotor.setVoltage(0);
     }
 
     /*** Returns the state of the note break beam */
