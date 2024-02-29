@@ -4,17 +4,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 public class ElevatorChangePositionIgnoreSoftLimit extends Command {
-    
-    private final ElevatorSubsystem elevator;
-    private final double incAmt;
 
-    public ElevatorChangePositionIgnoreSoftLimit(ElevatorSubsystem elevator, double incAmt) {
-        this.elevator = elevator;
-        this.incAmt = incAmt;
-        addRequirements(elevator);
-    }
+  private final ElevatorSubsystem elevator;
+  private final double incAmt;
 
-@Override
+  public ElevatorChangePositionIgnoreSoftLimit(ElevatorSubsystem elevator, double incAmt) {
+    this.elevator = elevator;
+    this.incAmt = incAmt;
+    addRequirements(elevator);
+  }
+
+  @Override
   public void initialize() {
     elevator.changePositionIgnoreSoftLimit(incAmt);
   }
