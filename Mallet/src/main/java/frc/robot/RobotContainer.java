@@ -44,7 +44,8 @@ public class RobotContainer {
   private static ElevatorSubsystem elevatorSub;
 
   // INIT XBOX CONTROLLER
-  public static CommandXboxController xbox1;
+  public static CommandXboxController xbox1; //Driver
+  public static CommandXboxController xbox2; //Operator
 
   // SMARTDASHBOARD
   private SendableChooser<Command> autoChooser = new SendableChooser<Command>();
@@ -147,10 +148,23 @@ public class RobotContainer {
     }
 
     if (ElevatorConstants.IS_USING_ELEVATOR) {
-      xbox1.rightTrigger().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, 0.1));
-      xbox1.leftTrigger().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, -0.1));
-      xbox1.a().whileTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.UP));
-      xbox1.b().whileTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.DOWN));
+      xbox2.a().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, 0.1));
+      xbox2.b().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, -0.1));
+      xbox2.rightBumper().whileTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.UP));
+      xbox2.leftBumper().whileTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.DOWN));
+
+      if (IntakeConstants.IS_USING_INTAKE) {
+        xbox1.y().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
+        xbox2.y().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
+        xbox1.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
+        xbox2.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
+
+        xbox2.leftTrigger().whileTrue(new ShootAmpCommandGroup(intakeSub, elevatorSub));
+        xbox2.leftTrigger().whileTrue(new ShootSpeakerCommandGroup(intakeSub, elevatorSub));
+
+        xbox1.x().whileTrue(new IntakeNoteCommandGroup(intakeSub, elevatorSub));
+        xbox2.x().whileTrue(new IntakeNoteCommandGroup(intakeSub, elevatorSub));
+      }
     }
   }
 
