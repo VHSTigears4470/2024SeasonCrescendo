@@ -157,6 +157,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     return desiredReferencePosition;
   }
 
+  /*** Returns the desired state of the motor */
+  public ELEVATOR_STATE getDesiredState() {
+    return currState;
+  }
+
   /***
    * Returns true if the elevator is within margin of error of the desired
    * position

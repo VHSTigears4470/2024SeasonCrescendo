@@ -8,10 +8,13 @@ import frc.robot.subsystems.IntakeSubsystem;
 
 public class IntakePositionAndSuck extends SequentialCommandGroup {
     public IntakePositionAndSuck(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem) {
-        // TODO: precondition to do nothing if a note is already in the intake
+        // Start if there is no note in the intake
+        if(!intakeSubsystem.getNoteBreakbeam())
+        {
         addCommands(
                 new ParallelCommandGroup(
                         new IntakePosition(intakeSubsystem, elevatorSubsystem),
                         new IntakeSetIntakeVoltageEndWithBreakbeam(intakeSubsystem)));
+        }
     }
 }

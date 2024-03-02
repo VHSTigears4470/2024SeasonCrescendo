@@ -26,6 +26,13 @@ public final class Constants {
         public static final int XBOX_2_ID = 1;
     }
 
+    public static final class CycleTimes {
+        // All times are in seconds
+        public static final double INTAKE_MOTORS_WARM_UP_CYCLE_TIME = 0.5;
+        public static final double INTAKE_MOTORS_PUSHER_CYCLE_TIME = 0.7;
+        public static final double CHANGE_POSITIONS_CYCLE_TIME = 0.5;
+    }
+
     public static final class SwerveConstants {
         public static final boolean USING_SWERVE = false;
         public static final boolean DEBUG = false;
