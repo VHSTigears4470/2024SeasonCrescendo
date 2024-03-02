@@ -6,7 +6,6 @@ import frc.robot.Constants.ElevatorConstants.ELEVATOR_STATE;
 import frc.robot.commands.elevator.ElevatorSetHeightState;
 import frc.robot.commands.intake.IntakePositionExtend;
 import frc.robot.commands.intake.IntakePusherRetract;
-import frc.robot.commands.intake.IntakeSetIntakeVoltageEndWithBreakbeam;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 

@@ -134,10 +134,10 @@ public class RobotContainer {
     if (Constants.IntakeConstants.IS_USING_INTAKE && Constants.ElevatorConstants.IS_USING_ELEVATOR) {
       NamedCommands.registerCommand("Climb Position", new ClimbPosition(intakeSub, elevatorSub));
       NamedCommands.registerCommand("Default Position", new DefaultPosition(intakeSub, elevatorSub));
-      NamedCommands.registerCommand("Intake Note", new IntakeNoteCommandGroup(intakeSub, elevatorSub));
+      NamedCommands.registerCommand("Intake Note", new IntakePositionAndSuck(intakeSub, elevatorSub));
       NamedCommands.registerCommand("Robot Climb", new RobotClimbCommandGroup(intakeSub, elevatorSub));
-      NamedCommands.registerCommand("Shoot Amp", new ShootAmpCommandGroup(intakeSub, elevatorSub));
-      NamedCommands.registerCommand("Shoot Speaker", new ShootSpeakerCommandGroup(intakeSub, elevatorSub));
+      NamedCommands.registerCommand("Shoot Amp", new ShootAmpAndReset(intakeSub, elevatorSub));
+      NamedCommands.registerCommand("Shoot Speaker", new ShootSpeakerAndReset(intakeSub, elevatorSub));
     }
     if (Constants.IntakeConstants.IS_USING_INTAKE && Constants.ElevatorConstants.IS_USING_ELEVATOR && Constants.SwerveConstants.USING_SWERVE) {
       NamedCommands.registerCommand("Drive Till Have Note", new DriveTillHaveNote(intakeSub, elevatorSub, swerveSub));
@@ -164,11 +164,11 @@ public class RobotContainer {
         xbox1.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
         xbox2.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
 
-        xbox2.leftTrigger().whileTrue(new ShootAmpCommandGroup(intakeSub, elevatorSub));
-        xbox2.leftTrigger().whileTrue(new ShootSpeakerCommandGroup(intakeSub, elevatorSub));
+        xbox2.leftTrigger().whileTrue(new ShootAmpAndReset(intakeSub, elevatorSub));
+        xbox2.leftTrigger().whileTrue(new ShootSpeakerAndReset(intakeSub, elevatorSub));
 
-        xbox1.x().whileTrue(new IntakeNoteCommandGroup(intakeSub, elevatorSub));
-        xbox2.x().whileTrue(new IntakeNoteCommandGroup(intakeSub, elevatorSub));
+        xbox1.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
+        xbox2.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
       }
     }
     if (IntakeConstants.IS_USING_INTAKE) {

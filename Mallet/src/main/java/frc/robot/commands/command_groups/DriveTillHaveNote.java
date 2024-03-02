@@ -16,7 +16,7 @@ public class DriveTillHaveNote extends SequentialCommandGroup {
             new IntakePosition(intake, elevator),
             new WaitCommand(0.5),
             new ParallelCommandGroup(
-                new IntakeNoteCommandGroup(intake, elevator),
+                new IntakePositionAndSuck(intake, elevator),
                 new DriveForward(swerve, SwerveConstants.SWERVE_AUTO_VELOCITY)
             ),
             new DefaultPosition(intake, elevator));
