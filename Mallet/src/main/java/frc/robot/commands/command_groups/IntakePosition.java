@@ -10,12 +10,13 @@ import frc.robot.commands.intake.IntakeSetIntakeVoltageEndWithBreakbeam;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class IntakeNoteCommandGroup extends SequentialCommandGroup {
-    public IntakeNoteCommandGroup(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem) {
+public class IntakePosition extends SequentialCommandGroup {
+    public IntakePosition(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem) {
         // TODO: precondition to do nothing if a note is already in the intake
         addCommands(
                 new ParallelCommandGroup(
-                        new IntakePosition(intakeSubsystem, elevatorSubsystem),
-                        new IntakeSetIntakeVoltageEndWithBreakbeam(intakeSubsystem)));
+                        new IntakePusherRetract(intakeSubsystem),
+                        new IntakePositionExtend(intakeSubsystem),
+                        new ElevatorSetHeightState(elevatorSubsystem, ELEVATOR_STATE.DOWN)));
     }
 }

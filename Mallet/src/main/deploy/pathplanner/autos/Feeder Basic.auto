@@ -1,6 +1,12 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 0.7418259386281802,
+      "y": 4.435354463125988
+    },
+    "rotation": 120.0
+  },
   "command": {
     "type": "sequential",
     "data": {
@@ -14,7 +20,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Feeder to Note"
+            "pathName": "Feeder Start to Note"
           }
         },
         {
@@ -38,6 +44,6 @@
       ]
     }
   },
-  "folder": null,
+  "folder": "Basic (Shoot-Get Note-Shoot)",
   "choreoAuto": false
 }
