@@ -66,7 +66,7 @@ public class IntakeSubsystem extends SubsystemBase {
         topMotor.setIdleMode(IdleMode.kBrake);
         topMotor.setInverted(IntakeConstants.DIRECTION_INVERTED);
         topEncoder.setPosition(0);
-        botMotor.follow(topMotor, IntakeConstants.BOT_FOLLOW_INVERTED);
+        botMotor.follow(topMotor, IntakeConstants.FOLLOWER_INVERTED);
 
         // Sensor initialization
         noteBreakbeam = new DigitalInput(IntakeConstants.NOTE_BREAKBEAM_RX_CHANNEL);
@@ -115,7 +115,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     /*** Set intake motors to the speed for intaking notes */
     public void setNoteIntakeVoltage() {
-        topMotor.setVoltage(IntakeConstants.NOTE_INTAKE_VOLTAGE);
+        topMotor.setVoltage(-IntakeConstants.NOTE_INTAKE_VOLTAGE);
     }
 
     /*** Stops motors */

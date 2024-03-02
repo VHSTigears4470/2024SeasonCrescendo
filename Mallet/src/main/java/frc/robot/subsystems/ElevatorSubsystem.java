@@ -21,10 +21,13 @@ import frc.robot.Constants.ElevatorConstants.ELEVATOR_STATE;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
-  private final CANSparkMax leadMotor;
-  private final CANSparkMax followMotor;
+  /** Elevator left, Lead motor */
+  private final CANSparkMax leftMotor;
+  private final RelativeEncoder leftEncoder;
 
-  private final RelativeEncoder encoder;
+  /** Elevator right, Follower motor, */
+  private final CANSparkMax rightMotor;
+  private final RelativeEncoder rightEncoder;
 
   private final SparkPIDController pidController;
 
@@ -56,24 +59,30 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public ElevatorSubsystem() {
     // Init motors and positions
-    leadMotor = new CANSparkMax(ElevatorConstants.LEAD_MOTOR_ID, MotorType.kBrushless);
-    followMotor = new CANSparkMax(ElevatorConstants.FOLLOW_MOTOR_ID, MotorType.kBrushless);
-    followMotor.follow(leadMotor, true);
-    pidController = leadMotor.getPIDController();
+    leftMotor = new CANSparkMax(ElevatorConstants.LEFT_MOTOR_ID, MotorType.kBrushless);
+    leftEncoder = leftMotor.getEncoder();
+    leftEncoder.setPosition(0);
+    leftEncoder.setPositionConversionFactor(ElevatorConstants.CONVERSION_RATIO);
 
-    encoder = leadMotor.getEncoder();
-    encoder.setPosition(0);
-    encoder.setPositionConversionFactor(ElevatorConstants.CONVERSION_RATIO);
+    rightMotor = new CANSparkMax(ElevatorConstants.RIGHT_MOTOR_ID, MotorType.kBrushless);
+    rightEncoder = rightMotor.getEncoder();
+    rightEncoder.setPosition(0);
+    rightEncoder.setPositionConversionFactor(ElevatorConstants.CONVERSION_RATIO);
+
+    // Set inversions
+    rightMotor.follow(leftMotor, ElevatorConstants.FOLLOWER_INVERTED);
+    leftMotor.setInverted(ElevatorConstants.DIRECTION_INVERTED);
 
     lowestPos = ElevatorConstants.LOW_INIT_HEIGHT;
     highestPos = ElevatorConstants.HIGH_INIT_HEIGHT;
     currState = ELEVATOR_STATE.DOWN;
 
     // Init sensors
-    bottomBreakBeam = new DigitalInput(ElevatorConstants.BOTTOM_BREAKBEAM_CHANNEL_ID);
-    topBreakBeam = new DigitalInput(ElevatorConstants.TOP_BREAKBEAM_CHANNEL_ID);
+    bottomBreakBeam = new DigitalInput(ElevatorConstants.BOTTOM_BREAKBEAM_RX_CHANNEL);
+    topBreakBeam = new DigitalInput(ElevatorConstants.TOP_BREAKBEAM_RX_CHANNEL);
 
     // Init PID
+    pidController = leftMotor.getPIDController();
     pidController.setP(ElevatorConstants.PID_KP);
     pidController.setI(ElevatorConstants.PID_KI);
     pidController.setD(ElevatorConstants.PID_KD);
@@ -82,7 +91,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // Init Smart Motion
     pidController.setSmartMotionMaxVelocity(ElevatorConstants.SM_MAX_RPM_VEL, ElevatorConstants.SM_ID);
-    pidController.setSmartMotionMinOutputVelocity(ElevatorConstants.SM_MIN_RPM_OUTPUT_VEL,
+    pidController.setSmartMotionMinOutputVelocity(ElevatorConstants.SM_MIN_RPM_VEL,
         ElevatorConstants.SM_ID);
     pidController.setSmartMotionMaxAccel(ElevatorConstants.SM_MAX_RPM_ACC, ElevatorConstants.SM_ID);
     pidController.setSmartMotionAllowedClosedLoopError(ElevatorConstants.SM_ALLOWED_ERR,
@@ -116,8 +125,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   /*** Stops motors in case of emergency */
   public void emergencyStop() {
-    leadMotor.stopMotor();
-    followMotor.stopMotor();
+    leftMotor.stopMotor();
+    rightMotor.stopMotor();
   }
 
   /*** Sets elevator to desired height */
@@ -153,7 +162,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    * position
    */
   public boolean isAtPos() {
-    return Math.abs(encoder.getPosition() - desiredReferencePosition) < ElevatorConstants.POSITION_TOLERANCE;
+    return Math.abs(leftEncoder.getPosition() - desiredReferencePosition) < ElevatorConstants.POSITION_TOLERANCE;
   }
 
   public boolean getBottomBreakbeam() {
@@ -212,7 +221,7 @@ public class ElevatorSubsystem extends SubsystemBase {
           .withWidget(BuiltInWidgets.kTextView)
           .getEntry();
       entry_smart_motion_pos = shuffleDebugTab.getLayout("Elevator PID", BuiltInLayouts.kList)
-          .add("Position", encoder.getPosition())
+          .add("Position", leftEncoder.getPosition())
           .withWidget(BuiltInWidgets.kTextView)
           .getEntry();
     }
@@ -223,7 +232,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     entry_elevatorState.setString(currState == ELEVATOR_STATE.DOWN ? "DOWN" : "UP");
     if (ElevatorConstants.DEBUG) {
       entry_breakBeam.setBoolean(bottomBreakBeam.get());
-      entry_encoder.setDouble(encoder.getPosition());
+      entry_encoder.setDouble(leftEncoder.getPosition());
       entry_smart_motion_pos.setDouble(desiredReferencePosition);
 
       int slotId = ElevatorConstants.SM_ID;
@@ -243,7 +252,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     if (getBottomBreakbeam()) {
-      lowestPos = encoder.getPosition() + ElevatorConstants.HIGH_LOW_OFFSET;
+      lowestPos = leftEncoder.getPosition() + ElevatorConstants.HIGH_LOW_OFFSET;
     }
     updateShuffleboard();
   }
