@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7418259386281802,
-      "y": 4.435354463125988
+      "x": 1.34,
+      "y": 5.53
     },
-    "rotation": 120.0
+    "rotation": 180.0
   },
   "command": {
     "type": "sequential",
@@ -20,7 +20,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Feeder Start to Note"
+            "pathName": "Middle Start to Middle Wing"
           }
         },
         {
@@ -32,24 +32,12 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Feeder Return to Start"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot Speaker"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Feeder Leave Wing"
+            "pathName": "Middle Wing to Middle Start"
           }
         }
       ]
     }
   },
-  "folder": "Center (Shoot-Get Note-Shoot-Leave Wing)",
+  "folder": null,
   "choreoAuto": false
 }

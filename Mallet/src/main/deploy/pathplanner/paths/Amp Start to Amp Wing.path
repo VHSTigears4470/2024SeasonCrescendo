@@ -3,36 +3,36 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 4.08
+        "x": 0.7223726295793819,
+        "y": 6.69
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5,
-        "y": 4.08
+        "x": 0.8473726295793819,
+        "y": 6.90650635094611
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Amp Start"
     },
     {
       "anchor": {
-        "x": 0.74,
-        "y": 4.44
+        "x": 2.0,
+        "y": 6.98
       },
       "prevControl": {
-        "x": 1.1730127018922194,
-        "y": 4.19
+        "x": 1.0,
+        "y": 6.98
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Amp Wing Note"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": 120.0,
-      "rotateFast": true
+      "waypointRelativePos": 0.2,
+      "rotationDegrees": -120.0,
+      "rotateFast": false
     }
   ],
   "constraintZones": [],
@@ -44,14 +44,14 @@
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
-    "velocity": 0.0,
-    "rotation": 120.0,
+    "velocity": 0,
+    "rotation": 0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Feeder Start",
+  "folder": "Start & Wing",
   "previewStartingState": {
-    "rotation": 0.0,
+    "rotation": -120.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

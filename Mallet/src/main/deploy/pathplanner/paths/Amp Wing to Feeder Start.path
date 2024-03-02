@@ -3,40 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7418259386281802,
-        "y": 4.435354463125988
+        "x": 2.0,
+        "y": 6.98
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.8418259386281799,
-        "y": 4.435354463125988
+        "x": 2.0,
+        "y": 6.48
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Amp Wing Note"
     },
     {
       "anchor": {
-        "x": 6.5,
-        "y": 4.08
+        "x": 0.7418259386281802,
+        "y": 4.435354463125988
       },
       "prevControl": {
-        "x": 6.0,
-        "y": 4.08
+        "x": 1.9918259386281805,
+        "y": 4.435354463125988
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Feeder Start"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.3,
+      "waypointRelativePos": 0.7,
       "rotationDegrees": 120.0,
-      "rotateFast": false
-    },
-    {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": 0,
       "rotateFast": true
     }
   ],
@@ -50,13 +45,13 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": 0,
+    "rotation": 120.0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Feeder Start",
+  "folder": "Start & Wing",
   "previewStartingState": {
-    "rotation": 120.0,
+    "rotation": 0.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

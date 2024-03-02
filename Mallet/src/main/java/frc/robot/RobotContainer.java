@@ -123,8 +123,38 @@ public class RobotContainer {
   public void initializeAutoChooser() {
     // with command chooser
     autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
-    if (SwerveConstants.USING_SWERVE) {
-      autoChooser = AutoBuilder.buildAutoChooser();
+    if (SwerveConstants.USING_SWERVE && Constants.IntakeConstants.IS_USING_INTAKE && Constants.ElevatorConstants.IS_USING_ELEVATOR) {
+      // autoChooser = AutoBuilder.buildAutoChooser();
+      // Amp Start
+      autoChooser.addOption("Amp Start to Amp Wing Cycle", 
+        swerveSub.getAutonomousCommand("Amp Start to Amp Wing Cycle", false)
+        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
+      autoChooser.addOption("Amp Start to Middle Wing Cycle", 
+        swerveSub.getAutonomousCommand("Amp Start to Middle Wing Cycle", false)
+        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
+      autoChooser.addOption("Amp Start to Feeder Wing Cycle", 
+        swerveSub.getAutonomousCommand("Amp Start to Feeder Wing Cycle", false)
+        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
+      // Middle Start
+      autoChooser.addOption("Middle Start to Feeder Wing Cycle", 
+        swerveSub.getAutonomousCommand("Middle Start to Feeder Wing Cycle", false)
+        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
+      autoChooser.addOption("Middle Start to Amp Wing Cycle", 
+        swerveSub.getAutonomousCommand("Middle Start to Middle Wing Cycle", false)
+        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
+        autoChooser.addOption("Middle Start to Amp Wing Cycle", 
+        swerveSub.getAutonomousCommand("Middle Start to Amp Wing Cycle", false)
+        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
+      // Feeder Start
+      autoChooser.addOption("Feeder Start to Feeder Wing Cycle", 
+        swerveSub.getAutonomousCommand("Feeder Start to Feeder Wing Cycle", false)
+        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
+      autoChooser.addOption("Feeder Start to Middle Wing Cycle", 
+        swerveSub.getAutonomousCommand("Feeder Start to Middle Wing Cycle", false)
+        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
+      autoChooser.addOption("Feeder Start to Amp Wing Cycle", 
+        swerveSub.getAutonomousCommand("Feeder Start to Amp Wing Cycle", false)
+        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
     }
     shuffleDriverTab.add("Auto Routine", autoChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
   }

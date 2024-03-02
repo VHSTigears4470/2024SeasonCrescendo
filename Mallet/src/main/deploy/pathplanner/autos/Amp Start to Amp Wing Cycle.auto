@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7418259386281802,
-      "y": 4.435354463125988
+      "x": 0.7223726295793819,
+      "y": 6.691938312786578
     },
-    "rotation": 120.0
+    "rotation": -120.0
   },
   "command": {
     "type": "sequential",
@@ -20,7 +20,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Feeder Start to Note"
+            "pathName": "Amp Start to Amp Wing"
           }
         },
         {
@@ -32,18 +32,12 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Feeder Return to Start"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot Speaker"
+            "pathName": "Amp Wing to Amp Start"
           }
         }
       ]
     }
   },
-  "folder": "Basic (Shoot-Get Note-Shoot)",
+  "folder": null,
   "choreoAuto": false
 }

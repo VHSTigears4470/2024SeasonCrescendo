@@ -8,27 +8,33 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.7418259386281804,
-        "y": 3.4353544631259876
+        "x": 1.9728356298934404,
+        "y": 4.218294241042325
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Feeder Start"
     },
     {
       "anchor": {
         "x": 2.0,
-        "y": 4.08
+        "y": 6.98
       },
       "prevControl": {
-        "x": 1.0,
-        "y": 4.08
+        "x": 2.0,
+        "y": 6.480000000000001
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Amp Wing Note"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.3,
+      "rotationDegrees": 120.0,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -43,7 +49,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Feeder Start",
+  "folder": "Start & Wing",
   "previewStartingState": {
     "rotation": 120.0,
     "velocity": 0

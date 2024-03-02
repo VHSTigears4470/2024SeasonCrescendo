@@ -3,14 +3,11 @@
   "robotLength": 0.8255,
   "holonomicMode": true,
   "pathFolders": [
-    "Amp Start",
-    "Middle Start",
-    "Feeder Start"
+    "Hoi",
+    "Start & Center",
+    "Start & Wing"
   ],
-  "autoFolders": [
-    "Basic (Shoot-Get Note-Shoot)",
-    "Center (Shoot-Get Note-Shoot-Leave Wing)"
-  ],
+  "autoFolders": [],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,
