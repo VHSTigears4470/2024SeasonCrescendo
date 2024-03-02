@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7418259386281802,
+      "y": 4.435354463125988
+    },
+    "rotation": 120.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Speaker"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Feeder Start to Note"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Drive Till Have Note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Feeder Return to Start"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Speaker"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Basic (Shoot-Get Note-Shoot)",
+  "choreoAuto": false
+}

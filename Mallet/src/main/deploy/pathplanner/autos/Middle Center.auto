@@ -1,0 +1,55 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.5,
+      "y": 5.53
+    },
+    "rotation": 180.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Speaker"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Middle Start to Note"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Drive Till Have Note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Middle Return to Start"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Speaker"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Middle Leave Wing"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Center (Shoot-Get Note-Shoot-Leave Wing)",
+  "choreoAuto": false
+}

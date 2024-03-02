@@ -22,16 +22,23 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.RobotContainerConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.ElevatorConstants.ELEVATOR_STATE;
+import frc.robot.commands.command_groups.*;
 import frc.robot.commands.differential.ArcadeDrive;
 import frc.robot.commands.drivebase.AbsoluteDrive;
 import frc.robot.commands.drivebase.AbsoluteDriveWithFocus;
 import frc.robot.commands.elevator.ElevatorChangePositionIgnoreSoftLimit;
 import frc.robot.commands.elevator.ElevatorSetHeightState;
+import frc.robot.commands.intake.IntakeSetAmpVoltage;
+import frc.robot.commands.intake.IntakeSetIntakeVoltage;
+import frc.robot.commands.intake.IntakeSetIntakeVoltageEndWithBreakbeam;
+import frc.robot.commands.intake.IntakeSetSpeakerVoltage;
+import frc.robot.commands.intake.IntakeSetZeroVoltage;
 
 import java.io.File;
 import java.util.HashMap;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 public class RobotContainer {
   // INIT SUBSYSTEMS
@@ -42,6 +49,7 @@ public class RobotContainer {
 
   // INIT XBOX CONTROLLER
   public static DeadbandCommandXboxController xbox1;
+  public static DeadbandCommandXboxController xbox2;
 
   // SMARTDASHBOARD
   private SendableChooser<Command> autoChooser;
@@ -66,11 +74,11 @@ public class RobotContainer {
     // Initialize Shuffleboard
     initializeShuffleboard();
 
+    // Initialize path planner command names
+    initializeCommandNames();
+
     // Configure auto
     initializeAutoChooser();
-
-    // Initialize path planner event maps
-    initializeEventMap();
   }
 
   public void initializeDriveMode() {
@@ -134,8 +142,20 @@ public class RobotContainer {
     shuffleDriverTab.add("Auto Routine", autoChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
   }
 
-  public void initializeEventMap() {
-    eventMap.put("marker1", new PrintCommand("Pressed Marker 1"));
+  public void initializeCommandNames() {
+    NamedCommands.registerCommand("test1", new PrintCommand("Test 1 Triggered"));
+    if (Constants.IntakeConstants.IS_USING_INTAKE && Constants.ElevatorConstants.IS_USING_ELEVATOR) {
+      NamedCommands.registerCommand("Climb Position", new ClimbPosition(intakeSub, elevatorSub));
+      NamedCommands.registerCommand("Default Position", new DefaultPosition(intakeSub, elevatorSub));
+      NamedCommands.registerCommand("Intake Note", new IntakePositionAndSuck(intakeSub, elevatorSub));
+      NamedCommands.registerCommand("Robot Climb", new RobotClimbCommandGroup(intakeSub, elevatorSub));
+      NamedCommands.registerCommand("Shoot Amp", new ShootAmpAndReset(intakeSub, elevatorSub));
+      NamedCommands.registerCommand("Shoot Speaker", new ShootSpeakerAndReset(intakeSub, elevatorSub));
+    }
+    if (Constants.IntakeConstants.IS_USING_INTAKE && Constants.ElevatorConstants.IS_USING_ELEVATOR
+        && Constants.SwerveConstants.USING_SWERVE) {
+      NamedCommands.registerCommand("Drive Till Have Note", new DriveTillHaveNote(intakeSub, elevatorSub, swerveSub));
+    }
   }
 
   // assign button functions
@@ -147,14 +167,34 @@ public class RobotContainer {
     }
 
     if (ElevatorConstants.IS_USING_ELEVATOR) {
-      xbox1.rightTrigger().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, 0.1));
-      xbox1.leftTrigger().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, -0.1));
-      xbox1.a().whileTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.UP));
-      xbox1.b().whileTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.DOWN));
+      xbox2.a().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, 0.1));
+      xbox2.b().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, -0.1));
+      xbox2.rightBumper().whileTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.UP));
+      xbox2.leftBumper().whileTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.DOWN));
+
+      if (IntakeConstants.IS_USING_INTAKE) {
+        xbox1.y().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
+        xbox2.y().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
+        xbox1.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
+        xbox2.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
+
+        xbox2.leftTrigger().whileTrue(new ShootAmpAndReset(intakeSub, elevatorSub));
+        xbox2.leftTrigger().whileTrue(new ShootSpeakerAndReset(intakeSub, elevatorSub));
+
+        xbox1.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
+        xbox2.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
+      }
+    }
+    if (IntakeConstants.IS_USING_INTAKE) {
+      // Testing ONLY
+      xbox1.leftTrigger().whileTrue(new IntakeSetIntakeVoltage(intakeSub)).onFalse(new IntakeSetZeroVoltage(intakeSub));
+      xbox1.rightTrigger().whileTrue(new IntakeSetSpeakerVoltage(intakeSub))
+          .onFalse(new IntakeSetZeroVoltage(intakeSub));
+      xbox1.rightBumper().whileTrue(new IntakeSetAmpVoltage(intakeSub)).onFalse(new IntakeSetZeroVoltage(intakeSub));
     }
   }
 
-  public Command getAutonomousCommand() {
+  public Command getAutoInput() {
     return autoChooser.getSelected();
   }
 
