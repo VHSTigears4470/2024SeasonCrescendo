@@ -4,10 +4,13 @@
   "holonomicMode": true,
   "pathFolders": [
     "Amp Start",
-    "Center Start",
+    "Middle Start",
     "Feeder Start"
   ],
-  "autoFolders": [],
+  "autoFolders": [
+    "Basic (Shoot-Get Note-Shoot)",
+    "Center (Shoot-Get Note-Shoot-Leave Wing)"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,
