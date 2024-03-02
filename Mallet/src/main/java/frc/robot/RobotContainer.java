@@ -139,9 +139,8 @@ public class RobotContainer {
       NamedCommands.registerCommand("Shoot Amp", new ShootAmpCommandGroup(intakeSub, elevatorSub));
       NamedCommands.registerCommand("Shoot Speaker", new ShootSpeakerCommandGroup(intakeSub, elevatorSub));
     }
-    if (Constants.IntakeConstants.IS_USING_INTAKE && Constants.SwerveConstants.USING_SWERVE) {
-      // NamedCommands.registerCommand("Drive Till Have Note", new
-      // DriveTillHaveNote(intakeSub, swerveSub));
+    if (Constants.IntakeConstants.IS_USING_INTAKE && Constants.ElevatorConstants.IS_USING_ELEVATOR && Constants.SwerveConstants.USING_SWERVE) {
+      NamedCommands.registerCommand("Drive Till Have Note", new DriveTillHaveNote(intakeSub, elevatorSub, swerveSub));
     }
   }
 
