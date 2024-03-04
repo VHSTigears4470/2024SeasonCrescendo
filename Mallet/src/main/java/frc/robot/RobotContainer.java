@@ -131,6 +131,8 @@ public class RobotContainer {
     }
     xbox1 = new DeadbandCommandXboxController(RobotContainerConstants.XBOX_1_ID,
         RobotContainerConstants.XBOX_1_DEADBAND);
+    xbox2 = new DeadbandCommandXboxController(RobotContainerConstants.XBOX_2_ID,
+        RobotContainerConstants.XBOX_2_DEADBAND);
   }
 
   public void initializeAutoChooser() {
@@ -142,6 +144,7 @@ public class RobotContainer {
     shuffleDriverTab.add("Auto Routine", autoChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
   }
 
+  @SuppressWarnings("unused")
   public void initializeCommandNames() {
     NamedCommands.registerCommand("test1", new PrintCommand("Test 1 Triggered"));
     if (Constants.IntakeConstants.IS_USING_INTAKE && Constants.ElevatorConstants.IS_USING_ELEVATOR) {

@@ -25,6 +25,7 @@ public final class Constants {
         public static final int XBOX_1_ID = 0;
         public static final int XBOX_2_ID = 1;
         public static final double XBOX_1_DEADBAND = 0.2;
+        public static final double XBOX_2_DEADBAND = 0.2;
     }
 
     public static final class SwerveConstants {
