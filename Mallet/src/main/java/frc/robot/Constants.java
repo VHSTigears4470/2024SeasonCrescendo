@@ -73,7 +73,7 @@ public final class Constants {
     }
 
     public static final class IntakeConstants {
-        public static final boolean IS_USING_INTAKE = true;
+        public static final boolean IS_USING_INTAKE = false;
         public static final boolean DEBUG = true;
 
         // Pneumatics
@@ -115,7 +115,7 @@ public final class Constants {
     }
 
     public static class ElevatorConstants {
-        public static final boolean IS_USING_ELEVATOR = false;
+        public static final boolean IS_USING_ELEVATOR = true;
         public static final boolean DEBUG = true;
 
         // Motors
@@ -169,8 +169,8 @@ public final class Constants {
 
         // Elevator States
         public static final double LOW_INIT_HEIGHT = 0;
-        public static final double HIGH_INIT_HEIGHT = 30;// 14, but actually 28 because 2 stage
-        public static final double CLIMB_HEIGHT = 15; // TODO: Update
+        public static final double HIGH_INIT_HEIGHT = 28;// 14, but actually 28 because 2 stage
+        public static final double CLIMB_HEIGHT = 16; // TODO: Update
 
         public static enum ELEVATOR_STATE {
             UP, DOWN, CLIMB

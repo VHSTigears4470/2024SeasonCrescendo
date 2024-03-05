@@ -123,38 +123,39 @@ public class RobotContainer {
   public void initializeAutoChooser() {
     // with command chooser
     autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
-    if (SwerveConstants.USING_SWERVE && Constants.IntakeConstants.IS_USING_INTAKE && Constants.ElevatorConstants.IS_USING_ELEVATOR) {
+    if (SwerveConstants.USING_SWERVE && Constants.IntakeConstants.IS_USING_INTAKE
+        && Constants.ElevatorConstants.IS_USING_ELEVATOR) {
       // autoChooser = AutoBuilder.buildAutoChooser();
       // Amp Start
-      autoChooser.addOption("Amp Start to Amp Wing Cycle", 
-        swerveSub.getAutonomousCommand("Amp Start to Amp Wing Cycle", false)
-        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
-      autoChooser.addOption("Amp Start to Middle Wing Cycle", 
-        swerveSub.getAutonomousCommand("Amp Start to Middle Wing Cycle", false)
-        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
-      autoChooser.addOption("Amp Start to Feeder Wing Cycle", 
-        swerveSub.getAutonomousCommand("Amp Start to Feeder Wing Cycle", false)
-        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
+      autoChooser.addOption("Amp Start to Amp Wing Cycle",
+          swerveSub.getAutonomousCommand("Amp Start to Amp Wing Cycle", false)
+              .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
+      autoChooser.addOption("Amp Start to Middle Wing Cycle",
+          swerveSub.getAutonomousCommand("Amp Start to Middle Wing Cycle", false)
+              .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
+      autoChooser.addOption("Amp Start to Feeder Wing Cycle",
+          swerveSub.getAutonomousCommand("Amp Start to Feeder Wing Cycle", false)
+              .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
       // Middle Start
-      autoChooser.addOption("Middle Start to Feeder Wing Cycle", 
-        swerveSub.getAutonomousCommand("Middle Start to Feeder Wing Cycle", false)
-        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
-      autoChooser.addOption("Middle Start to Amp Wing Cycle", 
-        swerveSub.getAutonomousCommand("Middle Start to Middle Wing Cycle", false)
-        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
-        autoChooser.addOption("Middle Start to Amp Wing Cycle", 
-        swerveSub.getAutonomousCommand("Middle Start to Amp Wing Cycle", false)
-        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
+      autoChooser.addOption("Middle Start to Feeder Wing Cycle",
+          swerveSub.getAutonomousCommand("Middle Start to Feeder Wing Cycle", false)
+              .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
+      autoChooser.addOption("Middle Start to Amp Wing Cycle",
+          swerveSub.getAutonomousCommand("Middle Start to Middle Wing Cycle", false)
+              .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
+      autoChooser.addOption("Middle Start to Amp Wing Cycle",
+          swerveSub.getAutonomousCommand("Middle Start to Amp Wing Cycle", false)
+              .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
       // Feeder Start
-      autoChooser.addOption("Feeder Start to Feeder Wing Cycle", 
-        swerveSub.getAutonomousCommand("Feeder Start to Feeder Wing Cycle", false)
-        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
-      autoChooser.addOption("Feeder Start to Middle Wing Cycle", 
-        swerveSub.getAutonomousCommand("Feeder Start to Middle Wing Cycle", false)
-        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
-      autoChooser.addOption("Feeder Start to Amp Wing Cycle", 
-        swerveSub.getAutonomousCommand("Feeder Start to Amp Wing Cycle", false)
-        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
+      autoChooser.addOption("Feeder Start to Feeder Wing Cycle",
+          swerveSub.getAutonomousCommand("Feeder Start to Feeder Wing Cycle", false)
+              .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
+      autoChooser.addOption("Feeder Start to Middle Wing Cycle",
+          swerveSub.getAutonomousCommand("Feeder Start to Middle Wing Cycle", false)
+              .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
+      autoChooser.addOption("Feeder Start to Amp Wing Cycle",
+          swerveSub.getAutonomousCommand("Feeder Start to Amp Wing Cycle", false)
+              .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
     }
     shuffleDriverTab.add("Auto Routine", autoChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
   }
@@ -169,7 +170,8 @@ public class RobotContainer {
       NamedCommands.registerCommand("Shoot Amp", new ShootAmpAndReset(intakeSub, elevatorSub));
       NamedCommands.registerCommand("Shoot Speaker", new ShootSpeakerAndReset(intakeSub, elevatorSub));
     }
-    if (Constants.IntakeConstants.IS_USING_INTAKE && Constants.ElevatorConstants.IS_USING_ELEVATOR && Constants.SwerveConstants.USING_SWERVE) {
+    if (Constants.IntakeConstants.IS_USING_INTAKE && Constants.ElevatorConstants.IS_USING_ELEVATOR
+        && Constants.SwerveConstants.USING_SWERVE) {
       NamedCommands.registerCommand("Drive Till Have Note", new DriveTillHaveNote(intakeSub, elevatorSub, swerveSub));
     }
   }
@@ -182,31 +184,43 @@ public class RobotContainer {
           () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), "cone"));
     }
 
-    if (ElevatorConstants.IS_USING_ELEVATOR) {
-      xbox2.a().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, 0.1));
-      xbox2.b().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, -0.1));
-      xbox2.rightBumper().whileTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.UP));
-      xbox2.leftBumper().whileTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.DOWN));
+    // if (ElevatorConstants.IS_USING_ELEVATOR) {
+    // xbox2.a().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub,
+    // 0.1));
+    // xbox2.b().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub,
+    // -0.1));
+    // xbox2.rightBumper().whileTrue(new ElevatorSetHeightState(elevatorSub,
+    // ELEVATOR_STATE.UP));
+    // xbox2.leftBumper().whileTrue(new ElevatorSetHeightState(elevatorSub,
+    // ELEVATOR_STATE.DOWN));
 
-      if (IntakeConstants.IS_USING_INTAKE) {
-        xbox1.y().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
-        xbox2.y().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
-        xbox1.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
-        xbox2.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
+    // if (IntakeConstants.IS_USING_INTAKE) {
+    // xbox1.y().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
+    // xbox2.y().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
+    // xbox1.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
+    // xbox2.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
 
-        xbox2.leftTrigger().whileTrue(new ShootAmpAndReset(intakeSub, elevatorSub));
-        xbox2.leftTrigger().whileTrue(new ShootSpeakerAndReset(intakeSub, elevatorSub));
+    // xbox2.leftTrigger().whileTrue(new ShootAmpAndReset(intakeSub, elevatorSub));
+    // xbox2.leftTrigger().whileTrue(new ShootSpeakerAndReset(intakeSub,
+    // elevatorSub));
 
-        xbox1.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
-        xbox2.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
-      }
-    }
+    // xbox1.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
+    // xbox2.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
+    // }
+    // }
     if (IntakeConstants.IS_USING_INTAKE) {
       // Testing ONLY
       xbox1.leftTrigger().whileTrue(new IntakeSetIntakeVoltage(intakeSub)).onFalse(new IntakeSetZeroVoltage(intakeSub));
       xbox1.rightTrigger().whileTrue(new IntakeSetSpeakerVoltage(intakeSub))
           .onFalse(new IntakeSetZeroVoltage(intakeSub));
       xbox1.rightBumper().whileTrue(new IntakeSetAmpVoltage(intakeSub)).onFalse(new IntakeSetZeroVoltage(intakeSub));
+    }
+
+    if (ElevatorConstants.IS_USING_ELEVATOR && ElevatorConstants.DEBUG) {
+      xbox1.leftTrigger().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, -0.1));
+      xbox1.rightTrigger().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, 0.1));
+      xbox1.povUp().onTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.UP));
+      xbox1.povDown().onTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.DOWN));
     }
   }
 
