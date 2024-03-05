@@ -29,6 +29,7 @@ import frc.robot.commands.drivebase.AbsoluteDrive;
 import frc.robot.commands.drivebase.AbsoluteDriveWithFocus;
 import frc.robot.commands.elevator.ElevatorChangePositionIgnoreSoftLimit;
 import frc.robot.commands.elevator.ElevatorSetHeightState;
+import frc.robot.commands.elevator.SetVoltage;
 import frc.robot.commands.intake.IntakeSetAmpVoltage;
 import frc.robot.commands.intake.IntakeSetIntakeVoltage;
 import frc.robot.commands.intake.IntakeSetIntakeVoltageEndWithBreakbeam;
@@ -221,6 +222,8 @@ public class RobotContainer {
       xbox1.rightTrigger().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, 0.1));
       xbox1.povUp().onTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.UP));
       xbox1.povDown().onTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.DOWN));
+      xbox1.leftBumper().whileTrue(new SetVoltage(elevatorSub, -1));
+      xbox1.rightBumper().whileTrue(new SetVoltage(elevatorSub, 1));
     }
   }
 

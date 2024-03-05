@@ -31,7 +31,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private final SparkPIDController pidController;
 
+  /** false when blocked, true when open */
   private final DigitalInput bottomBreakBeam; // Assuming Limit Switch is used to set when elevator reaches bottom
+  /** false when blocked, true when open */
   private final DigitalInput topBreakBeam; // Assuming Limit Switch is used to set when elevator reaches top
   private double highestPos; // Highest encoder value the motor can go
   private double lowestPos; // Lowest encoder value the motor can go
@@ -40,8 +42,11 @@ public class ElevatorSubsystem extends SubsystemBase {
   // Shuffleboard
   private ShuffleboardTab shuffleDebugTab;
   private ShuffleboardTab shuffleDriverTab;
-  private GenericEntry entry_breakBeam;
-  private GenericEntry entry_encoder;
+  private GenericEntry entry_botBeam;
+  private GenericEntry entry_topBeam;
+  private GenericEntry entry_leftEncoder;
+  private GenericEntry entry_rightEncoder;
+
   // PID Entries
   private GenericEntry entry_pid_kp;
   private GenericEntry entry_pid_ki;
@@ -170,12 +175,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     return Math.abs(leftEncoder.getPosition() - desiredReferencePosition) < ElevatorConstants.POSITION_TOLERANCE;
   }
 
-  public boolean getBottomBreakbeam() {
-    return bottomBreakBeam.get();
+  public boolean botBreakbeamTripped() {
+    return !bottomBreakBeam.get(); // inverts because false when blocked, true when open
   }
 
-  public boolean getTopBreakbeam() {
-    return topBreakBeam.get();
+  public boolean topBreakbeamTripped() {
+    return !topBreakBeam.get(); // inverts because false when blocked, true when open
   }
 
   // Init Shuffleboard
@@ -185,12 +190,20 @@ public class ElevatorSubsystem extends SubsystemBase {
         .add("Elevator Height State", "Down").withWidget(BuiltInWidgets.kTextView).getEntry();
     if (ElevatorConstants.DEBUG) {
       shuffleDebugTab = Shuffleboard.getTab("Debug Tab");
-      entry_breakBeam = shuffleDebugTab.getLayout("Elevator", BuiltInLayouts.kList)
-          .add("IR Break Beam Sensor", false)
+      entry_botBeam = shuffleDebugTab.getLayout("Elevator", BuiltInLayouts.kList)
+          .add("Bottom Breakbeam", false)
           .withWidget(BuiltInWidgets.kBooleanBox)
           .getEntry();
-      entry_encoder = shuffleDebugTab.getLayout("Elevator", BuiltInLayouts.kList)
-          .add("Encoder Value", 0)
+      entry_topBeam = shuffleDebugTab.getLayout("Elevator", BuiltInLayouts.kList)
+          .add("Top Breakbeam", false)
+          .withWidget(BuiltInWidgets.kBooleanBox)
+          .getEntry();
+      entry_leftEncoder = shuffleDebugTab.getLayout("Elevator", BuiltInLayouts.kList)
+          .add("Left Encoder Value", 0)
+          .withWidget(BuiltInWidgets.kTextView)
+          .getEntry();
+      entry_rightEncoder = shuffleDebugTab.getLayout("Elevator", BuiltInLayouts.kList)
+          .add("Right Encoder Value", 0)
           .withWidget(BuiltInWidgets.kTextView)
           .getEntry();
 
@@ -236,8 +249,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   private void updateShuffleboard() {
     entry_elevatorState.setString(currState == ELEVATOR_STATE.DOWN ? "DOWN" : "UP");
     if (ElevatorConstants.DEBUG) {
-      entry_breakBeam.setBoolean(bottomBreakBeam.get());
-      entry_encoder.setDouble(leftEncoder.getPosition());
+      entry_botBeam.setBoolean(bottomBreakBeam.get());
+      entry_topBeam.setBoolean(topBreakBeam.get());
+      entry_leftEncoder.setDouble(leftEncoder.getPosition());
+      entry_rightEncoder.setDouble(rightEncoder.getPosition());
       entry_smart_motion_pos.setDouble(desiredReferencePosition);
 
       int slotId = ElevatorConstants.SM_ID;
@@ -256,13 +271,22 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (getBottomBreakbeam()) {
+    if (botBreakbeamTripped()) {
       lowestPos = leftEncoder.getPosition() + ElevatorConstants.HIGH_LOW_OFFSET;
+      pidController.setReference(lowestPos, ControlType.kSmartMotion);
+    }
+    if (topBreakbeamTripped()) {
+      highestPos = leftEncoder.getPosition() - ElevatorConstants.HIGH_LOW_OFFSET;
+      pidController.setReference(highestPos, ControlType.kSmartMotion);
     }
     updateShuffleboard();
   }
 
   @Override
   public void simulationPeriodic() {
+  }
+
+  public void leadSetVoltage(double voltage) {
+    leftMotor.setVoltage(voltage);
   }
 }

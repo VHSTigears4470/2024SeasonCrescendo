@@ -138,10 +138,10 @@ public final class Constants {
 
         // Sensors
         public static final int BOTTOM_BREAKBEAM_RX_CHANNEL = 0; // TODO: Update
-        public static final int TOP_BREAKBEAM_RX_CHANNEL = 0; // TODO: Update
+        public static final int TOP_BREAKBEAM_RX_CHANNEL = 1; // TODO: Update
 
         // PID
-        public static final double PID_KP = 0.00000007015; // TODO: Tune
+        public static final double PID_KP = 0.00000011015; // TODO: Tune
         public static final double PID_KI = 0; // TODO: Tune
         public static final double PID_KD = 0.0000000; // TODO: Tune
         public static final double PID_KIZ = 0.005; // TODO: Tune
@@ -177,7 +177,7 @@ public final class Constants {
         };
 
         // Tolerances
-        public static final double HIGH_LOW_OFFSET = 0; // Distance in inches for PID to maintain from breakbeams
+        public static final double HIGH_LOW_OFFSET = 0.5; // Distance in inches for PID to maintain from breakbeams
         public static final double POSITION_TOLERANCE = 1; // Distance in inches for PID to be considered "at the
                                                            // position"
     }
