@@ -1,7 +1,13 @@
 package frc.robot;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 // Swerve Imports
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
 import swervelib.parser.PIDFConfig;
@@ -83,6 +89,15 @@ public final class Constants {
         // Sensors
         public static final int NOTE_BREAKBEAM_RX_CHANNEL = 0;
 
+        //Cameras
+        public static boolean USE_VISION = true;
+        public static final Transform3d ROBOT_TO_RIGHT_CAMERA = new Transform3d(
+        new Translation3d(Units.inchesToMeters(-11.88), Units.inchesToMeters(-6.88), Units.inchesToMeters(31.09)),
+        new Rotation3d(0, Math.toRadians(10.62), Math.toRadians(-45)));
+        public static final Transform3d ROBOT_TO_LEFT_CAMERA = new Transform3d(
+        new Translation3d(Units.inchesToMeters(-11.88), Units.inchesToMeters(6.88), Units.inchesToMeters(31.09)),
+        new Rotation3d(0, Math.toRadians(10.62), Math.toRadians(46)));
+        
         // Piston
         public static final int PISTON_ID = 0;
 
@@ -115,6 +130,22 @@ public final class Constants {
         // Sensors
         public static final int BOTTOM_BREAKBEAM_CHANNEL_ID = 0; // TODO: Update
         public static final int TOP_BREAKBEAM_CHANNEL_ID = 0; // TODO: Update
+
+        //Camera
+        public static final double APRILTAG_AMBIGUITY_THRESHOLD = 0.2;
+        public static final double POSE_AMBIGUITY_SHIFTER = 0.2;
+        public static final double POSE_AMBIGUITY_MULTIPLIER = 4;
+        public static final double NOISY_DISTANCE_METERS = 2.5;
+        public static final double DISTANCE_WEIGHT = 7;
+        public static final int TAG_PRESENCE_WEIGHT = 10;
+
+        public static final Matrix<N3, N1> VISION_MEASUREMENT_STANDARD_DEVIATIONS = Matrix.mat(Nat.N3(), Nat.N1())
+        .fill(
+            // if these numbers are less than one, multiplying will do bad things
+            1, // x
+            1, // y
+            1 * Math.PI // theta
+        );
 
         // PID
         public static final double PID_KP = 0.00000007015; // TODO: Tune
