@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.subsystems.DifferentialSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,6 +20,7 @@ import frc.robot.Constants.DifferentialConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.PhotonConstants;
 import frc.robot.Constants.RobotContainerConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.ElevatorConstants.ELEVATOR_STATE;
@@ -39,6 +41,7 @@ public class RobotContainer {
   private static DifferentialSubsystem differentialSub;
   private static IntakeSubsystem intakeSub;
   private static ElevatorSubsystem elevatorSub;
+  private static PhotonSubsystem photonSub;
 
   // INIT XBOX CONTROLLER
   public static DeadbandCommandXboxController xbox1;
@@ -120,6 +123,16 @@ public class RobotContainer {
     }
     if (ElevatorConstants.IS_USING_ELEVATOR) {
       elevatorSub = new ElevatorSubsystem();
+    }
+    if(PhotonConstants.USING_VISION) {
+      photonSub = new PhotonSubsystem();
+      // Set up vision readings for Swerve
+      if(SwerveConstants.USING_SWERVE) {
+        swerveSub.setupVisionMeasurement(
+          () -> {return photonSub.getEstimatedRobotPoseFromLeftPhoton(swerveSub.getPose());},
+          () -> {return photonSub.getEstimatedRobotPoseFromLeftPhoton(swerveSub.getPose());}
+        );
+      }
     }
     xbox1 = new DeadbandCommandXboxController(RobotContainerConstants.XBOX_1_ID,
         RobotContainerConstants.XBOX_1_DEADBAND);
