@@ -20,4 +20,22 @@ public class PhotonVisionSubsystem implements Runnable {
     private final PhotonCamera photonCamera;
     private final AtomicReference<EstimatedRobotPose> atomicEstimatedRobotPose = new AtomicReference<EstimatedRobotPose>();
 
+    public PhotonVisionSubsystem(PhotonCamera cameraName, Transform3d robotToCamera) {
+        this.photonCamera = cameraName;
+        PhotonPoseEstimator photonPoseEstimator = null;
+        try {
+          var layout = AprilTagFields.k2023ChargedUp.loadAprilTagLayoutField();
+          // PV estimates will always be blue, they'll get flipped by robot thread
+          layout.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
+          if (photonCamera != null) {
+            photonPoseEstimator = new PhotonPoseEstimator(
+                layout, PoseStrategy.MULTI_TAG_PNP, photonCamera, robotToCamera);
+            photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+          }
+        } catch (IOException e) {
+          DriverStation.reportError("Failed to load AprilTagFieldLayout", e.getStackTrace());
+          photonPoseEstimator = null;
+        }
+        this.photonPoseEstimator = photonPoseEstimator;
+      }
 }
