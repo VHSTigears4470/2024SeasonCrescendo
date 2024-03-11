@@ -1,7 +1,12 @@
 package frc.robot;
 
+import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 // Swerve Imports
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
 import swervelib.parser.PIDFConfig;
@@ -202,4 +207,20 @@ public final class Constants {
         }
     }
 
+    public static class FieldConstants {
+        public static final double FIELD_LENGTH_METERS = Units.inchesToMeters(651.25); // TODO: UPDATE
+        public static final double FIELD_WIDTH_METERS = Units.inchesToMeters(315.5); // TODO: UPDATE
+    }
+
+    public static class VisionConstants {
+   
+    //TODO: UPDATE
+    public static final double APRILTAG_AMBIGUITY_THRESHOLD = 0.2;
+    public static final double POSE_AMBIGUITY_SHIFTER = 0.2;
+    public static final double POSE_AMBIGUITY_MULTIPLIER = 4;
+    public static final double NOISY_DISTANCE_METERS = 2.5;
+    public static final double DISTANCE_WEIGHT = 7;
+    public static final int TAG_PRESENCE_WEIGHT = 10;
+
+    }
 }
