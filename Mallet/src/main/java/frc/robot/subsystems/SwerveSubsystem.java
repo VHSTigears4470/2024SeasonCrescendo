@@ -39,6 +39,8 @@ import java.io.File;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
+import org.photonvision.EstimatedRobotPose;
+
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.parser.SwerveControllerConfiguration;
@@ -62,9 +64,9 @@ public class SwerveSubsystem extends SubsystemBase {
   private ShuffleboardTab shuffleDebugTab;
   private GenericEntry entry_swerveHeading;
 
-  // Limelight Pose
-  private Supplier<Pose2d> limelightRobotPose;
-  private DoubleSupplier limelightTimestamp;
+  // Photon Pose
+  private Supplier<EstimatedRobotPose> rightPhotonPose;
+  private Supplier<EstimatedRobotPose> leftPhotonPose;
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -101,7 +103,7 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param limelightRobotPose Supplier for Robot Pose
    * @param limeightTimestamp Supplier for Timestamp Pose was taken
    */
-  public SwerveSubsystem(File directory, Supplier<Pose2d> limelightRobotPose, DoubleSupplier limelightTimestamp) {
+  public SwerveSubsystem(File directory, Supplier<Pose2d> rightPhotonPose, Supplier<Pose2d> leftPhotonPose) {
     // Configure the Telemetry before creating the SwerveDrive to avoid
     // unnecessary objects being created.
     SwerveDriveTelemetry.verbosity = SwerveConstants.TELEMETRY_VERBOSITY;
@@ -122,7 +124,6 @@ public class SwerveSubsystem extends SubsystemBase {
                                              // angle. Ex. Xbox Controller
     setupPathPlanner();
     initializeShuffleboard();
-    setupVisionMeasurement(limelightRobotPose, limelightTimestamp);
   }
 
   /**
@@ -135,18 +136,6 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive = new SwerveDrive(driveCfg, controllerCfg, SwerveConstants.MAX_SPEED_METERS);
   }
 
-  /**
-   * Construct the swerve drive.
-   *
-   * @param driveCfg      SwerveDriveConfiguration for the swerve.
-   * @param controllerCfg Swerve Controller.
-   * @param limelightRobotPose Supplier for Robot Pose
-   * @param limeightTimestamp Supplier for Timestamp Pose was taken
-   */
-  public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg, Supplier<Pose2d> limelightRobotPose, DoubleSupplier limelightTimestamp) {
-    swerveDrive = new SwerveDrive(driveCfg, controllerCfg, SwerveConstants.MAX_SPEED_METERS);
-    setupVisionMeasurement(limelightRobotPose, limelightTimestamp);
-  }
   /**
    * Setup AutoBuilder for PathPlanner.
    */
@@ -369,7 +358,7 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param timestamp Time the pose was taken in seconds
    */
   public void addVisionMeasurement(Pose2d robotPose, double timestamp) {
-    // Checks if limelight has an id or not
+    // Checks pose is not null
     if(robotPose != null){
       swerveDrive.addVisionMeasurement(robotPose, timestamp);
     }
@@ -377,11 +366,16 @@ public class SwerveSubsystem extends SubsystemBase {
 
   /**
    * Updates the vision measurement, should be called after setupVisionMeasurement has been called 
+   * otherwise will not do anything
    */
   public void updateVisionMeasurement() {
-    // Checks if limelight has an id or not
-    if(limelightRobotPose != null && limelightTimestamp != null){
-      swerveDrive.addVisionMeasurement(limelightRobotPose.get(), limelightTimestamp.getAsDouble());
+    // Checks is the rightPhotonPose has been declared and has a pose to give
+    if(rightPhotonPose != null && rightPhotonPose.get() != null) {
+      addVisionMeasurement(rightPhotonPose.get().estimatedPose.toPose2d(), rightPhotonPose.get().timestampSeconds);
+    }
+    // Checks is the leftPhotonPose has been declared and has a pose to give
+    if(leftPhotonPose != null && leftPhotonPose.get() != null) {
+      addVisionMeasurement(leftPhotonPose.get().estimatedPose.toPose2d(), leftPhotonPose.get().timestampSeconds);
     }
   }
 
@@ -391,9 +385,9 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param robotPose Supplier for the pose of the robot
    * @param timestamp Supplier for the time the pose was taken in seconds
    */
-  public void setupVisionMeasurement(Supplier<Pose2d> robotPose, DoubleSupplier timestamp) {
-    limelightRobotPose = robotPose;
-    limelightTimestamp = timestamp;
+  public void setupVisionMeasurement(Supplier<EstimatedRobotPose> leftPhotonPose, Supplier<EstimatedRobotPose> rightPhotonPose) {
+    this.leftPhotonPose = leftPhotonPose;
+    this.rightPhotonPose = rightPhotonPose;
   }
 
   /**
@@ -606,6 +600,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    updateVisionMeasurement();
     updateShuffleboard();
   }
 
