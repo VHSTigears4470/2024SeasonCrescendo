@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.VisionConstants.APRILTAG_AMBIGUITY_THRESHOLD;
+import static frc.robot.Constants.PhotonConstants.APRILTAG_AMBIGUITY_THRESHOLD;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
@@ -16,12 +16,12 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants.FieldConstants;
 
-public class PhotonVisionSubsystem implements Runnable {
+public class PhotonRunnable implements Runnable {
     private final PhotonPoseEstimator photonPoseEstimator;
     private final PhotonCamera photonCamera;
     private final AtomicReference<EstimatedRobotPose> atomicEstimatedRobotPose = new AtomicReference<EstimatedRobotPose>();
 
-    public PhotonVisionSubsystem(PhotonCamera cameraName, Transform3d robotToCamera) {
+    public PhotonRunnable(PhotonCamera cameraName, Transform3d robotToCamera) {
       this.photonCamera = cameraName;
       PhotonPoseEstimator photonPoseEstimator = null;
       //try { *See if exception is needed

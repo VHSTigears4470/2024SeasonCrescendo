@@ -213,6 +213,9 @@ public final class Constants {
     }
 
     public static class PhotonConstants {
+        public static final double FIELD_LENGTH_METERS = Units.inchesToMeters(651.25);
+        public static final double FIELD_WIDTH_METERS =  Units.inchesToMeters(315.5);
+
         public static final boolean USING_VISION = true;
 
         public static final boolean USING_RIGHT_PHOTON = true;
