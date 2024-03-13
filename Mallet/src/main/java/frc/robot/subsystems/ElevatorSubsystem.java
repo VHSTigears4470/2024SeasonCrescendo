@@ -83,8 +83,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     currState = ELEVATOR_STATE.DOWN;
 
     // Init sensors
-    bottomBreakBeam = new DigitalInput(ElevatorConstants.BOTTOM_BREAKBEAM_RX_CHANNEL);
-    topBreakBeam = new DigitalInput(ElevatorConstants.TOP_BREAKBEAM_RX_CHANNEL);
+    bottomBreakBeam = new DigitalInput(ElevatorConstants.BOTTOM_BREAKBEAM_DIO);
+    topBreakBeam = new DigitalInput(ElevatorConstants.TOP_BREAKBEAM_DIO);
 
     // Init PID
     pidController = leftMotor.getPIDController();
@@ -181,6 +181,12 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public boolean topBreakbeamTripped() {
     return !topBreakBeam.get(); // inverts because false when blocked, true when open
+  }
+
+  public void zeroElevator() {
+    leftEncoder.setPosition(0);
+    rightEncoder.setPosition(0);
+    pidController.setReference(0, ControlType.kSmartMotion);
   }
 
   // Init Shuffleboard

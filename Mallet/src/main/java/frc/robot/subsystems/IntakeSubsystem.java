@@ -69,7 +69,7 @@ public class IntakeSubsystem extends SubsystemBase {
         botMotor.follow(topMotor, IntakeConstants.FOLLOWER_INVERTED);
 
         // Sensor initialization
-        noteBreakbeam = new DigitalInput(IntakeConstants.NOTE_BREAKBEAM_RX_CHANNEL);
+        noteBreakbeam = new DigitalInput(IntakeConstants.NOTE_BREAKBEAM_DIO);
 
         initializeShuffleboard();
     }

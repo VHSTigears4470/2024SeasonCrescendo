@@ -29,6 +29,7 @@ import frc.robot.commands.drivebase.AbsoluteDrive;
 import frc.robot.commands.drivebase.AbsoluteDriveWithFocus;
 import frc.robot.commands.elevator.ElevatorChangePositionIgnoreSoftLimit;
 import frc.robot.commands.elevator.ElevatorSetHeightState;
+import frc.robot.commands.elevator.ElevatorZero;
 import frc.robot.commands.elevator.SetVoltage;
 import frc.robot.commands.intake.IntakeSetAmpVoltage;
 import frc.robot.commands.intake.IntakeSetIntakeVoltage;
@@ -76,7 +77,8 @@ public class RobotContainer {
     initializeShuffleboard();
 
     // Initialize path planner command names
-    initializeCommandNames();
+    // initializeCommandNames();
+    // TODO: Reenable
 
     // Configure auto
     initializeAutoChooser();
@@ -209,21 +211,24 @@ public class RobotContainer {
     // xbox2.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
     // }
     // }
-    if (IntakeConstants.IS_USING_INTAKE) {
+    if (IntakeConstants.IS_USING_INTAKE && IntakeConstants.DEBUG) {
       // Testing ONLY
-      xbox1.leftTrigger().whileTrue(new IntakeSetIntakeVoltage(intakeSub)).onFalse(new IntakeSetZeroVoltage(intakeSub));
-      xbox1.rightTrigger().whileTrue(new IntakeSetSpeakerVoltage(intakeSub))
+      xbox1.leftBumper().whileTrue(new IntakeSetIntakeVoltage(intakeSub)).onFalse(new IntakeSetZeroVoltage(intakeSub));
+      xbox1.rightBumper().whileTrue(new IntakeSetSpeakerVoltage(intakeSub))
           .onFalse(new IntakeSetZeroVoltage(intakeSub));
-      xbox1.rightBumper().whileTrue(new IntakeSetAmpVoltage(intakeSub)).onFalse(new IntakeSetZeroVoltage(intakeSub));
+      // xbox1.rightBumper().whileTrue(new IntakeSetAmpVoltage(intakeSub)).onFalse(new
+      // IntakeSetZeroVoltage(intakeSub));
     }
 
     if (ElevatorConstants.IS_USING_ELEVATOR && ElevatorConstants.DEBUG) {
       xbox1.leftTrigger().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, -0.1));
       xbox1.rightTrigger().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, 0.1));
+      xbox1.a().onTrue(new ElevatorZero(elevatorSub));
+
       xbox1.povUp().onTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.UP));
       xbox1.povDown().onTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.DOWN));
-      xbox1.leftBumper().whileTrue(new SetVoltage(elevatorSub, -1));
-      xbox1.rightBumper().whileTrue(new SetVoltage(elevatorSub, 1));
+      // xbox1.leftBumper().whileTrue(new SetVoltage(elevatorSub, -1));
+      // xbox1.rightBumper().whileTrue(new SetVoltage(elevatorSub, 1));
     }
   }
 
