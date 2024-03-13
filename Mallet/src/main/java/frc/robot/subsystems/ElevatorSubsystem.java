@@ -190,6 +190,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     return !topBreakBeam.get(); // inverts because false when blocked, true when open
   }
 
+  public void zeroElevator() {
+    leftEncoder.setPosition(0);
+    rightEncoder.setPosition(0);
+    pidController.setReference(0, ControlType.kSmartMotion);
+  }
+
   // Init Shuffleboard
   private void initalizeShuffleboard() {
     shuffleDriverTab = Shuffleboard.getTab("Driver's Tab");
