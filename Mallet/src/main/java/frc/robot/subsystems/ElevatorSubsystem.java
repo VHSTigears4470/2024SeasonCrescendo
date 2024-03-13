@@ -83,8 +83,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     currState = ELEVATOR_STATE.DOWN;
 
     // Init sensors
-    bottomBreakBeam = new DigitalInput(ElevatorConstants.BOTTOM_BREAKBEAM_RX_CHANNEL);
-    topBreakBeam = new DigitalInput(ElevatorConstants.TOP_BREAKBEAM_RX_CHANNEL);
+    bottomBreakBeam = new DigitalInput(ElevatorConstants.BOTTOM_BREAKBEAM_DIO);
+    topBreakBeam = new DigitalInput(ElevatorConstants.TOP_BREAKBEAM_DIO);
 
     // Init PID
     pidController = leftMotor.getPIDController();
@@ -155,6 +155,13 @@ public class ElevatorSubsystem extends SubsystemBase {
       desiredReferencePosition = ElevatorConstants.CLIMB_HEIGHT;
     }
     pidController.setReference(desiredReferencePosition, ControlType.kSmartMotion);
+  }
+
+  /** Zeros encoders and sets setpoint to zero */
+  public void zeroElevator() {
+    leftEncoder.setPosition(0);
+    rightEncoder.setPosition(0);
+    pidController.setReference(0, ControlType.kSmartMotion);
   }
 
   /*** Returns the desired position of the motor */
@@ -272,7 +279,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     if (botBreakbeamTripped()) {
-      lowestPos = leftEncoder.getPosition() + ElevatorConstants.HIGH_LOW_OFFSET;
+      zeroElevator();
       pidController.setReference(lowestPos, ControlType.kSmartMotion);
     }
     if (topBreakbeamTripped()) {

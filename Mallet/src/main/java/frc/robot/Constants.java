@@ -73,7 +73,7 @@ public final class Constants {
     }
 
     public static final class IntakeConstants {
-        public static final boolean IS_USING_INTAKE = false;
+        public static final boolean IS_USING_INTAKE = true;
         public static final boolean DEBUG = true;
 
         // Pneumatics
@@ -104,7 +104,7 @@ public final class Constants {
         public static final double AMP_OUTPUT_VOLTAGE = 3; // unsigned, polarity set in subsystem
 
         // Sensors
-        public static final int NOTE_BREAKBEAM_RX_CHANNEL = 0;
+        public static final int NOTE_BREAKBEAM_DIO = 2;
 
         // Piston
         public static final int PISTON_ID = 0;
@@ -129,7 +129,7 @@ public final class Constants {
                                                                // direction is positive voltage
 
         // Height calculations
-        private static final double GEAR_RADIUS = 1.981 / 2; // Sprocket WCP-0560, outermost radius 1.981
+        private static final double GEAR_RADIUS = 1.8 / 2; // Sprocket WCP-0560, outermost radius 1.981
         private static final double GEAR_CIRCUMFRENCE = 2 * Math.PI * GEAR_RADIUS;
         private static final double GEAR_RATIO = 60;
         public static final double CONVERSION_RATIO = GEAR_CIRCUMFRENCE / GEAR_RATIO * 2; // TODO: CHECK IF NEED 2x IS
@@ -137,8 +137,8 @@ public final class Constants {
                                                                                           // elevator
 
         // Sensors
-        public static final int BOTTOM_BREAKBEAM_RX_CHANNEL = 0; // TODO: Update
-        public static final int TOP_BREAKBEAM_RX_CHANNEL = 1; // TODO: Update
+        public static final int BOTTOM_BREAKBEAM_DIO = 0; // TODO: Update
+        public static final int TOP_BREAKBEAM_DIO = 1; // TODO: Update
 
         // PID
         public static final double PID_KP = 0.00000011015; // TODO: Tune
@@ -169,7 +169,7 @@ public final class Constants {
 
         // Elevator States
         public static final double LOW_INIT_HEIGHT = 0;
-        public static final double HIGH_INIT_HEIGHT = 28;// 14, but actually 28 because 2 stage
+        public static final double HIGH_INIT_HEIGHT = 14;// 28 inches up
         public static final double CLIMB_HEIGHT = 16; // TODO: Update
 
         public static enum ELEVATOR_STATE {
