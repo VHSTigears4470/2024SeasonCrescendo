@@ -8,10 +8,6 @@ import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 
-<<<<<<< HEAD
-
-=======
->>>>>>> da812efe605cd133b866de77167f05a1a021fb0f
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 
 //import com.pathplanner.lib.PathPlannerTrajectory;
