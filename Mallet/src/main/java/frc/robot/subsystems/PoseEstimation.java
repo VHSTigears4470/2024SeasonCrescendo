@@ -8,10 +8,6 @@ import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 
-import com.pathplanner.lib.path.PathPlannerTrajectory;
-
-//import com.pathplanner.lib.PathPlannerTrajectory;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
 import edu.wpi.first.math.Matrix; 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -21,6 +17,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -35,12 +32,12 @@ public class PoseEstimation extends SubsystemBase {
     private final SwerveDrivePoseEstimator poseEstimator;
     private final Field2d field2d = new Field2d();
     private final PhotonRunnable rightEstimator = new PhotonRunnable(new PhotonCamera("rightCamera"),
-        Constants.PhotonConstants.USING_RIGHT_PHOTON);
+        Constants.PhotonConstants.ROBOT_TO_RIGHT_PHOTON);
     private final PhotonRunnable leftEstimator = new PhotonRunnable(new PhotonCamera("leftCamera"),
-        Constants.PhotonConstants.USING_LEFT_PHOTON);
+        Constants.PhotonConstants.ROBOT_TO_LEFT_PHOTON);
 
       // private final Notifier rightNotifier = new Notifier(rightEstimator);
-  // private final Notifier leftNotifier = new Notifier(leftEstimator);
+      // private final Notifier leftNotifier = new Notifier(leftEstimator);
   private final Notifier allNotifier = new Notifier(() -> {
     rightEstimator.run();
     leftEstimator.run();
@@ -48,17 +45,19 @@ public class PoseEstimation extends SubsystemBase {
   // private final Notifier backNotifier = new Notifier(backEstimator);
 
   private OriginPosition originPosition = kBlueAllianceWallRightSide;
+  private SwerveSubsystem SwerveUse;
 
   // private final ArrayList<Double> xValues = new ArrayList<Double>();
   // private final ArrayList<Double> yValues = new ArrayList<Double>();
 
   public PoseEstimation(Supplier<Rotation2d> rotationSupplier,
-      Supplier<SwerveModulePosition[]> modulePositionSupplier) {
+      Supplier<SwerveModulePosition[]> modulePositionSupplier, SwerveSubsystem swerveUse) {
     this.rotationSupplier = rotationSupplier;
     this.modulePositionSupplier = modulePositionSupplier;
+    this.SwerveUse = swerveUse;
 
     poseEstimator = new SwerveDrivePoseEstimator(
-        DrivetrainConstants.KINEMATICS,
+        swerveUse.getKinematics(),
         rotationSupplier.get(),
         modulePositionSupplier.get(),
         new Pose2d(),
@@ -185,7 +184,7 @@ public class PoseEstimation extends SubsystemBase {
         new Rotation2d(Math.PI)));
   }
 
-  public void addTrajectory(PathPlannerTrajectory traj) {
+  public void addTrajectory(Trajectory traj) {
     field2d.getObject("Trajectory").setTrajectory(traj);
   }
 

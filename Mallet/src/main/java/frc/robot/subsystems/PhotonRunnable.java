@@ -14,7 +14,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.PhotonConstants;
 
 public class PhotonRunnable implements Runnable {
     private final PhotonPoseEstimator photonPoseEstimator;
@@ -24,7 +24,7 @@ public class PhotonRunnable implements Runnable {
     public PhotonRunnable(PhotonCamera cameraName, Transform3d robotToCamera) {
       this.photonCamera = cameraName;
       PhotonPoseEstimator photonPoseEstimator = null;
-      //try { *See if exception is needed
+      //  try { 
         var layout = AprilTagFields.k2023ChargedUp.loadAprilTagLayoutField();
         layout.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
         if (photonCamera != null) {
@@ -32,10 +32,10 @@ public class PhotonRunnable implements Runnable {
               layout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, photonCamera, robotToCamera);
           photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
         }
-      /* } catch (IOException e) {
-        DriverStation.reportError("Failed to load AprilTagFieldLayout", e.getStackTrace());
-        photonPoseEstimator = null;
-      }*/
+      // } catch (IOException e) {
+      //   DriverStation.reportError("Failed to load AprilTagFieldLayout", e.getStackTrace());
+      //   photonPoseEstimator = null;
+      // }
       this.photonPoseEstimator = photonPoseEstimator;
     }
       
@@ -50,8 +50,8 @@ public class PhotonRunnable implements Runnable {
           photonPoseEstimator.update(photonResults).ifPresent(estimatedRobotPose -> {
             var estimatedPose = estimatedRobotPose.estimatedPose;
             // Make sure the measurement is on the field
-            if (estimatedPose.getX() > 0.0 && estimatedPose.getX() <= FieldConstants.FIELD_LENGTH_METERS
-                && estimatedPose.getY() > 0.0 && estimatedPose.getY() <= FieldConstants.FIELD_WIDTH_METERS) {
+            if (estimatedPose.getX() > 0.0 && estimatedPose.getX() <= PhotonConstants.FIELD_LENGTH_METERS
+                && estimatedPose.getY() > 0.0 && estimatedPose.getY() <= PhotonConstants.FIELD_WIDTH_METERS) {
               atomicEstimatedRobotPose.set(estimatedRobotPose);
             }
           });
