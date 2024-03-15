@@ -119,7 +119,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     /*** Returns the state of the note break beam */
-    public boolean getNoteBreakbeam() {
+    public boolean noteBreambeamTripped() {
         return noteBreakbeam.get();
     }
 

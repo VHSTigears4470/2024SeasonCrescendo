@@ -10,7 +10,7 @@ public class IntakePositionAndSuck extends SequentialCommandGroup {
     public IntakePositionAndSuck(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem) {
         addRequirements(intakeSubsystem, elevatorSubsystem);
         // Start if there is no note in the intake
-        if (!intakeSubsystem.getNoteBreakbeam()) {
+        if (!intakeSubsystem.noteBreambeamTripped()) {
             addCommands(
                     new ParallelCommandGroup(
                             new IntakePosition(intakeSubsystem, elevatorSubsystem),
