@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public final class Constants {
     public static class OperatorConstants {
-        // Joystick Deadband
+        // DEADBANDS
         public static final double LEFT_X_DEADBAND = 0.05;
         public static final double LEFT_Y_DEADBAND = 0.05;
         public static final double RIGHT_X_DEADBAND = 0.01;
@@ -61,13 +61,13 @@ public final class Constants {
         public static final boolean USING_DIFFERENTIAL = false;
         public static final boolean DEBUG = true;
 
-        // PWM Motors
+        // PWM MOTORS
         public static final int FL_MOTOR_PWM = 3;
         public static final int FR_MOTOR_PWM = 0;
         public static final int BL_MOTOR_PWM = 2;
         public static final int BR_MOTOR_PWM = 1;
 
-        // Arcade Drive
+        // ARCADE DRIVE
         public static final double FWD_SPEED_SCALAR = 0.3;
         public static final double ROT_SPEED_SCALAR = 0.3;
     }
@@ -76,18 +76,18 @@ public final class Constants {
         public static final boolean IS_USING_INTAKE = true;
         public static final boolean DEBUG = true;
 
-        // Pneumatics
+        // PNEUMATICS
         public static final int PCM_MODULE_ID = 0;
         public static final PneumaticsModuleType MODULE_TYPE = PneumaticsModuleType.CTREPCM;
         public static final int INTAKE_FORWARD_CHANNEL_ID = 0;
         public static final int INTAKE_REVERSE_CHANNEL_ID = 1;
-        public static final int NOTES_FORWARD_CHANNEL_ID = 4;
-        public static final int NOTES_REVERSE_CHANNEL_ID = 5;
+        public static final int NOTES_FORWARD_CHANNEL_ID = 2;
+        public static final int NOTES_REVERSE_CHANNEL_ID = 3;
         public static final Value INTAKE_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse;
         public static final Value PISTON_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse; // Need to change later for
                                                                                            // piston
 
-        // Motors
+        // MOTORS
         public static final int TOP_MOTOR_ID = 9; // Leader
         public static final int BOT_MOTOR_ID = 10; // Follower
         /** Inverts follower direction. */
@@ -101,11 +101,8 @@ public final class Constants {
         public static final double SPEAKER_OUTPUT_VOLTAGE = 12; // unsigned, polarity set in subsystem
         public static final double AMP_OUTPUT_VOLTAGE = 3; // unsigned, polarity set in subsystem
 
-        // Sensors
-        public static final int NOTE_BREAKBEAM_DIO = 2;
-
-        // Piston
-        public static final int PISTON_ID = 0;
+        // SENSORS
+        public static final int NOTE_BREAKBEAM_DIO = 2; // TODO: Set DIO
 
         public static enum INTAKE_POSITION_STATE {
             RETRACTED, UNRETRACTED
@@ -116,7 +113,7 @@ public final class Constants {
         public static final boolean IS_USING_ELEVATOR = true;
         public static final boolean DEBUG = true;
 
-        // Motors
+        // MOTORS
         public static final int LEFT_MOTOR_ID = 11; // Leader
         public static final int RIGHT_MOTOR_ID = 12; // Follower
         /** Inverts follower direction. */
@@ -126,13 +123,13 @@ public final class Constants {
         public static final boolean DIRECTION_INVERTED = true; // Specifies which
                                                                // direction is positive voltage
 
-        // Height calculations
+        // HEIGHT CALCULATIONS
         private static final double GEAR_RADIUS = 1.756 / 2; // Sprocket WCP-0560, outermost radius 1.981, 1.756 inner
         private static final double GEAR_CIRCUMFRENCE = 2 * Math.PI * GEAR_RADIUS;
         private static final double GEAR_RATIO = 60;
         public static final double CONVERSION_RATIO = GEAR_CIRCUMFRENCE / GEAR_RATIO * 2;
 
-        // Sensors
+        // SENSORS
         public static final int BOTTOM_BREAKBEAM_DIO = 0; // TODO: Update
         public static final int TOP_BREAKBEAM_DIO = 1; // TODO: Update
 
@@ -147,7 +144,7 @@ public final class Constants {
         /** Max negative voltage (must be negative) */
         public static final double PID_KMIN_OUTPUT = -3; // TODO: Tune
 
-        // Smart Motion
+        // SMART MOTION
         public static final int SM_ID = 0;
         private static final double SM_MAX_INCHES_VEL = 6; // Elevator maximum inches per second
         public static final double SM_MAX_RPM_VEL = SM_MAX_INCHES_VEL / GEAR_CIRCUMFRENCE
@@ -163,7 +160,7 @@ public final class Constants {
 
         public static final double SM_ALLOWED_ERR = 0; //
 
-        // Elevator States
+        // ELEVATOR STATES
         // TODO: Find correct heights
         public static final double LOW_INIT_HEIGHT = 0;
         public static final double HIGH_INIT_HEIGHT = 14;// 28 inches up
@@ -173,7 +170,7 @@ public final class Constants {
             UP, DOWN, CLIMB
         };
 
-        // Tolerances
+        // TOLERANCES
         public static final double HIGH_LOW_OFFSET = 0.5; // Distance in inches for PID to maintain from breakbeams
         public static final double POSITION_TOLERANCE = 1; // Distance in inches for PID to be considered "at the
                                                            // position"
