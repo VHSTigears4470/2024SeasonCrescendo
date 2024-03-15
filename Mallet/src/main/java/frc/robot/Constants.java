@@ -91,7 +91,7 @@ public final class Constants {
 
         // Sensors
         public static final int NOTE_BREAKBEAM_RX_CHANNEL = 0;
-        
+
         // Piston
         public static final int PISTON_ID = 0;
 
@@ -124,7 +124,6 @@ public final class Constants {
         // Sensors
         public static final int BOTTOM_BREAKBEAM_CHANNEL_ID = 0; // TODO: Update
         public static final int TOP_BREAKBEAM_CHANNEL_ID = 0; // TODO: Update
-
 
         // PID
         public static final double PID_KP = 0.00000007015; // TODO: Tune
@@ -216,31 +215,34 @@ public final class Constants {
         public static final boolean USING_VISION = true;
 
         public static final boolean USING_RIGHT_PHOTON = true;
-        public static final boolean USING_LEFT_PHOTON = true; 
+        public static final boolean USING_LEFT_PHOTON = true;
 
-        public static final String RIGHT_PHOTON_NAME = "right photon"; //TODO - Change both names
-        public static final String LEFT_PHOTON_NAME = "left photon"; 
+        public static final String RIGHT_PHOTON_NAME = "right photon"; // TODO - Change both names
+        public static final String LEFT_PHOTON_NAME = "left photon";
 
         public static final PoseStrategy PHOTON_CAMERA_STRAT = PoseStrategy.LOWEST_AMBIGUITY;
-        
+
         // Right Camera w/ its real position
         public static final Transform3d ROBOT_TO_RIGHT_PHOTON = new Transform3d(
-        new Translation3d(Units.inchesToMeters(-11.88), Units.inchesToMeters(-6.88), Units.inchesToMeters(31.09)),
-        new Rotation3d(0, Math.toRadians(10.62), Math.toRadians(-45))); //TODO - Need to modify position of Right
-        
+                new Translation3d(Units.inchesToMeters(-11.88), Units.inchesToMeters(-6.88),
+                        Units.inchesToMeters(31.09)),
+                new Rotation3d(0, Math.toRadians(10.62), Math.toRadians(-45))); // TODO - Need to modify position of
+                                                                                // Right
+
         // Left Camera w/ its real position
         public static final Transform3d ROBOT_TO_LEFT_PHOTON = new Transform3d(
-        new Translation3d(Units.inchesToMeters(-11.88), Units.inchesToMeters(6.88), Units.inchesToMeters(31.09)),
-        new Rotation3d(0, Math.toRadians(10.62), Math.toRadians(46))); //TODO - Need to modify position of Left
+                new Translation3d(Units.inchesToMeters(-11.88), Units.inchesToMeters(6.88),
+                        Units.inchesToMeters(31.09)),
+                new Rotation3d(0, Math.toRadians(10.62), Math.toRadians(46))); // TODO - Need to modify position of Left
 
-        //TODO - Review the var under to see if needs to be deleted
+        // TODO - Review the var under to see if needs to be deleted
         // Min target ambiguity. Targets w/ higher ambiguity will be discarded
         public static final double APRILTAG_AMBIGUITY_THRESHOLD = 0.2;
         public static final double POSE_AMBIGUITY_SHIFTER = 0.2;
         public static final double POSE_AMBIGUITY_MULTIPLIER = 4;
         public static final double NOISY_DISTANCE_METERS = 2.5;
         public static final double DISTANCE_WEIGHT = 7;
-        public static final int TAG_PRESENCE_WEIGHT = 10; //TODO - Maybe modify these values(?)
+        public static final int TAG_PRESENCE_WEIGHT = 10; // TODO - Maybe modify these values(?)
 
         /**
          * Standard deviations of model states. Increase these numbers to trust your
@@ -249,11 +251,11 @@ public final class Constants {
          * meters.
          */
         public static final Matrix<N3, N1> VISION_MEASUREMENT_STANDARD_DEVIATIONS = MatBuilder.fill(
-            Nat.N3(), Nat.N1(), 
-            // if these numbers below are less than one, multiplying will do bad things
-            1, // x
-            1, // y
-            1 * Math.PI // theta
+                Nat.N3(), Nat.N1(),
+                // if these numbers below are less than one, multiplying will do bad things
+                1, // x
+                1, // y
+                1 * Math.PI // theta
         );
         /**
          * Standard deviations of the vision measurements. Increase these numbers to
@@ -262,11 +264,11 @@ public final class Constants {
          * radians.
          */
         public static final Matrix<N3, N1> STATE_STANDARD_DEVIATIONS = MatBuilder.fill(
-            Nat.N3(), Nat.N1(),
-            // if these numbers are less than one, multiplying will do bad things
-            .1, // x
-            .1, // y
-            .1);
-        }
+                Nat.N3(), Nat.N1(),
+                // if these numbers are less than one, multiplying will do bad things
+                .1, // x
+                .1, // y
+                .1);
+    }
 
 }
