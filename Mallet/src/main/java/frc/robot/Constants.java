@@ -198,7 +198,7 @@ public final class Constants {
         public static final boolean IS_USING_ODOM_LIMELIGHT = false;
         public static final boolean DEBUG = true;
 
-        public static final String LIMELIGHT_NAME = "limelight-odometry";
+        public static final String LIMELIGHT_NAME = "limelight-april";
         public static final ODOM_LL_PIPELINE DEFAULT_PIPELINE = ODOM_LL_PIPELINE.APRIL;
 
         public static enum ODOM_LL_PIPELINE {
