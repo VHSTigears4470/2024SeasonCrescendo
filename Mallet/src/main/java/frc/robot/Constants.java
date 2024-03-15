@@ -129,12 +129,10 @@ public final class Constants {
                                                                // direction is positive voltage
 
         // Height calculations
-        private static final double GEAR_RADIUS = 1.8 / 2; // Sprocket WCP-0560, outermost radius 1.981
+        private static final double GEAR_RADIUS = 1.756 / 2; // Sprocket WCP-0560, outermost radius 1.981, 1.756 inner
         private static final double GEAR_CIRCUMFRENCE = 2 * Math.PI * GEAR_RADIUS;
         private static final double GEAR_RATIO = 60;
-        public static final double CONVERSION_RATIO = GEAR_CIRCUMFRENCE / GEAR_RATIO * 2; // TODO: CHECK IF NEED 2x IS
-                                                                                          // CORRECT for 2 stage
-                                                                                          // elevator
+        public static final double CONVERSION_RATIO = GEAR_CIRCUMFRENCE / GEAR_RATIO * 2;
 
         // Sensors
         public static final int BOTTOM_BREAKBEAM_DIO = 0; // TODO: Update
@@ -152,7 +150,7 @@ public final class Constants {
         public static final double PID_KMIN_OUTPUT = -3; // TODO: Tune
 
         // Smart Motion
-        public static final int SM_ID = 0; // TODO: Update
+        public static final int SM_ID = 0;
         private static final double SM_MAX_INCHES_VEL = 6; // Elevator maximum inches per second
         public static final double SM_MAX_RPM_VEL = SM_MAX_INCHES_VEL / GEAR_CIRCUMFRENCE
                 * GEAR_RATIO * 60; // Elevator maximum revolutions per minute -> revolutions -> gear ratio
@@ -165,12 +163,13 @@ public final class Constants {
         public static final double SM_MAX_RPM_ACC = SM_INCHES_ACC / GEAR_CIRCUMFRENCE
                 * GEAR_RATIO * 60; // Elevator inches acceleration per minute -> revolutions -> gear ratio
 
-        public static final double SM_ALLOWED_ERR = 0; // TODO: Update
+        public static final double SM_ALLOWED_ERR = 0; //
 
         // Elevator States
+        // TODO: Find correct heights
         public static final double LOW_INIT_HEIGHT = 0;
         public static final double HIGH_INIT_HEIGHT = 14;// 28 inches up
-        public static final double CLIMB_HEIGHT = 16; // TODO: Update
+        public static final double CLIMB_HEIGHT = 16;
 
         public static enum ELEVATOR_STATE {
             UP, DOWN, CLIMB

@@ -221,8 +221,8 @@ public class RobotContainer {
     }
 
     if (ElevatorConstants.IS_USING_ELEVATOR && ElevatorConstants.DEBUG) {
-      xbox1.leftTrigger().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, -0.1));
-      xbox1.rightTrigger().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, 0.1));
+      xbox1.leftTrigger().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, -0.15));
+      xbox1.rightTrigger().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, 0.15));
       xbox1.a().onTrue(new ElevatorZero(elevatorSub));
 
       xbox1.povUp().onTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.UP));

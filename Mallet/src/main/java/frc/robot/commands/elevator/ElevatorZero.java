@@ -21,7 +21,7 @@ public class ElevatorZero extends Command {
 
   @Override
   public void initialize() {
-    elevator.zeroElevator();
+    elevator.zeroEncoders();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

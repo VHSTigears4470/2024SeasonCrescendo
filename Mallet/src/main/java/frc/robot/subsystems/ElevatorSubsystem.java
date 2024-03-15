@@ -35,6 +35,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final DigitalInput bottomBreakBeam; // Assuming Limit Switch is used to set when elevator reaches bottom
   /** false when blocked, true when open */
   private final DigitalInput topBreakBeam; // Assuming Limit Switch is used to set when elevator reaches top
+
+  /** bottom breakbeam toggle for only setting voltage to zero once */
+  private boolean botBreakbeamTripped;
+  /** top breakbeam toggle for only setting voltage to zero once */
+  private boolean topBreakbeamTripped;
+
   private double highestPos; // Highest encoder value the motor can go
   private double lowestPos; // Lowest encoder value the motor can go
   private double desiredReferencePosition; // Desired position the motor should go to
@@ -53,7 +59,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   private GenericEntry entry_pid_kd;
   private GenericEntry entry_pid_kiz;
   private GenericEntry entry_pid_kff;
-  private GenericEntry entry_pid_max_output;
   private GenericEntry entry_smart_motion_allowed_err;
   private GenericEntry entry_smart_motion_pos;
   // Driver Tab
@@ -78,6 +83,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     rightMotor.follow(leftMotor, ElevatorConstants.FOLLOWER_INVERTED);
     leftMotor.setInverted(ElevatorConstants.DIRECTION_INVERTED);
 
+    botBreakbeamTripped = false;
+    topBreakbeamTripped = false;
     lowestPos = ElevatorConstants.LOW_INIT_HEIGHT;
     highestPos = ElevatorConstants.HIGH_INIT_HEIGHT;
     currState = ELEVATOR_STATE.DOWN;
@@ -157,11 +164,37 @@ public class ElevatorSubsystem extends SubsystemBase {
     pidController.setReference(desiredReferencePosition, ControlType.kSmartMotion);
   }
 
-  /** Zeros encoders and sets setpoint to zero */
-  public void zeroElevator() {
+  /** Zeros encoders */
+  public void zeroEncoders() {
     leftEncoder.setPosition(0);
     rightEncoder.setPosition(0);
-    pidController.setReference(0, ControlType.kSmartMotion);
+  }
+
+  public void handleBreakbeams() {
+    if (botBreakbeamTripped()) {
+      zeroEncoders();
+      if (!botBreakbeamTripped) {
+        botBreakbeamTripped = true;
+        leftMotor.setVoltage(0); // Stop motor
+        pidController.setOutputRange(0, ElevatorConstants.PID_KMAX_OUTPUT); // Only allowed to go up
+        pidController.setReference(lowestPos, ControlType.kSmartMotion);
+      } else {
+        botBreakbeamTripped = false;
+        pidController.setOutputRange(ElevatorConstants.PID_KMIN_OUTPUT, ElevatorConstants.PID_KMAX_OUTPUT);
+      }
+    }
+    if (topBreakbeamTripped()) {
+      highestPos = leftEncoder.getPosition();
+      if (!topBreakbeamTripped) {
+        topBreakbeamTripped = true;
+        leftMotor.setVoltage(0); // Stop motor
+        pidController.setOutputRange(ElevatorConstants.PID_KMIN_OUTPUT, 0); // Only allowed to go down
+        pidController.setReference(highestPos, ControlType.kSmartMotion);
+      }
+    } else {
+      topBreakbeamTripped = false;
+      pidController.setOutputRange(ElevatorConstants.PID_KMIN_OUTPUT, ElevatorConstants.PID_KMAX_OUTPUT);
+    }
   }
 
   /*** Returns the desired position of the motor */
@@ -235,10 +268,6 @@ public class ElevatorSubsystem extends SubsystemBase {
           .add("FF Gain", ElevatorConstants.PID_KFF)
           .withWidget(BuiltInWidgets.kTextView)
           .getEntry();
-      entry_pid_max_output = shuffleDebugTab.getLayout("Elevator PID", BuiltInLayouts.kList)
-          .add("Max Output", ElevatorConstants.PID_KMAX_OUTPUT)
-          .withWidget(BuiltInWidgets.kTextView)
-          .getEntry();
 
       // Smart Motion
       entry_smart_motion_allowed_err = shuffleDebugTab.getLayout("Elevator PID", BuiltInLayouts.kList)
@@ -268,8 +297,6 @@ public class ElevatorSubsystem extends SubsystemBase {
       pidController.setD(entry_pid_kd.getDouble(pidController.getD(slotId)), slotId);
       pidController.setIZone(entry_pid_kiz.getDouble(pidController.getIZone(slotId)), slotId);
       pidController.setFF(entry_pid_kff.getDouble(pidController.getFF(slotId)), slotId);
-      pidController.setOutputRange(ElevatorConstants.PID_KMIN_OUTPUT,
-          entry_pid_max_output.getDouble(pidController.getOutputMax(slotId)), slotId);
 
       pidController.setSmartMotionAllowedClosedLoopError(
           entry_smart_motion_allowed_err.getDouble(pidController.getSmartMotionAllowedClosedLoopError(slotId)), slotId);
@@ -278,14 +305,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (botBreakbeamTripped()) {
-      zeroElevator();
-      pidController.setReference(lowestPos, ControlType.kSmartMotion);
-    }
-    if (topBreakbeamTripped()) {
-      highestPos = leftEncoder.getPosition() - ElevatorConstants.HIGH_LOW_OFFSET;
-      pidController.setReference(highestPos, ControlType.kSmartMotion);
-    }
+    handleBreakbeams();
     updateShuffleboard();
   }
 
