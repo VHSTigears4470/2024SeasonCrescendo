@@ -11,9 +11,9 @@ import frc.robot.subsystems.IntakeSubsystem;
 
 public class ShootSpeakerAndReset extends SequentialCommandGroup {
     public ShootSpeakerAndReset(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem) {
+        addRequirements(intakeSubsystem, elevatorSubsystem);
         // Start if note is in the intake
-        if(intakeSubsystem.getNoteBreakbeam())
-        {
+        if (intakeSubsystem.getNoteBreakbeam()) {
             addCommands(
                     // TODO: Light on the robot glows when in correct range/radius around the
                     // speaker and pointing in correct direction

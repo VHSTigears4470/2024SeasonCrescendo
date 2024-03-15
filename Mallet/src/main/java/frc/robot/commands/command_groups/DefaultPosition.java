@@ -14,15 +14,17 @@ import frc.robot.commands.intake.IntakeSetZeroVoltage;
 
 public class DefaultPosition extends SequentialCommandGroup {
     public DefaultPosition(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem) {
+        addRequirements(intakeSubsystem, elevatorSubsystem);
         addCommands(
                 // Delay retraction of intake to allow for elevator to go down first
                 new ParallelCommandGroup(
-                        new SequentialCommandGroup(new WaitCommand( 
-                            // Conditional to only wait for elevator if its already in the up position
-                            (elevatorSubsystem.getDesiredState() == ELEVATOR_STATE.UP && elevatorSubsystem.isAtPos()) ? 0.7 : 0.1),
+                        new SequentialCommandGroup(new WaitCommand(
+                                // Conditional to only wait for elevator if its already in the up position
+                                (elevatorSubsystem.getDesiredState() == ELEVATOR_STATE.UP
+                                        && elevatorSubsystem.isAtPos()) ? 0.7 : 0.1),
                                 new IntakePositionRetract(intakeSubsystem)),
                         new ElevatorSetHeightState(elevatorSubsystem, ElevatorConstants.ELEVATOR_STATE.DOWN),
-                        new IntakeSetZeroVoltage(intakeSubsystem),
-                        new IntakePusherRetract(intakeSubsystem)));
+                        new SequentialCommandGroup(new IntakeSetZeroVoltage(intakeSubsystem),
+                                new IntakePusherRetract(intakeSubsystem))));
     }
 }

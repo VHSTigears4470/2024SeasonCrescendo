@@ -7,10 +7,11 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class RobotClimbCommandGroup extends SequentialCommandGroup {
-    public RobotClimbCommandGroup(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem){
-        addCommands(
-            new ClimbPosition(intakeSubsystem, elevatorSubsystem),
-            new ElevatorSetHeightState(elevatorSubsystem, ELEVATOR_STATE.DOWN)
-        );
+    public RobotClimbCommandGroup(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem) {
+        addRequirements(intakeSubsystem, elevatorSubsystem);
+        addCommands( // TODO: Might not want a command group for this unless we have a timer between
+                     // this
+                new ClimbPosition(intakeSubsystem, elevatorSubsystem),
+                new ElevatorSetHeightState(elevatorSubsystem, ELEVATOR_STATE.DOWN));
     }
 }

@@ -13,9 +13,9 @@ import frc.robot.subsystems.IntakeSubsystem;
 
 public class ShootAmpAndReset extends SequentialCommandGroup {
     public ShootAmpAndReset(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem) {
+        addRequirements(intakeSubsystem, elevatorSubsystem);
         // Start if note is in the intake
-        if(intakeSubsystem.getNoteBreakbeam())
-        {
+        if (intakeSubsystem.getNoteBreakbeam()) {
             addCommands(
                     // TODO: Align to amp with on the fly path planning, ensure that the path is
                     // actually only traversed when close enough to the amp to prevent collisions

@@ -11,6 +11,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 
 public class IntakePosition extends SequentialCommandGroup {
     public IntakePosition(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem) {
+        addRequirements(intakeSubsystem, elevatorSubsystem);
         // TODO: precondition to do nothing if a note is already in the intake
         addCommands(
                 new ParallelCommandGroup(
