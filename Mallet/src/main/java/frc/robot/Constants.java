@@ -79,10 +79,12 @@ public final class Constants {
         // PNEUMATICS
         public static final int PCM_MODULE_ID = 0;
         public static final PneumaticsModuleType MODULE_TYPE = PneumaticsModuleType.CTREPCM;
-        public static final int INTAKE_FORWARD_CHANNEL_ID = 0;
-        public static final int INTAKE_REVERSE_CHANNEL_ID = 1;
-        public static final int NOTES_FORWARD_CHANNEL_ID = 2;
-        public static final int NOTES_REVERSE_CHANNEL_ID = 3;
+        public static final int LEFT_INTAKE_FORWARD_CHANNEL_ID = 0;
+        public static final int LEFT_INTAKE_REVERSE_CHANNEL_ID = 1;
+        public static final int RIGHT_INTAKE_FORWARD_CHANNEL_ID = 2;
+        public static final int RIGHT_INTAKE_REVERSE_CHANNEL_ID = 3;
+        public static final int NOTES_FORWARD_CHANNEL_ID = 4;
+        public static final int NOTES_REVERSE_CHANNEL_ID = 5;
         public static final Value INTAKE_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse;
         public static final Value PISTON_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse; // Need to change later for
                                                                                            // piston

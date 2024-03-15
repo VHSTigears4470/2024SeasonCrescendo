@@ -19,7 +19,8 @@ import frc.robot.Constants.IntakeConstants;
 public class IntakeSubsystem extends SubsystemBase {
     // Variables for intake pneumatics deployment and retractaction
     private final Compressor compressor;
-    private final DoubleSolenoid intakePositionSolenoid;
+    private final DoubleSolenoid rightIntakePositionSolenoid;
+    private final DoubleSolenoid leftIntakePositionSolenoid;
     private final DoubleSolenoid notePusherSolenoid;
 
     // Variables for intake motors
@@ -40,12 +41,14 @@ public class IntakeSubsystem extends SubsystemBase {
     public IntakeSubsystem() {
         // Pneumatics initialization
         compressor = new Compressor(IntakeConstants.PCM_MODULE_ID, IntakeConstants.MODULE_TYPE);
-
-        intakePositionSolenoid = new DoubleSolenoid(IntakeConstants.PCM_MODULE_ID, IntakeConstants.MODULE_TYPE,
-                IntakeConstants.INTAKE_REVERSE_CHANNEL_ID,
-                IntakeConstants.INTAKE_FORWARD_CHANNEL_ID);
-        intakePositionSolenoid.set(IntakeConstants.INTAKE_DEFAULT_POSITION);
-
+        rightIntakePositionSolenoid = new DoubleSolenoid(IntakeConstants.PCM_MODULE_ID, IntakeConstants.MODULE_TYPE,
+                IntakeConstants.RIGHT_INTAKE_REVERSE_CHANNEL_ID,
+                IntakeConstants.RIGHT_INTAKE_FORWARD_CHANNEL_ID);
+        rightIntakePositionSolenoid.set(IntakeConstants.INTAKE_DEFAULT_POSITION);
+        leftIntakePositionSolenoid = new DoubleSolenoid(IntakeConstants.PCM_MODULE_ID, IntakeConstants.MODULE_TYPE,
+                IntakeConstants.LEFT_INTAKE_REVERSE_CHANNEL_ID,
+                IntakeConstants.LEFT_INTAKE_FORWARD_CHANNEL_ID);
+        leftIntakePositionSolenoid.set(IntakeConstants.INTAKE_DEFAULT_POSITION);
         notePusherSolenoid = new DoubleSolenoid(IntakeConstants.PCM_MODULE_ID, IntakeConstants.MODULE_TYPE,
                 IntakeConstants.NOTES_REVERSE_CHANNEL_ID,
                 IntakeConstants.NOTES_FORWARD_CHANNEL_ID); // Update Later
@@ -73,7 +76,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     /*** Pivots the inake to the retracted ready for intaking */
     public void retractIntake() {
-        intakePositionSolenoid.set(DoubleSolenoid.Value.kReverse);
+        leftIntakePositionSolenoid.set(DoubleSolenoid.Value.kReverse);
+        rightIntakePositionSolenoid.set(DoubleSolenoid.Value.kReverse);
     }
 
     /*** Sets the feeder pistons ready for intaking */
@@ -83,7 +87,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     /*** Pivots the intake to the ground, ready for intaking */
     public void extendIntake() {
-        intakePositionSolenoid.set(DoubleSolenoid.Value.kForward);
+        leftIntakePositionSolenoid.set(DoubleSolenoid.Value.kForward);
+        rightIntakePositionSolenoid.set(DoubleSolenoid.Value.kForward);
     }
 
     /*** Feeds the note into the intake */
