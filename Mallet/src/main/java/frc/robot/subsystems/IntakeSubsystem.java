@@ -40,16 +40,16 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public IntakeSubsystem() {
         // Pneumatics initialization
-        compressor = new Compressor(IntakeConstants.PCM_MODULE_ID, IntakeConstants.MODULE_TYPE);
-        rightIntakePositionSolenoid = new DoubleSolenoid(IntakeConstants.PCM_MODULE_ID, IntakeConstants.MODULE_TYPE,
+        compressor = new Compressor(IntakeConstants.REVPH_MODULE_ID, IntakeConstants.MODULE_TYPE);
+        rightIntakePositionSolenoid = new DoubleSolenoid(IntakeConstants.REVPH_MODULE_ID, IntakeConstants.MODULE_TYPE,
                 IntakeConstants.RIGHT_INTAKE_REVERSE_CHANNEL_ID,
                 IntakeConstants.RIGHT_INTAKE_FORWARD_CHANNEL_ID);
         rightIntakePositionSolenoid.set(IntakeConstants.INTAKE_DEFAULT_POSITION);
-        leftIntakePositionSolenoid = new DoubleSolenoid(IntakeConstants.PCM_MODULE_ID, IntakeConstants.MODULE_TYPE,
+        leftIntakePositionSolenoid = new DoubleSolenoid(IntakeConstants.REVPH_MODULE_ID, IntakeConstants.MODULE_TYPE,
                 IntakeConstants.LEFT_INTAKE_REVERSE_CHANNEL_ID,
                 IntakeConstants.LEFT_INTAKE_FORWARD_CHANNEL_ID);
         leftIntakePositionSolenoid.set(IntakeConstants.INTAKE_DEFAULT_POSITION);
-        notePusherSolenoid = new DoubleSolenoid(IntakeConstants.PCM_MODULE_ID, IntakeConstants.MODULE_TYPE,
+        notePusherSolenoid = new DoubleSolenoid(IntakeConstants.REVPH_MODULE_ID, IntakeConstants.MODULE_TYPE,
                 IntakeConstants.NOTES_REVERSE_CHANNEL_ID,
                 IntakeConstants.NOTES_FORWARD_CHANNEL_ID); // Update Later
         notePusherSolenoid.set(IntakeConstants.PISTON_DEFAULT_POSITION);
@@ -125,7 +125,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     /*** Returns the state of the note break beam */
     public boolean noteBreambeamTripped() {
-        return noteBreakbeam.get();
+        return !noteBreakbeam.get(); // Inverted because it is true when not tripped
     }
 
     /*** Inits Shuffleboard */
@@ -141,7 +141,7 @@ public class IntakeSubsystem extends SubsystemBase {
                     .withWidget(BuiltInWidgets.kBooleanBox)
                     .getEntry();
             entry_noteBreakBeam = shuffleDebugTab.getLayout("Intake", BuiltInLayouts.kList)
-                    .add("Note Break Beam", false)
+                    .add("Note Break Beam Tripped", false)
                     .withWidget(BuiltInWidgets.kBooleanBox)
                     .getEntry();
         }
@@ -152,7 +152,7 @@ public class IntakeSubsystem extends SubsystemBase {
         if (IntakeConstants.DEBUG) {
             entry_compressorPressure.setDouble(compressor.getPressure());
             entry_compressorSwitch.setBoolean(compressor.getPressureSwitchValue());
-            entry_noteBreakBeam.setBoolean(noteBreakbeam.get());
+            entry_noteBreakBeam.setBoolean(noteBreambeamTripped());
         }
     }
 

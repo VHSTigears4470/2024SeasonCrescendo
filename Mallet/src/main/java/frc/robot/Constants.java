@@ -77,8 +77,8 @@ public final class Constants {
         public static final boolean DEBUG = true;
 
         // PNEUMATICS
-        public static final int PCM_MODULE_ID = 0;
-        public static final PneumaticsModuleType MODULE_TYPE = PneumaticsModuleType.CTREPCM;
+        public static final int REVPH_MODULE_ID = 1;
+        public static final PneumaticsModuleType MODULE_TYPE = PneumaticsModuleType.REVPH;
         public static final int LEFT_INTAKE_FORWARD_CHANNEL_ID = 8;
         public static final int LEFT_INTAKE_REVERSE_CHANNEL_ID = 13;
         public static final int RIGHT_INTAKE_FORWARD_CHANNEL_ID = 7;
@@ -96,7 +96,7 @@ public final class Constants {
         public static final boolean FOLLOWER_INVERTED = false; // False because we need them to spin in opposite
                                                                // directions to suck in
         /** Inverts both motors together. */
-        public static final boolean DIRECTION_INVERTED = true; // Specifies sucking direction
+        public static final boolean DIRECTION_INVERTED = false; // Specifies sucking direction
 
         // Intake sucking and shooting speeds
         public static final double NOTE_INTAKE_VOLTAGE = 4; // unsigned, polarity set in subsystem
