@@ -22,6 +22,8 @@ public final class Constants {
     }
 
     public static final class RobotContainerConstants {
+        public static final boolean USING_XBOX_1 = true;
+        public static final boolean USING_XBOX_2 = false;
         public static final int XBOX_1_ID = 0;
         public static final int XBOX_2_ID = 1;
     }

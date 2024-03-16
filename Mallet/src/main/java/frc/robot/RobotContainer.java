@@ -66,11 +66,10 @@ public class RobotContainer {
   public RobotContainer() {
     // Initialize drive system (swerve or differential)
     initializeDriveMode();
-
+    // Initialize the other subsystems and controllers
     initializeOtherVars();
 
     // Configure default commands
-
     configureButtonBindings();
 
     // Initialize Shuffleboard
@@ -94,19 +93,21 @@ public class RobotContainer {
     if (SwerveConstants.USING_SWERVE) {
       swerveSub = new SwerveSubsystem(
           new File(Filesystem.getDeployDirectory(), "neo/swerve"));
-
-      if (RobotBase.isReal()) {
-        swerveSub.setDefaultCommand(new AbsoluteDrive(swerveSub,
-            () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-            () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-            () -> MathUtil.applyDeadband(-xbox1.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
-            () -> MathUtil.applyDeadband(-xbox1.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND)));
-        differentialSub.setDefaultCommand(new ArcadeDrive(differentialSub, xbox1));
-      } else {
-        swerveSub.setDefaultCommand(swerveSub.simDriveCommand(
-            () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-            () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-            () -> -xbox1.getRawAxis(2)));
+      
+      if(RobotContainerConstants.USING_XBOX_1) {
+        if (RobotBase.isReal()) {
+          swerveSub.setDefaultCommand(new AbsoluteDrive(swerveSub,
+              () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+              () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+              () -> MathUtil.applyDeadband(-xbox1.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
+              () -> MathUtil.applyDeadband(-xbox1.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND)));
+          differentialSub.setDefaultCommand(new ArcadeDrive(differentialSub, xbox1));
+        } else {
+          swerveSub.setDefaultCommand(swerveSub.simDriveCommand(
+              () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+              () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+              () -> -xbox1.getRawAxis(2)));
+        }
       }
     } else {
       swerveSub = null;
@@ -120,7 +121,12 @@ public class RobotContainer {
     if (ElevatorConstants.IS_USING_ELEVATOR) {
       elevatorSub = new ElevatorSubsystem();
     }
-    xbox1 = new CommandXboxController(RobotContainerConstants.XBOX_1_ID);
+    if(RobotContainerConstants.USING_XBOX_1) {
+      xbox1 = new CommandXboxController(RobotContainerConstants.XBOX_1_ID);
+    }
+    if(RobotContainerConstants.USING_XBOX_2) {
+      xbox2 = new CommandXboxController(RobotContainerConstants.XBOX_2_ID);
+    }
   }
 
   public void initializeAutoChooser() {
@@ -174,61 +180,70 @@ public class RobotContainer {
       NamedCommands.registerCommand("Shoot Speaker", new ShootSpeakerAndReset(intakeSub, elevatorSub));
     }
     if (Constants.IntakeConstants.IS_USING_INTAKE && Constants.ElevatorConstants.IS_USING_ELEVATOR
-        && Constants.SwerveConstants.USING_SWERVE) {
+      && Constants.SwerveConstants.USING_SWERVE) {
       NamedCommands.registerCommand("Drive Till Have Note", new DriveTillHaveNote(intakeSub, elevatorSub, swerveSub));
     }
   }
 
   // assign button functions
   private void configureButtonBindings() {
-    if (SwerveConstants.USING_SWERVE) {
-      xbox1.a().onTrue(new AbsoluteDriveWithFocus(swerveSub,
-          () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-          () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), "cone"));
+    // XBOX 1 Configs
+    if(RobotContainerConstants.USING_XBOX_1) {
+      if (SwerveConstants.USING_SWERVE) {
+        xbox1.a().onTrue(new AbsoluteDriveWithFocus(swerveSub,
+            () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+            () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), "cone"));
+      }
+
+      if (IntakeConstants.IS_USING_INTAKE && IntakeConstants.DEBUG) {
+        //TODO - Remove the debug commands for real testing
+        // Testing ONLY
+        xbox1.leftBumper().whileTrue(new IntakeSetIntakeVoltage(intakeSub)).onFalse(new IntakeSetZeroVoltage(intakeSub));
+        xbox1.rightBumper().whileTrue(new IntakeSetSpeakerVoltage(intakeSub))
+            .onFalse(new IntakeSetZeroVoltage(intakeSub));
+        // xbox1.rightBumper().whileTrue(new IntakeSetAmpVoltage(intakeSub)).onFalse(new IntakeSetZeroVoltage(intakeSub));
+      }
+
+      if (ElevatorConstants.IS_USING_ELEVATOR && ElevatorConstants.DEBUG) {
+        //TODO - Remove the debug commands for real testing
+        xbox1.leftTrigger().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, -0.15));
+        xbox1.rightTrigger().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, 0.15));
+        xbox1.a().onTrue(new ElevatorZero(elevatorSub));
+
+        xbox1.povUp().onTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.UP));
+        xbox1.povDown().onTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.DOWN));
+        // xbox1.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub)); //TODO - Check if this is intentional or not as it overlaps with xbox2
+        // xbox1.y().whileTrue(new DefaultPosition(intakeSub, elevatorSub)); //TODO - Check if this is intentional or not as it overlaps with xbox2
+        // xbox1.leftBumper().whileTrue(new SetVoltage(elevatorSub, -1));
+        // xbox1.rightBumper().whileTrue(new SetVoltage(elevatorSub, 1));
+      }
+    
+      // if (IntakeConstants.IS_USING_INTAKE && ElevatorConstants.IS_USING_ELEVATOR) {
+      //   xbox1.y().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
+      //   xbox1.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
+      //   xbox1.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
+      // }
+
     }
+    // XBOX 2 Configs
+    if(RobotContainerConstants.USING_XBOX_2) {
+      // if (ElevatorConstants.IS_USING_ELEVATOR) {
+      //   xbox2.a().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, 0.1));
+      //   xbox2.b().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, -0.1));
+        
+      //   xbox2.rightBumper().whileTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.UP));
+      //   xbox2.leftBumper().whileTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.DOWN));
+      // }
 
-    // if (ElevatorConstants.IS_USING_ELEVATOR) {
-    // xbox2.a().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub,
-    // 0.1));
-    // xbox2.b().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub,
-    // -0.1));
-    // xbox2.rightBumper().whileTrue(new ElevatorSetHeightState(elevatorSub,
-    // ELEVATOR_STATE.UP));
-    // xbox2.leftBumper().whileTrue(new ElevatorSetHeightState(elevatorSub,
-    // ELEVATOR_STATE.DOWN));
+      // if (IntakeConstants.IS_USING_INTAKE && ElevatorConstants.IS_USING_ELEVATOR) {
+      //     xbox2.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
+      //     xbox2.y().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
 
-    // if (IntakeConstants.IS_USING_INTAKE) {
-    // xbox1.y().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
-    // xbox2.y().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
-    // xbox1.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
-    // xbox2.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
+      //     xbox2.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
 
-    // xbox2.leftTrigger().whileTrue(new ShootAmpAndReset(intakeSub, elevatorSub));
-    // xbox2.leftTrigger().whileTrue(new ShootSpeakerAndReset(intakeSub,
-    // elevatorSub));
-
-    // xbox1.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
-    // xbox2.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
-    // }
-    // }
-    if (IntakeConstants.IS_USING_INTAKE && IntakeConstants.DEBUG) {
-      // Testing ONLY
-      xbox1.leftBumper().whileTrue(new IntakeSetIntakeVoltage(intakeSub)).onFalse(new IntakeSetZeroVoltage(intakeSub));
-      xbox1.rightBumper().whileTrue(new IntakeSetSpeakerVoltage(intakeSub))
-          .onFalse(new IntakeSetZeroVoltage(intakeSub));
-      // xbox1.rightBumper().whileTrue(new IntakeSetAmpVoltage(intakeSub)).onFalse(new
-      // IntakeSetZeroVoltage(intakeSub));
-    }
-
-    if (ElevatorConstants.IS_USING_ELEVATOR && ElevatorConstants.DEBUG) {
-      xbox1.leftTrigger().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, -0.15));
-      xbox1.rightTrigger().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, 0.15));
-      xbox1.a().onTrue(new ElevatorZero(elevatorSub));
-
-      xbox1.povUp().onTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.UP));
-      xbox1.povDown().onTrue(new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.DOWN));
-      // xbox1.leftBumper().whileTrue(new SetVoltage(elevatorSub, -1));
-      // xbox1.rightBumper().whileTrue(new SetVoltage(elevatorSub, 1));
+      //     xbox2.leftTrigger().whileTrue(new ShootAmpAndReset(intakeSub, elevatorSub));
+      //     xbox2.rightTrigger().whileTrue(new ShootSpeakerAndReset(intakeSub, elevatorSub));
+      // }
     }
   }
 
