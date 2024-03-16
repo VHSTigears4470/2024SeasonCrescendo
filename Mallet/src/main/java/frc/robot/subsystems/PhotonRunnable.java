@@ -25,7 +25,7 @@ public class PhotonRunnable implements Runnable {
     this.photonCamera = cameraName;
     PhotonPoseEstimator photonPoseEstimator = null;
     // try {
-    var layout = AprilTagFields.k2023ChargedUp.loadAprilTagLayoutField();
+    var layout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     layout.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
     if (photonCamera != null) {
       photonPoseEstimator = new PhotonPoseEstimator(
