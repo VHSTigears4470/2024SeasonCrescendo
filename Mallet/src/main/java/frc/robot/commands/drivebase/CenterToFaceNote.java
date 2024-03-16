@@ -4,16 +4,13 @@
 
 package frc.robot.commands.drivebase;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.NoteLimelight;
 import frc.robot.subsystems.SwerveSubsystem;
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
-import swervelib.SwerveController;
+
 import frc.robot.Constants.SwerveConstants;
 
 /**
@@ -23,9 +20,6 @@ public class CenterToFaceNote extends Command {
 
     private final SwerveSubsystem swerve;
     private final NoteLimelight limelight;
-
-    private final double offsetThreshold = 0.5; //TODO - change value
-    private final double omegaRadiansPerSecond = 20 / Math.PI; //TODO - change value
 
     /**
      * Creates a new Command.
@@ -50,11 +44,28 @@ public class CenterToFaceNote extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if(limelight.hasTarget()) {
-            // Keep rotating robot (direction depends on the x offset, aka if it is to the left or right)
-            //TODO - Check if offset direction is correct
-            swerve.drive(new Translation2d(0, 0), Math.signum(limelight.getXOffset()) * omegaRadiansPerSecond, true);
+        // Grabs the heading error from the network table and uses it to create a
+        // direction to go to
+        double headingError;
+
+        if(limelight.hasTarget()){
+            headingError = limelight.getXOffset();
+        }else{
+            headingError = 0;
         }
+
+        double steeringAdjust = SwerveConstants.ANGLE_KP * headingError;
+
+        // Formats steeringAdjust to be a number from -maxSpeed to maxSpeed
+        steeringAdjust = Math.signum(steeringAdjust) * Math.min(Math.abs(steeringAdjust), SwerveConstants.ANGLE_MAX_TURN_SPEED);
+        // Multiply it by a negative or positive depending on if it need to be inverted it or not
+        steeringAdjust *= SwerveConstants.ANGLE_INVERT_MULTIPLIER;
+
+        // Get the desired chassis rotation in radians
+        ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(0, 0, new Rotation2d(steeringAdjust * Math.PI));
+
+        // Make the robot rotate only (no movement)
+        swerve.drive(new Translation2d(0, 0), desiredSpeeds.omegaRadiansPerSecond, true);
     }
 
     // Called once the command ends or is interrupted.
@@ -68,6 +79,6 @@ public class CenterToFaceNote extends Command {
     @Override
     public boolean isFinished() {
         // Finishes once the note has been centered (if there is no note, ends)
-        return limelight.hasTarget() && Math.abs(limelight.getXOffset()) < offsetThreshold;
+        return limelight.hasTarget() && Math.abs(limelight.getXOffset()) < SwerveConstants.OFFSET_THRESHOLD;
     }
 }

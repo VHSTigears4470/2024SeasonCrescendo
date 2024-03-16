@@ -51,24 +51,33 @@ public class DriveForwardWithFocus extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double calcOffset;
+    // Grabs the heading error from the network table and uses it to create a
+    // direction to go to
+    double headingError;
     // Checks whether the robot has a note to rotate to
     if(limelight.hasTarget()){
       // Calculates the offset / speed to rotate to. Has a max of speed of maxOffset
-      calcOffset = Math.signum(limelight.getXOffset()) * Math.min(Math.abs(limelight.getXOffset()), maxOffset);
+      headingError = limelight.getXOffset();
     } else {
-      calcOffset = 0;
+      headingError = 0;
     }
-    // Drives forward at a certain rotation
+    double steeringAdjust = SwerveConstants.ANGLE_KP * headingError;
+    // Formats steeringAdjust to be a number from -maxSpeed to maxSpeed
+    steeringAdjust = Math.signum(steeringAdjust) * Math.min(Math.abs(steeringAdjust), SwerveConstants.ANGLE_MAX_TURN_SPEED);
+    // Multiply it by a negative or positive depending on if it need to be inverted
+    // it or not
+    steeringAdjust *= 1;
+
+    // Get the desired chassis speeds based on a 2 joystick module.
     ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(
-        swerve.getPose().getRotation().getCos() * sensitivity, 
-        swerve.getPose().getRotation().getSin() * sensitivity, 
-        new Rotation2d(calcOffset)
+      swerve.getPose().getRotation().getCos() * sensitivity, 
+      swerve.getPose().getRotation().getSin() * sensitivity, 
+      new Rotation2d(steeringAdjust * Math.PI)
     );
 
     // Prevent Movement After Auto
     if (initRotation) {
-      if (calcOffset < minOffset) {
+      if (headingError < minOffset) {
         // Get the curretHeading
         Rotation2d firstLoopHeading = swerve.getHeading();
 

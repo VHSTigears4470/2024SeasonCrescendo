@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.subsystems.DifferentialSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.NoteLimelight;
 import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -19,6 +20,7 @@ import frc.robot.DeadbandCommandXboxController;
 import frc.robot.Constants.DifferentialConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.NoteLLConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.PhotonConstants;
 import frc.robot.Constants.RobotContainerConstants;
@@ -42,6 +44,7 @@ public class RobotContainer {
   private static IntakeSubsystem intakeSub;
   private static ElevatorSubsystem elevatorSub;
   private static PhotonSubsystem photonSub;
+  private static NoteLimelight limelightSub;
 
   // INIT XBOX CONTROLLER
   public static DeadbandCommandXboxController xbox1;
@@ -134,6 +137,9 @@ public class RobotContainer {
         );
       }
     }
+    if(NoteLLConstants.IS_USING_NOTE_LIMELIGHT) {
+      limelightSub = new NoteLimelight();
+    }
     xbox1 = new DeadbandCommandXboxController(RobotContainerConstants.XBOX_1_ID,
         RobotContainerConstants.XBOX_1_DEADBAND);
   }
@@ -154,9 +160,10 @@ public class RobotContainer {
   // assign button functions
   private void configureButtonBindings() {
     if (SwerveConstants.USING_SWERVE) {
-      xbox1.a().onTrue(new AbsoluteDriveWithFocus(swerveSub,
-          () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-          () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), "cone"));
+      xbox1.a().onTrue(new AbsoluteDriveWithFocus(swerveSub, limelightSub,
+        () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+        () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND)
+      ));
     }
 
     if (ElevatorConstants.IS_USING_ELEVATOR) {

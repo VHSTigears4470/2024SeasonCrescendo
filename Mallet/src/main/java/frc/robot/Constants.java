@@ -35,6 +35,12 @@ public final class Constants {
         public static final PIDFConfig Y_AUTO_PID = new PIDFConfig(0.000000005, 0, 0);
         public static final PIDFConfig ANGLE_AUTO_PID = new PIDFConfig(0.01, 0, 0.04);
 
+        public static final double ANGLE_KP = -0.1; // Proportional control constant
+        public static final double ANGLE_MIN_TURN_SPEED = 0.05; // Min speed of drivetrain (used for both positive and negative directions)
+        public static final double ANGLE_MAX_TURN_SPEED = 0.5; // Max speed of drivetrain (used for both positive and negative directions)
+        public static final int ANGLE_INVERT_MULTIPLIER = 1; // Multiplier depending on if turning direction need to be inverted it or not
+        public static final double OFFSET_THRESHOLD = 0.5; //TODO - change value
+
         // TODO CHANGE SCALAR in gettargetspeeds
 
         // SWERVE
