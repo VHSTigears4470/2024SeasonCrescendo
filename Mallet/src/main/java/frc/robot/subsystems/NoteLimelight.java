@@ -50,7 +50,7 @@ public class NoteLimelight extends SubsystemBase {
     /**
      * @return Whether or not the limelight has found a target
      */
-    public boolean isTarget() {
+    public boolean hasTarget() {
         return LimelightHelpers.getTV(NoteLLConstants.LIMELIGHT_NAME);
     }
 
@@ -102,7 +102,7 @@ public class NoteLimelight extends SubsystemBase {
     private void updateShuffleboard() {
         if (NoteLLConstants.DEBUG) {
             entry_pipelineName.setString(getPipeline().toString());
-            entry_tvEntry.setBoolean(isTarget());
+            entry_tvEntry.setBoolean(hasTarget());
             entry_txEntry.setDouble(getXOffset());
             entry_tyEntry.setDouble(getYOffset());
             entry_taEntry.setDouble(getArea());
