@@ -51,11 +51,12 @@ public class OdomLimelight extends SubsystemBase {
     // So using red will get us coordinates as if we were blue
     /**
      * Returns the Pose2D reported by the limelight, null if none
+     * 
      * @return The Pose2D reported by the limelight, null if none
      */
     public Pose2d getPose2D() {
         // Checks if there is a target or not
-        if(LimelightHelpers.getTV(OdometryLLConstants.LIMELIGHT_NAME)) {
+        if (LimelightHelpers.getTV(OdometryLLConstants.LIMELIGHT_NAME)) {
             return LimelightHelpers.getBotPose2d_wpiBlue(OdometryLLConstants.LIMELIGHT_NAME);
         }
         return null;
@@ -63,10 +64,13 @@ public class OdomLimelight extends SubsystemBase {
 
     /**
      * Returns the time the pose was captured in seconds
+     * 
      * @return The time the pose was captured in seconds
      */
     public double getLatency() {
-        return Timer.getFPGATimestamp() - (LimelightHelpers.getLatency_Pipeline(OdometryLLConstants.LIMELIGHT_NAME)/1000.0) - (LimelightHelpers.getLatency_Capture(OdometryLLConstants.LIMELIGHT_NAME)/1000.0);
+        return Timer.getFPGATimestamp()
+                - (LimelightHelpers.getLatency_Pipeline(OdometryLLConstants.LIMELIGHT_NAME) / 1000.0)
+                - (LimelightHelpers.getLatency_Capture(OdometryLLConstants.LIMELIGHT_NAME) / 1000.0);
     }
 
     /*** Inits Shuffleboard */

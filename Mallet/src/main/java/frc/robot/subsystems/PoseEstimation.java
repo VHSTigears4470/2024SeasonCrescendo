@@ -1,4 +1,5 @@
 package frc.robot.subsystems;
+
 import static edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition.kBlueAllianceWallRightSide;
 //import static edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition.KRedAllianceWallRightSide;
 import static edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition.kRedAllianceWallRightSide;
@@ -9,7 +10,7 @@ import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
-import edu.wpi.first.math.Matrix; 
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -27,17 +28,17 @@ import frc.robot.Constants;
 //import frc.robot.Constants.DrivetrainConstants;
 
 public class PoseEstimation extends SubsystemBase {
-    private final Supplier<Rotation2d> rotationSupplier;
-    private final Supplier<SwerveModulePosition[]> modulePositionSupplier;
-    private final SwerveDrivePoseEstimator poseEstimator;
-    private final Field2d field2d = new Field2d();
-    private final PhotonRunnable rightEstimator = new PhotonRunnable(new PhotonCamera("rightCamera"),
-        Constants.PhotonConstants.ROBOT_TO_RIGHT_PHOTON);
-    private final PhotonRunnable leftEstimator = new PhotonRunnable(new PhotonCamera("leftCamera"),
-        Constants.PhotonConstants.ROBOT_TO_LEFT_PHOTON);
+  private final Supplier<Rotation2d> rotationSupplier;
+  private final Supplier<SwerveModulePosition[]> modulePositionSupplier;
+  private final SwerveDrivePoseEstimator poseEstimator;
+  private final Field2d field2d = new Field2d();
+  private final PhotonRunnable rightEstimator = new PhotonRunnable(new PhotonCamera("rightCamera"),
+      Constants.PhotonConstants.ROBOT_TO_RIGHT_PHOTON);
+  private final PhotonRunnable leftEstimator = new PhotonRunnable(new PhotonCamera("leftCamera"),
+      Constants.PhotonConstants.ROBOT_TO_LEFT_PHOTON);
 
-      // private final Notifier rightNotifier = new Notifier(rightEstimator);
-      // private final Notifier leftNotifier = new Notifier(leftEstimator);
+  // private final Notifier rightNotifier = new Notifier(rightEstimator);
+  // private final Notifier leftNotifier = new Notifier(leftEstimator);
   private final Notifier allNotifier = new Notifier(() -> {
     rightEstimator.run();
     leftEstimator.run();
@@ -234,10 +235,3 @@ public class PoseEstimation extends SubsystemBase {
     }
   }
 }
-
-
-
-
-
-
-

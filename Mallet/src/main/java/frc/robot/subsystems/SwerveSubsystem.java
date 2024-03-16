@@ -96,12 +96,12 @@ public class SwerveSubsystem extends SubsystemBase {
     initializeShuffleboard();
   }
 
-    /**
+  /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
-   * @param directory Directory of swerve drive config files.
+   * @param directory          Directory of swerve drive config files.
    * @param limelightRobotPose Supplier for Robot Pose
-   * @param limeightTimestamp Supplier for Timestamp Pose was taken
+   * @param limeightTimestamp  Supplier for Timestamp Pose was taken
    */
   public SwerveSubsystem(File directory, Supplier<Pose2d> rightPhotonPose, Supplier<Pose2d> leftPhotonPose) {
     // Configure the Telemetry before creating the SwerveDrive to avoid
@@ -354,38 +354,42 @@ public class SwerveSubsystem extends SubsystemBase {
 
   /**
    * Adds a vision measurement to the swerve
+   * 
    * @param robotPose Pose of robot
    * @param timestamp Time the pose was taken in seconds
    */
   public void addVisionMeasurement(Pose2d robotPose, double timestamp) {
     // Checks pose is not null
-    if(robotPose != null){
+    if (robotPose != null) {
       swerveDrive.addVisionMeasurement(robotPose, timestamp);
     }
   }
 
   /**
-   * Updates the vision measurement, should be called after setupVisionMeasurement has been called 
+   * Updates the vision measurement, should be called after setupVisionMeasurement
+   * has been called
    * otherwise will not do anything
    */
   public void updateVisionMeasurement() {
     // Checks is the rightPhotonPose has been declared and has a pose to give
-    if(rightPhotonPose != null && rightPhotonPose.get() != null) {
+    if (rightPhotonPose != null && rightPhotonPose.get() != null) {
       addVisionMeasurement(rightPhotonPose.get().estimatedPose.toPose2d(), rightPhotonPose.get().timestampSeconds);
     }
     // Checks is the leftPhotonPose has been declared and has a pose to give
-    if(leftPhotonPose != null && leftPhotonPose.get() != null) {
+    if (leftPhotonPose != null && leftPhotonPose.get() != null) {
       addVisionMeasurement(leftPhotonPose.get().estimatedPose.toPose2d(), leftPhotonPose.get().timestampSeconds);
     }
   }
 
   /**
-   * Sets up the vision measurement for swerve; after calling this function, 
-   * use updateVisionMeasurement, note addVisionMeasurement 
+   * Sets up the vision measurement for swerve; after calling this function,
+   * use updateVisionMeasurement, note addVisionMeasurement
+   * 
    * @param robotPose Supplier for the pose of the robot
    * @param timestamp Supplier for the time the pose was taken in seconds
    */
-  public void setupVisionMeasurement(Supplier<EstimatedRobotPose> leftPhotonPose, Supplier<EstimatedRobotPose> rightPhotonPose) {
+  public void setupVisionMeasurement(Supplier<EstimatedRobotPose> leftPhotonPose,
+      Supplier<EstimatedRobotPose> rightPhotonPose) {
     this.leftPhotonPose = leftPhotonPose;
     this.rightPhotonPose = rightPhotonPose;
   }
