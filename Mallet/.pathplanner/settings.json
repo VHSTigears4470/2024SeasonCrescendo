@@ -1,13 +1,13 @@
 {
-  "robotWidth": 0.9,
-  "robotLength": 0.9,
+  "robotWidth": 0.83,
+  "robotLength": 0.8255,
   "holonomicMode": true,
   "pathFolders": [
-    "Hoi"
+    "Hoi",
+    "Start & Center",
+    "Start & Wing"
   ],
-  "autoFolders": [
-    "New Folder"
-  ],
+  "autoFolders": [],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,

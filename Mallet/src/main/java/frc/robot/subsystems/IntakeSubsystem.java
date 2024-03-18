@@ -24,10 +24,10 @@ public class IntakeSubsystem extends SubsystemBase {
     private final DoubleSolenoid notePusherSolenoid;
 
     // Variables for intake motors
-    private final CANSparkMax backMotor;
-    private final CANSparkMax frontMotor;
-    private final RelativeEncoder backEncoder;
-    private final RelativeEncoder frontEncoder;
+    private final CANSparkMax botMotor;
+    private final CANSparkMax topMotor;
+    private final RelativeEncoder botEncoder;
+    private final RelativeEncoder topEncoder;
 
     // Variables for sensors
     private final DigitalInput noteBreakbeam;
@@ -40,35 +40,36 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public IntakeSubsystem() {
         // Pneumatics initialization
-        compressor = new Compressor(IntakeConstants.PCM_MODULE_ID, IntakeConstants.MODULE_TYPE);
-        rightIntakePositionSolenoid = new DoubleSolenoid(IntakeConstants.PCM_MODULE_ID, IntakeConstants.MODULE_TYPE,
+        compressor = new Compressor(IntakeConstants.REVPH_MODULE_ID, IntakeConstants.MODULE_TYPE);
+        rightIntakePositionSolenoid = new DoubleSolenoid(IntakeConstants.REVPH_MODULE_ID, IntakeConstants.MODULE_TYPE,
                 IntakeConstants.RIGHT_INTAKE_REVERSE_CHANNEL_ID,
                 IntakeConstants.RIGHT_INTAKE_FORWARD_CHANNEL_ID);
         rightIntakePositionSolenoid.set(IntakeConstants.INTAKE_DEFAULT_POSITION);
-        leftIntakePositionSolenoid = new DoubleSolenoid(IntakeConstants.PCM_MODULE_ID, IntakeConstants.MODULE_TYPE,
+        leftIntakePositionSolenoid = new DoubleSolenoid(IntakeConstants.REVPH_MODULE_ID, IntakeConstants.MODULE_TYPE,
                 IntakeConstants.LEFT_INTAKE_REVERSE_CHANNEL_ID,
                 IntakeConstants.LEFT_INTAKE_FORWARD_CHANNEL_ID);
         leftIntakePositionSolenoid.set(IntakeConstants.INTAKE_DEFAULT_POSITION);
-        notePusherSolenoid = new DoubleSolenoid(IntakeConstants.PCM_MODULE_ID, IntakeConstants.MODULE_TYPE,
+        notePusherSolenoid = new DoubleSolenoid(IntakeConstants.REVPH_MODULE_ID, IntakeConstants.MODULE_TYPE,
                 IntakeConstants.NOTES_REVERSE_CHANNEL_ID,
                 IntakeConstants.NOTES_FORWARD_CHANNEL_ID); // Update Later
         notePusherSolenoid.set(IntakeConstants.PISTON_DEFAULT_POSITION);
 
         // Motor initialization
-        backMotor = new CANSparkMax(IntakeConstants.FRONT_MOTOR_ID, MotorType.kBrushless);
-        backEncoder = backMotor.getEncoder();
-        backMotor.setIdleMode(IdleMode.kBrake);
-        backMotor.setInverted(false);
-        backEncoder.setPosition(0);
+        botMotor = new CANSparkMax(IntakeConstants.BOT_MOTOR_ID, MotorType.kBrushless);
+        botEncoder = botMotor.getEncoder();
+        botMotor.setIdleMode(IdleMode.kBrake);
+        botMotor.setInverted(false);
+        botEncoder.setPosition(0);
 
-        frontMotor = new CANSparkMax(IntakeConstants.FRONT_MOTOR_ID, MotorType.kBrushless);
-        frontEncoder = frontMotor.getEncoder();
-        frontMotor.setIdleMode(IdleMode.kBrake);
-        frontMotor.setInverted(false);
-        frontEncoder.setPosition(0);
-        backMotor.follow(frontMotor);
+        topMotor = new CANSparkMax(IntakeConstants.TOP_MOTOR_ID, MotorType.kBrushless);
+        topEncoder = topMotor.getEncoder();
+        topMotor.setIdleMode(IdleMode.kBrake);
+        topMotor.setInverted(IntakeConstants.DIRECTION_INVERTED);
+        topEncoder.setPosition(0);
+        botMotor.follow(topMotor, IntakeConstants.FOLLOWER_INVERTED);
+
         // Sensor initialization
-        noteBreakbeam = new DigitalInput(IntakeConstants.NOTE_BREAKBEAM_RX_CHANNEL);
+        noteBreakbeam = new DigitalInput(IntakeConstants.NOTE_BREAKBEAM_DIO);
 
         initializeShuffleboard();
     }
@@ -97,34 +98,34 @@ public class IntakeSubsystem extends SubsystemBase {
 
     /*** Set intake motors to the speed for intaking notes */
     public void setIntakeVoltage() {
-        frontMotor.setVoltage(IntakeConstants.NOTE_INTAKE_VOLTAGE);
+        topMotor.setVoltage(-IntakeConstants.NOTE_INTAKE_VOLTAGE); // Negative for intaking
     }
 
     /***
      * Set intake motors to the speed for shooting the note to the speaker notes
      */
     public void setSpeakerOutputVoltage() {
-        frontMotor.setVoltage(IntakeConstants.SPEAKER_OUTPUT_VOLTAGE);
+        topMotor.setVoltage(IntakeConstants.SPEAKER_OUTPUT_VOLTAGE);
     }
 
     /*** Set intake motors to the speed for shooting the note to the amp */
     public void setAmpOutputVoltage() {
-        frontMotor.setVoltage(IntakeConstants.AMP_OUTPUT_VOLTAGE);
+        topMotor.setVoltage(IntakeConstants.AMP_OUTPUT_VOLTAGE);
     }
 
     /*** Set intake motors to the speed for intaking notes */
     public void setNoteIntakeVoltage() {
-        frontMotor.setVoltage(IntakeConstants.NOTE_INTAKE_VOLTAGE);
+        topMotor.setVoltage(-IntakeConstants.NOTE_INTAKE_VOLTAGE);
     }
 
     /*** Stops motors */
     public void setZeroVoltage() {
-        frontMotor.setVoltage(0);
+        topMotor.setVoltage(0);
     }
 
     /*** Returns the state of the note break beam */
-    public boolean getNoteBreakbeam() {
-        return noteBreakbeam.get();
+    public boolean noteBreambeamTripped() {
+        return !noteBreakbeam.get(); // Inverted because it is true when not tripped
     }
 
     /*** Inits Shuffleboard */
@@ -140,7 +141,7 @@ public class IntakeSubsystem extends SubsystemBase {
                     .withWidget(BuiltInWidgets.kBooleanBox)
                     .getEntry();
             entry_noteBreakBeam = shuffleDebugTab.getLayout("Intake", BuiltInLayouts.kList)
-                    .add("Note Break Beam", false)
+                    .add("Note Break Beam Tripped", false)
                     .withWidget(BuiltInWidgets.kBooleanBox)
                     .getEntry();
         }
@@ -151,7 +152,7 @@ public class IntakeSubsystem extends SubsystemBase {
         if (IntakeConstants.DEBUG) {
             entry_compressorPressure.setDouble(compressor.getPressure());
             entry_compressorSwitch.setBoolean(compressor.getPressureSwitchValue());
-            entry_noteBreakBeam.setBoolean(noteBreakbeam.get());
+            entry_noteBreakBeam.setBoolean(noteBreambeamTripped());
         }
     }
 

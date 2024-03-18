@@ -1,7 +1,6 @@
 package frc.robot.commands.autos;
 
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.Constants;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class AutoGroup_LeaveCommunity extends SequentialCommandGroup {
