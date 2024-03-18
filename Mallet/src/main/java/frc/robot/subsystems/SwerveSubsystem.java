@@ -451,7 +451,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   private void updateShuffleboard() {
     if (IntakeConstants.DEBUG) {
-      entry_swerveHeading.setValue(swerveDrive.getOdometryHeading());
+      entry_swerveHeading.setValue(swerveDrive.getOdometryHeading().getDegrees());
     }
   }
 

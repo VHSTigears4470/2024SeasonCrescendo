@@ -86,12 +86,13 @@ public class RobotContainer {
     // TODO: Reenable
 
     // Configure auto
-    initializeAutoChooser();
+    // initializeAutoChooser();
   }
 
   public void initializeDriveMode() {
     if (DifferentialConstants.USING_DIFFERENTIAL) {
       differentialSub = new DifferentialSubsystem();
+      differentialSub.setDefaultCommand(new ArcadeDrive(differentialSub, xbox1));
     } else {
       differentialSub = null;
     }
@@ -107,7 +108,6 @@ public class RobotContainer {
               () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
               () -> MathUtil.applyDeadband(-xbox1.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
               () -> MathUtil.applyDeadband(-xbox1.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND)));
-          differentialSub.setDefaultCommand(new ArcadeDrive(differentialSub, xbox1));
         } else {
           swerveSub.setDefaultCommand(swerveSub.simDriveCommand(
               () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
@@ -196,9 +196,10 @@ public class RobotContainer {
     // XBOX 1 Configs
     if (RobotContainerConstants.USING_XBOX_1) {
       if (SwerveConstants.USING_SWERVE) {
-        xbox1.a().onTrue(new AbsoluteDriveWithFocus(swerveSub,
-            () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-            () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), "cone"));
+        // xbox1.a().onTrue(new AbsoluteDriveWithFocus(swerveSub,
+        // () -> -xbox1.getLeftY(),
+        // () -> MathUtil.applyDeadband(-xbox1.getLeftX(),
+        // OperatorConstants.LEFT_X_DEADBAND), "cone"));
       }
 
       // if (IntakeConstants.IS_USING_INTAKE && ElevatorConstants.IS_USING_ELEVATOR) {

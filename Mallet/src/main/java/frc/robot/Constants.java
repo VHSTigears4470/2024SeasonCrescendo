@@ -36,8 +36,8 @@ public final class Constants {
     }
 
     public static final class SwerveConstants {
-        public static final boolean USING_SWERVE = false;
-        public static final boolean DEBUG = false;
+        public static final boolean USING_SWERVE = true;
+        public static final boolean DEBUG = true;
 
         public static final PIDFConfig X_AUTO_PID = new PIDFConfig(0.000000005, 0, 0);
         public static final PIDFConfig Y_AUTO_PID = new PIDFConfig(0.000000005, 0, 0);
@@ -75,7 +75,7 @@ public final class Constants {
     }
 
     public static final class IntakeConstants {
-        public static final boolean IS_USING_INTAKE = true;
+        public static final boolean IS_USING_INTAKE = false;
         public static final boolean DEBUG = true;
 
         // PNEUMATICS
@@ -114,7 +114,7 @@ public final class Constants {
     }
 
     public static class ElevatorConstants {
-        public static final boolean IS_USING_ELEVATOR = true;
+        public static final boolean IS_USING_ELEVATOR = false;
         public static final boolean DEBUG = true;
 
         // MOTORS
