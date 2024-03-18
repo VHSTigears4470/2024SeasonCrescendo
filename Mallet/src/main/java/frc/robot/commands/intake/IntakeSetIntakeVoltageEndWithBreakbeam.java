@@ -33,6 +33,6 @@ public class IntakeSetIntakeVoltageEndWithBreakbeam extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return intake.getNoteBreakbeam();
+    return intake.noteBreambeamTripped();
   }
 }
