@@ -1,0 +1,43 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7223726295793819,
+      "y": 6.691938312786578
+    },
+    "rotation": -120.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot Speaker"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Amp Start to Amp Wing"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Drive Till Have Note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Amp Wing to Amp Start"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
