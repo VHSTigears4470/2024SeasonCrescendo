@@ -366,6 +366,20 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   /**
+   * Adds a vision measurement to the swerve
+   * 
+   * @param robotPose  Pose of robot
+   * @param timestamp  Time the pose was taken in seconds
+   * @param covariance The covariance of the measurement
+   */
+  public void addVisionMeasurement(Pose2d robotPose, double timestamp, Matrix<N3, N1> covariance) {
+    // Checks pose is not null
+    if (robotPose != null) {
+      swerveDrive.addVisionMeasurement(robotPose, timestamp, covariance);
+    }
+  }
+
+  /**
    * Updates the vision measurement, should be called after setupVisionMeasurement
    * has been called
    * otherwise will not do anything
