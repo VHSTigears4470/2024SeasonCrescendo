@@ -230,8 +230,8 @@ public class RobotContainer {
     if (RobotContainerConstants.USING_XBOX_1) {
       if (SwerveConstants.USING_SWERVE) {
         xbox1.a().onTrue(new AbsoluteDriveWithFocus(swerveSub,
-            () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-            () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND), "cone"));
+            () -> -xbox1.getLeftY(),
+            () -> -xbox1.getLeftX(), "cone"));
       }
 
       // if (IntakeConstants.IS_USING_INTAKE && ElevatorConstants.IS_USING_ELEVATOR) {
