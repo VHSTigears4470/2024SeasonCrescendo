@@ -41,5 +41,4 @@ public class ElevatorSetPosition extends Command {
   public boolean isFinished() {
     return true;
   }
-
 }

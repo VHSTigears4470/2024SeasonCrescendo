@@ -8,7 +8,6 @@ import frc.robot.Constants.ElevatorConstants.ELEVATOR_STATE;
 import frc.robot.commands.elevator.ElevatorSetHeightState;
 import frc.robot.commands.intake.IntakePusherExtend;
 import frc.robot.commands.intake.IntakePositionExtend;
-import frc.robot.commands.intake.IntakePositionRetract;
 import frc.robot.commands.intake.IntakeSetAmpVoltage;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
