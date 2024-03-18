@@ -64,7 +64,7 @@ public final class Constants {
         public static final boolean DEBUG = true;
 
         // PWM MOTORS
-        public static final int FL_MOTOR_PWM = 3;
+        public static final int FL_MOTOR_PWM = 5;
         public static final int FR_MOTOR_PWM = 0;
         public static final int BL_MOTOR_PWM = 2;
         public static final int BR_MOTOR_PWM = 1;
