@@ -1,11 +1,12 @@
 package frc.robot.commands.command_groups;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.drivebase.DriveForwardWithFocus;
-import frc.robot.commands.drivebase.CenterToFaceNote;
+import frc.robot.commands.drivebase.FaceNoteInstant;
 import frc.robot.commands.intake.IntakeSetIntakeVoltageEndWithBreakbeam;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -24,13 +25,15 @@ public class IntakeNoteWhileFocus extends SequentialCommandGroup {
                             // Sets robot to intake position
                             new IntakePosition(intakeSubsystem, elevatorSubsystem),
                             // Centers robot before going
-                            new CenterToFaceNote(swerveSubsystem, limelight),
+                            new FaceNoteInstant(swerveSubsystem, limelight),
                             new WaitCommand(0.5) // TODO - Link this to a constant in Constants.java
                     ),
                     // Go forward with adjustments until robot is gets a note
                     new ParallelRaceGroup(
                             new IntakeSetIntakeVoltageEndWithBreakbeam(intakeSubsystem),
-                            new DriveForwardWithFocus(swerveSubsystem, limelight)));
+                            new DriveForwardWithFocus(swerveSubsystem, limelight),
+                            new WaitCommand(3) // Deadline
+                    ));
         }
     }
 }
