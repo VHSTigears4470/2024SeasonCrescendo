@@ -1,20 +1,17 @@
 package frc.robot.subsystems;
+
 import static edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition.kBlueAllianceWallRightSide;
 //import static edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition.KRedAllianceWallRightSide;
 import static edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition.kRedAllianceWallRightSide;
-
-import java.util.function.Supplier;
 
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
-import edu.wpi.first.math.Matrix; 
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -27,62 +24,31 @@ import frc.robot.Constants;
 //import frc.robot.Constants.DrivetrainConstants;
 
 public class PoseEstimation extends SubsystemBase {
-    private final Supplier<Rotation2d> rotationSupplier;
-    private final Supplier<SwerveModulePosition[]> modulePositionSupplier;
-    private final SwerveDrivePoseEstimator poseEstimator;
-    private final Field2d field2d = new Field2d();
-    private final PhotonRunnable rightEstimator = new PhotonRunnable(new PhotonCamera("rightCamera"),
-        Constants.PhotonConstants.ROBOT_TO_RIGHT_PHOTON);
-    private final PhotonRunnable leftEstimator = new PhotonRunnable(new PhotonCamera("leftCamera"),
-        Constants.PhotonConstants.ROBOT_TO_LEFT_PHOTON);
+  private final Field2d field2d = new Field2d();
+  private final PhotonRunnable rightEstimator = new PhotonRunnable(new PhotonCamera("rightCamera"),
+      Constants.PhotonConstants.ROBOT_TO_RIGHT_PHOTON);
+  private final PhotonRunnable leftEstimator = new PhotonRunnable(new PhotonCamera("leftCamera"),
+      Constants.PhotonConstants.ROBOT_TO_LEFT_PHOTON);
 
-      // private final Notifier rightNotifier = new Notifier(rightEstimator);
-      // private final Notifier leftNotifier = new Notifier(leftEstimator);
   private final Notifier allNotifier = new Notifier(() -> {
     rightEstimator.run();
     leftEstimator.run();
   });
-  // private final Notifier backNotifier = new Notifier(backEstimator);
 
   private OriginPosition originPosition = kBlueAllianceWallRightSide;
-  private SwerveSubsystem SwerveUse;
+  private SwerveSubsystem swerveSub;
 
-  // private final ArrayList<Double> xValues = new ArrayList<Double>();
-  // private final ArrayList<Double> yValues = new ArrayList<Double>();
-
-  public PoseEstimation(Supplier<Rotation2d> rotationSupplier,
-      Supplier<SwerveModulePosition[]> modulePositionSupplier, SwerveSubsystem swerveUse) {
-    this.rotationSupplier = rotationSupplier;
-    this.modulePositionSupplier = modulePositionSupplier;
-    this.SwerveUse = swerveUse;
-
-    poseEstimator = new SwerveDrivePoseEstimator(
-        swerveUse.getKinematics(),
-        rotationSupplier.get(),
-        modulePositionSupplier.get(),
-        new Pose2d(),
-        Constants.PhotonConstants.STATE_STANDARD_DEVIATIONS,
-        Constants.PhotonConstants.VISION_MEASUREMENT_STANDARD_DEVIATIONS);
+  public PoseEstimation(SwerveSubsystem swerveSub) {
+    this.swerveSub = swerveSub;
 
     // Start PhotonVision thread
-    // rightNotifier.setName("rightRunnable");
-    // rightNotifier.startPeriodic(0.02);
-
-    // // Start PhotonVision thread
-    // leftNotifier.setName("leftRunnable");
-    // leftNotifier.startPeriodic(0.02);
-
     allNotifier.setName("runAll");
-    allNotifier.startPeriodic(0.02);
-
-    // backNotifier.setName("backRunnable");
-    // backNotifier.startPeriodic(0.02);
-
+    allNotifier.startPeriodic(0.2);
   }
 
   public void addDashboardWidgets(ShuffleboardTab tab) {
     tab.add("Field", field2d).withPosition(0, 0).withSize(6, 4);
-    tab.addString("Pose", this::getFomattedPose).withPosition(6, 2).withSize(2, 1);
+    tab.addString("Pose", this::getFormattedPose).withPosition(6, 2).withSize(2, 1);
   }
 
   /**
@@ -110,15 +76,13 @@ public class PoseEstimation extends SubsystemBase {
       // Since a tag was seen, and the tags are all relative to the coordinate system,
       // the estimated pose
       // needs to be transformed to the new coordinate system.
-      var newPose = flipAlliance(getCurrentPose());
-      poseEstimator.resetPosition(rotationSupplier.get(), modulePositionSupplier.get(), newPose);
+      var newPose = flipAlliance(swerveSub.getPose());
+      swerveSub.resetOdometry(newPose);
     }
   }
 
   @Override
   public void periodic() {
-    // Update pose estimator with drivetrain sensors
-    poseEstimator.update(rotationSupplier.get(), modulePositionSupplier.get());
     if (Constants.PhotonConstants.USING_VISION) {
       estimatorChecker(rightEstimator);
       estimatorChecker(leftEstimator);
@@ -129,7 +93,7 @@ public class PoseEstimation extends SubsystemBase {
     // estimatorChecker(backEstimator);
 
     // Set the pose on the dashboard
-    var dashboardPose = poseEstimator.getEstimatedPosition();
+    var dashboardPose = swerveSub.getPose();
     if (originPosition == kRedAllianceWallRightSide) {
       // Flip the pose when red, since the dashboard field photo cannot be rotated
       dashboardPose = flipAlliance(dashboardPose);
@@ -137,27 +101,12 @@ public class PoseEstimation extends SubsystemBase {
     field2d.setRobotPose(dashboardPose);
   }
 
-  private String getFomattedPose() {
-    var pose = getCurrentPose();
+  private String getFormattedPose() {
+    var pose = swerveSub.getPose();
     return String.format("(%.3f, %.3f) %.2f degrees",
         pose.getX(),
         pose.getY(),
         pose.getRotation().getDegrees());
-  }
-
-  public Pose2d getCurrentPose() {
-    return poseEstimator.getEstimatedPosition();
-  }
-
-  /**
-   * Resets the current pose to the specified pose. This should ONLY be called
-   * when the robot's position on the field is known, like at the beginning of
-   * a match.
-   * 
-   * @param newPose new pose
-   */
-  public void setCurrentPose(Pose2d newPose) {
-    poseEstimator.resetPosition(rotationSupplier.get(), modulePositionSupplier.get(), newPose);
   }
 
   /**
@@ -166,7 +115,7 @@ public class PoseEstimation extends SubsystemBase {
    * what "forward" is for field oriented driving.
    */
   public void resetFieldPosition() {
-    setCurrentPose(new Pose2d());
+    swerveSub.resetOdometry(new Pose2d());
   }
 
   /**
@@ -221,23 +170,16 @@ public class PoseEstimation extends SubsystemBase {
     return Constants.PhotonConstants.VISION_MEASUREMENT_STANDARD_DEVIATIONS.times(confidenceMultiplier);
   }
 
-  public void estimatorChecker(PhotonRunnable estamator) {
-    var cameraPose = estamator.grabLatestEstimatedPose();
+  public void estimatorChecker(PhotonRunnable estimator) {
+    var cameraPose = estimator.grabLatestEstimatedPose();
     if (cameraPose != null) {
       // New pose from vision
       var pose2d = cameraPose.estimatedPose.toPose2d();
       if (originPosition == kRedAllianceWallRightSide) {
         pose2d = flipAlliance(pose2d);
       }
-      poseEstimator.addVisionMeasurement(pose2d, cameraPose.timestampSeconds,
+      swerveSub.addVisionMeasurement(pose2d, cameraPose.timestampSeconds,
           confidenceCalculator(cameraPose));
     }
   }
 }
-
-
-
-
-
-
-
