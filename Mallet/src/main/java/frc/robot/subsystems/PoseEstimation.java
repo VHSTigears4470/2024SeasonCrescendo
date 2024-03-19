@@ -43,7 +43,7 @@ public class PoseEstimation extends SubsystemBase {
 
     // Start PhotonVision thread
     allNotifier.setName("runAll");
-    allNotifier.startPeriodic(0.02);
+    allNotifier.startPeriodic(0.2);
   }
 
   public void addDashboardWidgets(ShuffleboardTab tab) {
