@@ -104,8 +104,8 @@ public class RobotContainer {
       if (RobotContainerConstants.USING_XBOX_1) {
         if (RobotBase.isReal()) {
           swerveSub.setDefaultCommand(new AbsoluteDrive(swerveSub,
-              () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-              () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+              () -> -xbox1.getLeftY(),
+              () -> -xbox1.getLeftX(),
               () -> MathUtil.applyDeadband(-xbox1.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
               () -> MathUtil.applyDeadband(-xbox1.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND)));
         } else {
