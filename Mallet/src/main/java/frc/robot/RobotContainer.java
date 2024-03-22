@@ -16,12 +16,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.DeadbandCommandXboxController;
 import frc.robot.Constants.DifferentialConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.Constants.RobotContainerConstants;
+import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.ElevatorConstants.ELEVATOR_STATE;
 import frc.robot.commands.command_groups.*;
@@ -54,8 +54,8 @@ public class RobotContainer {
   private static ElevatorSubsystem elevatorSub;
 
   // INIT XBOX CONTROLLER
-  public static CommandXboxController xbox1; // Driver
-  public static CommandXboxController xbox2; // Operator
+  public static DeadbandCommandXboxController xbox1; // Driver
+  public static DeadbandCommandXboxController xbox2; // Operator
 
   // SMARTDASHBOARD
   private SendableChooser<Command> autoChooser = new SendableChooser<Command>();
@@ -101,17 +101,17 @@ public class RobotContainer {
       swerveSub = new SwerveSubsystem(
           new File(Filesystem.getDeployDirectory(), "neo/swerve"));
 
-      if (RobotContainerConstants.USING_XBOX_1) {
+      if (OperatorConstants.USING_XBOX_1) {
         if (RobotBase.isReal()) {
           swerveSub.setDefaultCommand(new AbsoluteDrive(swerveSub,
-              () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-              () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-              () -> MathUtil.applyDeadband(-xbox1.getRightX(), OperatorConstants.RIGHT_X_DEADBAND),
-              () -> MathUtil.applyDeadband(-xbox1.getRightY(), OperatorConstants.RIGHT_Y_DEADBAND)));
+              () -> -xbox1.getLeftY(),
+              () -> -xbox1.getLeftX(),
+              () -> -xbox1.getRightX(),
+              () -> -xbox1.getRightY()));
         } else {
           swerveSub.setDefaultCommand(swerveSub.simDriveCommand(
-              () -> MathUtil.applyDeadband(-xbox1.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-              () -> MathUtil.applyDeadband(-xbox1.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+              () -> -xbox1.getLeftY(),
+              () -> -xbox1.getLeftX(),
               () -> -xbox1.getRawAxis(2)));
         }
       }
@@ -127,11 +127,11 @@ public class RobotContainer {
     if (ElevatorConstants.IS_USING_ELEVATOR) {
       elevatorSub = new ElevatorSubsystem();
     }
-    if (RobotContainerConstants.USING_XBOX_1) {
-      xbox1 = new CommandXboxController(RobotContainerConstants.XBOX_1_ID);
+    if (OperatorConstants.USING_XBOX_1) {
+      xbox1 = new DeadbandCommandXboxController(OperatorConstants.XBOX_1_ID, OperatorConstants.XBOX_1_DEADBAND);
     }
-    if (RobotContainerConstants.USING_XBOX_2) {
-      xbox2 = new CommandXboxController(RobotContainerConstants.XBOX_2_ID);
+    if (OperatorConstants.USING_XBOX_2) {
+      xbox2 = new DeadbandCommandXboxController(OperatorConstants.XBOX_2_ID, OperatorConstants.XBOX_2_DEADBAND);
     }
   }
 
@@ -194,7 +194,7 @@ public class RobotContainer {
   // assign button functions
   private void configureButtonBindings() {
     // XBOX 1 Configs
-    if (RobotContainerConstants.USING_XBOX_1) {
+    if (OperatorConstants.USING_XBOX_1) {
       if (SwerveConstants.USING_SWERVE) {
         // xbox1.a().onTrue(new AbsoluteDriveWithFocus(swerveSub,
         // () -> -xbox1.getLeftY(),
@@ -252,7 +252,7 @@ public class RobotContainer {
       }
     }
     // XBOX 2 Configs
-    if (RobotContainerConstants.USING_XBOX_2) {
+    if (OperatorConstants.USING_XBOX_2) {
       // if (ElevatorConstants.IS_USING_ELEVATOR) {
       // xbox2.a().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub,
       // 0.1));

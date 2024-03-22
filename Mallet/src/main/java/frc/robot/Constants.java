@@ -13,19 +13,13 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public final class Constants {
-    public static class OperatorConstants {
-        // DEADBANDS
-        public static final double LEFT_X_DEADBAND = 0.05;
-        public static final double LEFT_Y_DEADBAND = 0.05;
-        public static final double RIGHT_X_DEADBAND = 0.01;
-        public static final double RIGHT_Y_DEADBAND = 0.01;
-    }
-
-    public static final class RobotContainerConstants {
+    public static final class OperatorConstants {
         public static final boolean USING_XBOX_1 = true;
         public static final boolean USING_XBOX_2 = false;
         public static final int XBOX_1_ID = 0;
         public static final int XBOX_2_ID = 1;
+        public static final double XBOX_1_DEADBAND = 0.3;
+        public static final double XBOX_2_DEADBAND = 0.3;
     }
 
     public static final class CycleTimes {
