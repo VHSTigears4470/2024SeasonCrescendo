@@ -75,11 +75,11 @@ public class RobotContainer {
     // Initialize the other subsystems and controllers
     initializeOtherVars();
 
-    // Configure default commands
-    configureButtonBindings();
-
     // Initialize Shuffleboard
     initializeShuffleboard();
+
+    // Configure default commands
+    configureButtonBindings();
 
     // Initialize path planner command names
     // initializeCommandNames();

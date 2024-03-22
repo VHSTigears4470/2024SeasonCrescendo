@@ -128,10 +128,10 @@ public final class Constants {
                                                                // direction is positive voltage
 
         // HEIGHT CALCULATIONS
-        private static final double GEAR_RADIUS = 1.756 / 2; // Sprocket WCP-0560, outermost radius 1.981, 1.756 inner
+        private static final double GEAR_RADIUS = 2.1 / 2; // Sprocket WCP-0560, outermost radius 1.981, 1.756 inner
         private static final double GEAR_CIRCUMFRENCE = 2 * Math.PI * GEAR_RADIUS;
         private static final double GEAR_RATIO = 60;
-        public static final double CONVERSION_RATIO = GEAR_CIRCUMFRENCE / GEAR_RATIO * 2;
+        public static final double CONVERSION_RATIO = GEAR_CIRCUMFRENCE / GEAR_RATIO * 2; // * 2 for 2 stages
 
         // SENSORS
         public static final int BOTTOM_BREAKBEAM_DIO = 1; // TODO: Update
