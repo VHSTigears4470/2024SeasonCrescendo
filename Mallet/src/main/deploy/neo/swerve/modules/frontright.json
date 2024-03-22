@@ -1,9 +1,9 @@
 {
   "location": {
-    "front": 17.0565,
+    "front": 0,
     "left": -10.377
   },
-  "absoluteEncoderOffset": 300.234,
+  "absoluteEncoderOffset": -119.619140625,
   "drive": {
     "type": "sparkmax",
     "id": 6,
@@ -24,7 +24,7 @@
     "canbus": null
   },
   "inverted": {
-    "drive": true,
+    "drive": false,
     "angle": false
   }
 }
