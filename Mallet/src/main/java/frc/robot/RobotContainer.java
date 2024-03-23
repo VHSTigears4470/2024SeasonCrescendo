@@ -32,8 +32,8 @@ import frc.robot.commands.elevator.ElevatorChangePosition;
 import frc.robot.commands.elevator.ElevatorChangePositionIgnoreSoftLimit;
 import frc.robot.commands.elevator.ElevatorSetHeightState;
 import frc.robot.commands.elevator.ElevatorZero;
-import frc.robot.commands.intake.IntakePositionExtend;
-import frc.robot.commands.intake.IntakePositionRetract;
+import frc.robot.commands.intake.IntakePositionDown;
+import frc.robot.commands.intake.IntakePositionUp;
 import frc.robot.commands.intake.IntakePusherExtend;
 import frc.robot.commands.intake.IntakePusherRetract;
 import frc.robot.commands.intake.IntakeSetAmpVoltage;
@@ -181,7 +181,6 @@ public class RobotContainer {
       NamedCommands.registerCommand("Climb Position", new ClimbPosition(intakeSub, elevatorSub));
       NamedCommands.registerCommand("Default Position", new DefaultPosition(intakeSub, elevatorSub));
       NamedCommands.registerCommand("Intake Note", new IntakePositionAndSuck(intakeSub, elevatorSub));
-      NamedCommands.registerCommand("Robot Climb", new RobotClimbCommandGroup(intakeSub, elevatorSub));
       NamedCommands.registerCommand("Shoot Amp", new ShootAmpAndReset(intakeSub, elevatorSub));
       NamedCommands.registerCommand("Shoot Speaker", new ShootSpeakerAndReset(intakeSub, elevatorSub));
     }
@@ -195,18 +194,6 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // XBOX 1 Configs
     if (OperatorConstants.USING_XBOX_1) {
-      if (SwerveConstants.USING_SWERVE) {
-        // xbox1.a().onTrue(new AbsoluteDriveWithFocus(swerveSub,
-        // () -> -xbox1.getLeftY(),
-        // () -> MathUtil.applyDeadband(-xbox1.getLeftX(),
-        // OperatorConstants.LEFT_X_DEADBAND), "cone"));
-      }
-
-      // if (IntakeConstants.IS_USING_INTAKE && ElevatorConstants.IS_USING_ELEVATOR) {
-      // xbox1.y().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
-      // xbox1.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
-      // xbox1.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
-      // }
 
       if (IntakeConstants.IS_USING_INTAKE && IntakeConstants.DEBUG) {
         // TODO - Remove the debug commands for real testing
@@ -218,9 +205,9 @@ public class RobotContainer {
         xbox1.a().whileTrue(new IntakeSetAmpVoltage(intakeSub))
             .onFalse(new IntakeSetZeroVoltage(intakeSub));
 
-        shuffleDebugIntakeCommandList.add("Intake Retract", new IntakePositionRetract(intakeSub))
+        shuffleDebugIntakeCommandList.add("Intake Retract", new IntakePositionUp(intakeSub))
             .withWidget(BuiltInWidgets.kCommand);
-        shuffleDebugIntakeCommandList.add("Intake Extend", new IntakePositionExtend(intakeSub))
+        shuffleDebugIntakeCommandList.add("Intake Extend", new IntakePositionDown(intakeSub))
             .withWidget(BuiltInWidgets.kCommand);
         shuffleDebugIntakeCommandList.add("Intake Pusher Retract", new IntakePusherRetract(intakeSub))
             .withWidget(BuiltInWidgets.kCommand);
@@ -242,18 +229,20 @@ public class RobotContainer {
             .withWidget(BuiltInWidgets.kCommand);
         shuffleDebugElevatorCommandList.add("Elevator Down",
             new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.DOWN)).withWidget(BuiltInWidgets.kCommand);
+        shuffleDebugElevatorCommandList
+            .add("Elevator Climb", new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.CLIMB))
+            .withWidget(BuiltInWidgets.kCommand);
 
-        // xbox1.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
-        // //TODO - Check if this is intentional or not as it overlaps with xbox2
-        // xbox1.y().whileTrue(new DefaultPosition(intakeSub, elevatorSub)); //TODO -
-        // Check if this is intentional or not as it overlaps with xbox2
-        // xbox1.leftBumper().whileTrue(new SetVoltage(elevatorSub, -1));
-        // xbox1.rightBumper().whileTrue(new SetVoltage(elevatorSub, 1));
+        // Positions
+        shuffleDebugElevatorCommandList.add("Default Position", new DefaultPosition(intakeSub, elevatorSub))
+            .withWidget(BuiltInWidgets.kCommand);
+        shuffleDebugElevatorCommandList.add("IntakeAndSuckPosition", new IntakePositionAndSuck(intakeSub, elevatorSub))
+            .withWidget(BuiltInWidgets.kCommand);
       }
     }
     // XBOX 2 Configs
     if (OperatorConstants.USING_XBOX_2) {
-      // if (ElevatorConstants.IS_USING_ELEVATOR) {
+      // if (ElevatorConstants.IS_USING_ELEVATOR && !ElevatorConstants.DEBUG) {
       // xbox2.a().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub,
       // 0.1));
       // xbox2.b().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub,

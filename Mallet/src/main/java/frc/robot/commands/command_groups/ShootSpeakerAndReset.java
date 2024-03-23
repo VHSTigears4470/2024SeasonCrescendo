@@ -7,7 +7,7 @@ import frc.robot.commands.intake.IntakePusherExtend;
 import frc.robot.Constants.CycleTimes;
 import frc.robot.Constants.ElevatorConstants.ELEVATOR_STATE;
 import frc.robot.commands.elevator.ElevatorSetHeightState;
-import frc.robot.commands.intake.IntakePositionRetract;
+import frc.robot.commands.intake.IntakePositionUp;
 import frc.robot.commands.intake.IntakeSetSpeakerVoltage;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -20,7 +20,7 @@ public class ShootSpeakerAndReset extends SequentialCommandGroup {
             addCommands(
                     // TODO: Light on the robot glows when in correct range/radius around the
                     // speaker and pointing in correct direction
-                    new IntakePositionRetract(intakeSubsystem),
+                    new IntakePositionUp(intakeSubsystem),
                     new ElevatorSetHeightState(elevatorSubsystem, ELEVATOR_STATE.DOWN),
                     new IntakeSetSpeakerVoltage(intakeSubsystem),
                     new WaitCommand(CycleTimes.INTAKE_MOTORS_WARM_UP_CYCLE_TIME),

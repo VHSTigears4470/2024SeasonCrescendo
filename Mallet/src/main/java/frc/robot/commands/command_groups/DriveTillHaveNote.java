@@ -1,25 +1,25 @@
 package frc.robot.commands.command_groups;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants.CycleTimes;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.drivebase.DriveForward;
+import frc.robot.commands.intake.IntakeSetIntakeVoltageEndWithBreakbeam;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class DriveTillHaveNote extends SequentialCommandGroup {
-    public DriveTillHaveNote(IntakeSubsystem intake, ElevatorSubsystem elevator, SwerveSubsystem swerve) {
-        addRequirements(intake, elevator, swerve);
+    public DriveTillHaveNote(IntakeSubsystem intake, ElevatorSubsystem elevatorSubsystem, SwerveSubsystem swerve) {
+        addRequirements(intake, elevatorSubsystem, swerve);
         swerve.getHeading();
         addCommands(
-                new IntakePosition(intake, elevator),
-                new WaitCommand(CycleTimes.CHANGE_POSITIONS_CYCLE_TIME),
-                new ParallelCommandGroup(
-                        new IntakePositionAndSuck(intake, elevator),
+                new IntakePosition(intake, elevatorSubsystem),
+                new WaitUntilCommand(elevatorSubsystem::isAtPos),
+                new ParallelRaceGroup(
+                        new IntakeSetIntakeVoltageEndWithBreakbeam(intake),
                         new DriveForward(swerve, SwerveConstants.SWERVE_AUTO_VELOCITY)),
-                new DefaultPosition(intake, elevator));
+                new DefaultPosition(intake, elevatorSubsystem));
     }
 }

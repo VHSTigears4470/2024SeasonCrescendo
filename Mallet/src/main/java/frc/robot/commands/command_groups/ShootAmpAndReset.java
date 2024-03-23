@@ -7,7 +7,7 @@ import frc.robot.Constants.CycleTimes;
 import frc.robot.Constants.ElevatorConstants.ELEVATOR_STATE;
 import frc.robot.commands.elevator.ElevatorSetHeightState;
 import frc.robot.commands.intake.IntakePusherExtend;
-import frc.robot.commands.intake.IntakePositionExtend;
+import frc.robot.commands.intake.IntakePositionDown;
 import frc.robot.commands.intake.IntakeSetAmpVoltage;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -20,7 +20,7 @@ public class ShootAmpAndReset extends SequentialCommandGroup {
             addCommands(
                     // TODO: Align to amp with on the fly path planning, ensure that the path is
                     // actually only traversed when close enough to the amp to prevent collisions
-                    new IntakePositionExtend(intakeSubsystem),
+                    new IntakePositionDown(intakeSubsystem),
                     new ElevatorSetHeightState(elevatorSubsystem, ELEVATOR_STATE.UP),
                     new IntakeSetAmpVoltage(intakeSubsystem),
                     new WaitCommand(CycleTimes.INTAKE_MOTORS_WARM_UP_CYCLE_TIME),
