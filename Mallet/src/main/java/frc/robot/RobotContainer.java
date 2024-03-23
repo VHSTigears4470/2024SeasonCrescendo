@@ -83,9 +83,6 @@ public class RobotContainer {
   public static final HashMap<String, Command> eventMap = new HashMap<>();
 
   public RobotContainer() {
-
-    initializeOtherVars();
-
     // Initialize drive system (swerve or differential)
     initializeDriveMode();
     // Initialize the other subsystems and controllers
@@ -99,7 +96,6 @@ public class RobotContainer {
 
     // Initialize path planner command names
     initializeCommandNames();
-    // TODO: Reenable
 
     // Configure auto
     initializeAutoChooser();
@@ -184,22 +180,24 @@ public class RobotContainer {
     }
 
     // Fills each Combo Chooser with all options
-    for (SendableChooser<String> currentNoteChooser : autoDirections) {
-      currentNoteChooser.setDefaultOption("Do Nothing", "Nothing"); // Depends on whether at the speaker or not
-      currentNoteChooser.addOption("Amp Wing Cycle", AutoConstants.AMP_WING_CYCLE);
-      currentNoteChooser.addOption("Middle Wing Cycle", AutoConstants.MIDDLE_WING_CYCLE);
-      currentNoteChooser.addOption("Feeder Wing Cycle", AutoConstants.FEEDER_WING_CYCLE);
+    for (SendableChooser<String> compiledCommandEnd : autoDirections) {
+      compiledCommandEnd.setDefaultOption("Do Nothing", "Nothing"); // Depends on whether at the speaker or not
+      if (SwerveConstants.USING_SWERVE) {
+        compiledCommandEnd.addOption("Amp Wing Cycle", AutoConstants.AMP_WING_CYCLE_ENDING);
+        compiledCommandEnd.addOption("Middle Wing Cycle", AutoConstants.MIDDLE_WING_CYCLE_ENDING);
+        compiledCommandEnd.addOption("Feeder Wing Cycle", AutoConstants.FEEDER_WING_CYCLE_ENDING);
 
-      currentNoteChooser.addOption("Amp Center Note", AutoConstants.AMP_CENTER_NOTE);
-      currentNoteChooser.addOption("Amp Middle Center Note", AutoConstants.AMP_MIDDLE_CENTER_NOTE);
-      currentNoteChooser.addOption("Middle Center Note", AutoConstants.MIDDLE_CENTER_NOTE);
-      currentNoteChooser.addOption("Feeder Middle Center Note", AutoConstants.FEEDER_MIDDLE_CENTER_NOTE);
-      currentNoteChooser.addOption("Feeder Center Note", AutoConstants.FEEDER_CENTER_NOTE);
+        compiledCommandEnd.addOption("Amp Center Note", AutoConstants.AMP_CENTER_NOTE_ENDING);
+        compiledCommandEnd.addOption("Amp Middle Center Note", AutoConstants.AMP_MIDDLE_CENTER_NOTE_ENDING);
+        compiledCommandEnd.addOption("Middle Center Note", AutoConstants.MIDDLE_CENTER_NOTE_ENDING);
+        compiledCommandEnd.addOption("Feeder Middle Center Note", AutoConstants.FEEDER_MIDDLE_CENTER_NOTE_ENDING);
+        compiledCommandEnd.addOption("Feeder Center Note", AutoConstants.FEEDER_CENTER_NOTE_ENDING);
+      }
 
       // Named commands
       if (IntakeConstants.IS_USING_INTAKE) {
-        currentNoteChooser.addOption("Shoot speaker", "Shoot Speaker");
-        currentNoteChooser.addOption("Shoot amp", "Shoot Amp");
+        compiledCommandEnd.addOption("Shoot speaker", "Shoot Speaker");
+        compiledCommandEnd.addOption("Shoot amp", "Shoot Amp");
       }
     }
     // Adds the base position to the shuffleboard list
@@ -225,7 +223,8 @@ public class RobotContainer {
     }
     if (Constants.IntakeConstants.IS_USING_INTAKE && Constants.ElevatorConstants.IS_USING_ELEVATOR
         && Constants.SwerveConstants.USING_SWERVE) {
-      NamedCommands.registerCommand(AutoConstants.DRIVE_TIL_HAVE_NOTE, new DriveTillHaveNote(intakeSub, elevatorSub, swerveSub));
+      NamedCommands.registerCommand(AutoConstants.DRIVE_TIL_HAVE_NOTE,
+          new DriveTillHaveNote(intakeSub, elevatorSub, swerveSub));
     }
   }
 
@@ -283,6 +282,10 @@ public class RobotContainer {
             .add("Elevator Climb", new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.CLIMB))
             .withWidget(BuiltInWidgets.kCommand);
 
+      }
+
+      if (IntakeConstants.IS_USING_INTAKE && IntakeConstants.DEBUG && ElevatorConstants.IS_USING_ELEVATOR
+          && ElevatorConstants.DEBUG) {
         // Positions
         shuffleDebugElevatorCommandList.add("Default Position", new DefaultPosition(intakeSub, elevatorSub))
             .withWidget(BuiltInWidgets.kCommand);

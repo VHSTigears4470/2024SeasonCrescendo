@@ -15,14 +15,12 @@ public class DefaultPosition extends SequentialCommandGroup {
     public DefaultPosition(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem) {
         addRequirements(intakeSubsystem, elevatorSubsystem);
         addCommands(
-                // Delay retraction of intake to allow for elevator to go down first
-                new ParallelCommandGroup(
-                        new SequentialCommandGroup(
-                                new ElevatorSetHeightState(elevatorSubsystem, ElevatorConstants.ELEVATOR_STATE.DOWN),
-                                new WaitUntilCommand(elevatorSubsystem::isAtPos),
-                                new IntakePositionUp(intakeSubsystem)),
-                        new SequentialCommandGroup(
-                                new IntakeSetZeroVoltage(intakeSubsystem), // Sequential because use same subsystem
-                                new IntakePusherRetract(intakeSubsystem))));
+                // Delay retraction of intake to allow for elevator to go down first to prevent
+                // out of bounds
+                new ElevatorSetHeightState(elevatorSubsystem, ElevatorConstants.ELEVATOR_STATE.DOWN),
+                new WaitUntilCommand(elevatorSubsystem::isAtPos),
+                new IntakePositionUp(intakeSubsystem),
+                new IntakeSetZeroVoltage(intakeSubsystem), // Sequential because use same subsystem
+                new IntakePusherRetract(intakeSubsystem));
     }
 }

@@ -33,7 +33,7 @@ public final class Constants {
     }
 
     public static final class AutoConstants {
-        public static final int numOfDirections = 4;
+        public static final int numOfDirections = 8;
 
         // String Names for starting Position
         public static final String AMP_SIDE_START = "Amp Side to";
@@ -44,7 +44,7 @@ public final class Constants {
         public static final String AMP_WING_CYCLE_ENDING = "Amp Wing Cycle";
         public static final String MIDDLE_WING_CYCLE_ENDING = "Middle Wing Cycle";
         public static final String FEEDER_WING_CYCLE_ENDING = "Feeder Wing Cycle";
-        
+
         // String Names for Center Note Paths
         public static final String AMP_CENTER_NOTE_ENDING = "Amp Center Note";
         public static final String AMP_MIDDLE_CENTER_NOTE_ENDING = "Amp Middle Center Note";
