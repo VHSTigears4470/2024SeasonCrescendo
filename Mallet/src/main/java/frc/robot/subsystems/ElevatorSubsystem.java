@@ -4,6 +4,9 @@
 
 package frc.robot.subsystems;
 
+import java.sql.Driver;
+
+import com.ctre.phoenix.Logger;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -184,6 +187,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
     if (topBreakbeamTripped() && !topBreakbeamTripped) {
       highestPos = leftEncoder.getPosition();
+
       topBreakbeamTripped = true;
       leftMotor.setVoltage(0); // Stop motor
       pidController.setOutputRange(ElevatorConstants.PID_KMIN_OUTPUT, 0); // Only allowed to go down

@@ -30,7 +30,7 @@ public final class Constants {
     }
 
     public static final class SwerveConstants {
-        public static final boolean USING_SWERVE = true;
+        public static final boolean USING_SWERVE = false;
         public static final boolean DEBUG = true;
 
         public static final PIDFConfig X_AUTO_PID = new PIDFConfig(0.000000005, 0, 0);
@@ -108,7 +108,7 @@ public final class Constants {
     }
 
     public static class ElevatorConstants {
-        public static final boolean IS_USING_ELEVATOR = false;
+        public static final boolean IS_USING_ELEVATOR = true;
         public static final boolean DEBUG = true;
 
         // MOTORS
@@ -132,19 +132,19 @@ public final class Constants {
         public static final int TOP_BREAKBEAM_DIO = 3; // TODO: Update
 
         // PID
-        public static final double PID_KP = 0.00000011015; // TODO: Tune
+        public static final double PID_KP = 0.0000010015; // TODO: Tune
         public static final double PID_KI = 0; // TODO: Tune
         public static final double PID_KD = 0.0000000; // TODO: Tune
         public static final double PID_KIZ = 0.005; // TODO: Tune
-        public static final double PID_KFF = 0.00031; // TODO: Tune
+        public static final double PID_KFF = 0.00071; // TODO: Tune
         /** Max positive voltage (must be positive) */
-        public static final double PID_KMAX_OUTPUT = 3; // TODO: Tune
+        public static final double PID_KMAX_OUTPUT = 3.5; // TODO: Tune
         /** Max negative voltage (must be negative) */
-        public static final double PID_KMIN_OUTPUT = -3; // TODO: Tune
+        public static final double PID_KMIN_OUTPUT = -3.5; // TODO: Tune
 
         // SMART MOTION
         public static final int SM_ID = 0;
-        private static final double SM_MAX_INCHES_VEL = 6; // Elevator maximum inches per second
+        private static final double SM_MAX_INCHES_VEL = 12; // Elevator maximum inches per second
         public static final double SM_MAX_RPM_VEL = SM_MAX_INCHES_VEL / GEAR_CIRCUMFRENCE
                 * GEAR_RATIO * 60; // Elevator maximum revolutions per minute -> revolutions -> gear ratio
 
@@ -161,7 +161,7 @@ public final class Constants {
         // ELEVATOR STATES
         // TODO: Find correct heights
         public static final double LOW_INIT_HEIGHT = 0;
-        public static final double HIGH_INIT_HEIGHT = 14;// 28 inches up
+        public static final double HIGH_INIT_HEIGHT = 30;// 28 inches up
         public static final double CLIMB_HEIGHT = 16;
 
         public static enum ELEVATOR_STATE {
