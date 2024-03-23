@@ -93,7 +93,7 @@ public final class Constants {
     }
 
     public static final class IntakeConstants {
-        public static final boolean IS_USING_INTAKE = false;
+        public static final boolean IS_USING_INTAKE = true;
         public static final boolean DEBUG = true;
 
         // PNEUMATICS
@@ -132,7 +132,7 @@ public final class Constants {
     }
 
     public static class ElevatorConstants {
-        public static final boolean IS_USING_ELEVATOR = false;
+        public static final boolean IS_USING_ELEVATOR = true;
         public static final boolean DEBUG = true;
 
         // MOTORS

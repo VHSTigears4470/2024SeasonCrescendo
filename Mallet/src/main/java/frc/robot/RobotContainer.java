@@ -46,6 +46,7 @@ import frc.robot.commands.intake.IntakeSetSpeakerVoltage;
 import frc.robot.commands.intake.IntakeSetZeroVoltage;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -67,7 +68,6 @@ public class RobotContainer {
   // SMARTDASHBOARD
   private SendableChooser<Command> autoChooser;
 
-  
   // private GenericEntry
   private SendableChooser<String> basePositionChooser;
   private ArrayList<SendableChooser<String>> autoDirections; // List to hold all the auto directions set by the driver
@@ -160,7 +160,7 @@ public class RobotContainer {
     }
     if (OperatorConstants.USING_XBOX_1) {
       xbox1 = new DeadbandCommandXboxController(OperatorConstants.XBOX_1_ID,
-      OperatorConstants.XBOX_1_DEADBAND);
+          OperatorConstants.XBOX_1_DEADBAND);
     }
     if (OperatorConstants.USING_XBOX_2) {
       xbox2 = new DeadbandCommandXboxController(OperatorConstants.XBOX_2_ID, OperatorConstants.XBOX_2_DEADBAND);
@@ -169,7 +169,6 @@ public class RobotContainer {
 
   public void initializeAutoChooser() {
     // Init Auto Chooser
-    autoChooser = new SendableChooser<Command>();
     basePositionChooser = new SendableChooser<String>();
     autoDirections = new ArrayList<SendableChooser<String>>();
 
@@ -179,13 +178,13 @@ public class RobotContainer {
     basePositionChooser.addOption("Feeder Side", "Feeder Side to ");
 
     // Fills with number of wanted directions
-    for(int i = 0; i < OperatorConstants.numOfDirections; i++) {
+    for (int i = 0; i < OperatorConstants.numOfDirections; i++) {
       autoDirections.add(new SendableChooser<String>());
     }
 
     // Fills each Combo Chooser with all options
-    for(SendableChooser<String> currentNoteChooser : autoDirections) {
-      currentNoteChooser.setDefaultOption("No Note", "Nothing");
+    for (SendableChooser<String> currentNoteChooser : autoDirections) {
+      currentNoteChooser.setDefaultOption("Do Nothing", "Nothing"); // Depends on whether at the speaker or not
       currentNoteChooser.addOption("Amp Wing Cycle", "Amp Wing Cycle");
       currentNoteChooser.addOption("Middle Wing Cycle", "Middle Wing Cycle");
       currentNoteChooser.addOption("Feeder Wing Cycle", "Feeder Wing Cycle");
@@ -195,60 +194,27 @@ public class RobotContainer {
       currentNoteChooser.addOption("Middle Center Note", "Middle Center Note");
       currentNoteChooser.addOption("Feeder Middle Center Note", "Feeder Middle Center Note");
       currentNoteChooser.addOption("Feeder Center Note", "Feeder Center Note");
+
+      // Named commands
+      if (IntakeConstants.IS_USING_INTAKE) {
+        currentNoteChooser.addOption("Shoot speaker", "Shoot Speaker");
+        currentNoteChooser.addOption("Shoot amp", "Shoot Amp");
+      }
     }
-    // with command chooser
-    autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
-    if (SwerveConstants.USING_SWERVE && Constants.IntakeConstants.IS_USING_INTAKE
-        && Constants.ElevatorConstants.IS_USING_ELEVATOR) {
-      // autoChooser = AutoBuilder.buildAutoChooser();
-      // Amp Start
-      autoChooser.addOption("Amp Start to Amp Wing Cycle",
-          swerveSub.getAutonomousCommand("Amp Start to Amp Wing Cycle", false)
-              .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
-      autoChooser.addOption("Amp Start to Middle Wing Cycle",
-          swerveSub.getAutonomousCommand("Amp Start to Middle Wing Cycle", false)
-              .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
-      autoChooser.addOption("Amp Start to Feeder Wing Cycle",
-          swerveSub.getAutonomousCommand("Amp Start to Feeder Wing Cycle", false)
-              .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
-      // Middle Start
-      autoChooser.addOption("Middle Start to Feeder Wing Cycle",
-          swerveSub.getAutonomousCommand("Middle Start to Feeder Wing Cycle", false)
-              .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
-      autoChooser.addOption("Middle Start to Amp Wing Cycle",
-          swerveSub.getAutonomousCommand("Middle Start to Middle Wing Cycle", false)
-              .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
-      autoChooser.addOption("Middle Start to Amp Wing Cycle",
-          swerveSub.getAutonomousCommand("Middle Start to Amp Wing Cycle", false)
-              .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
-      // Feeder Start
-      autoChooser.addOption("Feeder Start to Feeder Wing Cycle",
-          swerveSub.getAutonomousCommand("Feeder Start to Feeder Wing Cycle", false)
-              .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
-      autoChooser.addOption("Feeder Start to Middle Wing Cycle",
-          swerveSub.getAutonomousCommand("Feeder Start to Middle Wing Cycle", false)
-              .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
-      autoChooser.addOption("Feeder Start to Amp Wing Cycle",
-          swerveSub.getAutonomousCommand("Feeder Start to Amp Wing Cycle", false)
-              .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
-    }
-    shuffleDriverTab.add("Auto Routine", autoChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
-    
     // Adds the base position to the shuffleboard list
     shuffleDriverTab.getLayout("Directions", BuiltInLayouts.kList)
-      .add("Base Position", basePositionChooser)
-      .withWidget(BuiltInWidgets.kComboBoxChooser);
+        .add("Base Position", basePositionChooser)
+        .withWidget(BuiltInWidgets.kComboBoxChooser);
 
     // Adds each number of directions to the shuffleboard list
-    for(int i = 0; i < autoDirections.size(); i++){
+    for (int i = 0; i < autoDirections.size(); i++) {
       shuffleDriverTab.getLayout("Directions", BuiltInLayouts.kList)
-        .add("#" + (i + 1) + " Note", autoDirections.get(i))
-        .withWidget(BuiltInWidgets.kComboBoxChooser);
+          .add("#" + (i + 1) + " Note", autoDirections.get(i))
+          .withWidget(BuiltInWidgets.kComboBoxChooser);
     }
   }
 
   public void initializeCommandNames() {
-    NamedCommands.registerCommand("test1", new PrintCommand("Test 1 Triggered"));
     if (Constants.IntakeConstants.IS_USING_INTAKE && Constants.ElevatorConstants.IS_USING_ELEVATOR) {
       NamedCommands.registerCommand("Climb Position", new ClimbPosition(intakeSub, elevatorSub));
       NamedCommands.registerCommand("Default Position", new DefaultPosition(intakeSub, elevatorSub));
@@ -351,53 +317,40 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    // Object to store sequential command. This is done to init a command that does nothing (at first)
-    SequentialCommandGroup compiledCommand = new WaitCommand(0).andThen(new WaitCommand(0));
-    
+    // Object to store sequential command. This is done to init a command that does
+    // nothing (at first)
+    SequentialCommandGroup compiledCommand = new SequentialCommandGroup();
+
     // Where the robot starts
     String baseStart = basePositionChooser.getSelected();
-    // Bool to check if the robot starts at base/amp each direction
-    boolean startsAtBase = true;
 
-    for(SendableChooser<String> choice : autoDirections) {
+    for (SendableChooser<String> choice : autoDirections) {
       // Default choosen command does nothing
-      Command choosenCommand = new WaitCommand(0);
+      Command choosenCommand = null;
       // Selected choice as a string
       String selected = choice.getSelected();
-      // Checks if robbot is at base; If it does, most likely has note and should shoot
-      if(startsAtBase) {
-        // Appends shooting command
-        compiledCommand.andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub));
+
+      // If command is not a path command but a normal named command
+      Command namedCommand = NamedCommands.getCommand(selected);
+      // If named command
+      if (namedCommand != null) {
+        choosenCommand = namedCommand;
+      }
+      // If path planner command
+      else {
+        Command pathPlannerComand = swerveSub.getAutonomousCommand(baseStart + selected, false);
+        if (pathPlannerComand != null) {
+          choosenCommand = pathPlannerComand;
+        }
       }
 
-      // Wing Cycles
-      if(selected.equals("Amp Wing Cycle") || selected.equals("Middle Wing Cycle") || selected.equals("Feeder Wing Cycle")){
-        // Sets to correct path to go to note in wing
-        // Does not need to check if starts at base since
-        choosenCommand = swerveSub.getAutonomousCommand(baseStart + selected, false);
-        startsAtBase = true;
-      } 
-      
-      // Center Paths
-      else if(selected.equals("Amp Center Note") || selected.equals("Amp Middle Center Note") || selected.equals("Middle Center Note") || selected.equals("Feeder Middle Center Note") || selected.equals("Feeder Center Note")){
-        // Sets to correct path to go to note in center
-        choosenCommand = swerveSub.getAutonomousCommand(baseStart + selected, false);
-        startsAtBase = false;
-      } 
-      
-      // Others/Nothing
-      else if(selected.equals("Nothing")) {
-        choosenCommand = new WaitCommand(0);
-      }
       // Apends it to the sequential command
-      compiledCommand.andThen(choosenCommand);
+      if (choosenCommand == null || selected.equals("Nothing")) {
+        continue;
+      }
+      compiledCommand = compiledCommand.andThen(choosenCommand);
     }
-    
-    // Checks if the robot should shoot at the end
-    if(startsAtBase) {
-      // Appends shooting command
-      compiledCommand.andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub));
-    }
+
     // returns the compiled sequential command
     return compiledCommand;
   }

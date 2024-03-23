@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -179,15 +180,20 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public Command getAutonomousCommand(String pathName, boolean setOdomToStart) {
     // Load the path you want to follow using its name in the GUI
-    PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+    try {
+      PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
 
-    if (setOdomToStart) {
-      resetOdometry(new Pose2d(path.getPoint(0).position, getHeading()));
+      if (setOdomToStart) {
+        resetOdometry(new Pose2d(path.getPoint(0).position, getHeading()));
+      }
+
+      // Create a path following command using AutoBuilder. This will also trigger
+      // event markers.
+      return AutoBuilder.followPath(path);
+
+    } catch (RuntimeException e) {
+      return null;
     }
-
-    // Create a path following command using AutoBuilder. This will also trigger
-    // event markers.
-    return AutoBuilder.followPath(path);
   }
 
   /**
