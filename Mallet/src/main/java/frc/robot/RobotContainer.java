@@ -11,16 +11,21 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.subsystems.DifferentialSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.NoteLimelight;
+import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.DeadbandCommandXboxController;
 import frc.robot.Constants.DifferentialConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.NoteLLConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.PhotonConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.ElevatorConstants.ELEVATOR_STATE;
@@ -44,6 +49,7 @@ import frc.robot.commands.intake.IntakeSetZeroVoltage;
 import java.io.File;
 import java.util.HashMap;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 public class RobotContainer {
@@ -52,13 +58,15 @@ public class RobotContainer {
   private static DifferentialSubsystem differentialSub;
   private static IntakeSubsystem intakeSub;
   private static ElevatorSubsystem elevatorSub;
+  private static PhotonSubsystem photonSub;
+  private static NoteLimelight limelightSub;
 
   // INIT XBOX CONTROLLER
   public static DeadbandCommandXboxController xbox1; // Driver
   public static DeadbandCommandXboxController xbox2; // Operator
 
   // SMARTDASHBOARD
-  private SendableChooser<Command> autoChooser = new SendableChooser<Command>();
+  private SendableChooser<Command> autoChooser;
 
   // SHUFFLEBOARD
   private ShuffleboardTab shuffleDriverTab;
@@ -70,6 +78,9 @@ public class RobotContainer {
   public static final HashMap<String, Command> eventMap = new HashMap<>();
 
   public RobotContainer() {
+
+    initializeOtherVars();
+
     // Initialize drive system (swerve or differential)
     initializeDriveMode();
     // Initialize the other subsystems and controllers
@@ -127,8 +138,25 @@ public class RobotContainer {
     if (ElevatorConstants.IS_USING_ELEVATOR) {
       elevatorSub = new ElevatorSubsystem();
     }
+    if (PhotonConstants.USING_VISION) {
+      photonSub = new PhotonSubsystem();
+      // Set up vision readings for Swerve
+      if (SwerveConstants.USING_SWERVE) {
+        swerveSub.setupVisionMeasurement(
+            () -> {
+              return photonSub.getEstimatedRobotPoseFromLeftPhoton(swerveSub.getPose());
+            },
+            () -> {
+              return photonSub.getEstimatedRobotPoseFromLeftPhoton(swerveSub.getPose());
+            });
+      }
+    }
+    if (NoteLLConstants.IS_USING_NOTE_LIMELIGHT) {
+      limelightSub = new NoteLimelight();
+    }
     if (OperatorConstants.USING_XBOX_1) {
-      xbox1 = new DeadbandCommandXboxController(OperatorConstants.XBOX_1_ID, OperatorConstants.XBOX_1_DEADBAND);
+      xbox1 = new DeadbandCommandXboxController(OperatorConstants.XBOX_1_ID,
+      OperatorConstants.XBOX_1_DEADBAND);
     }
     if (OperatorConstants.USING_XBOX_2) {
       xbox2 = new DeadbandCommandXboxController(OperatorConstants.XBOX_2_ID, OperatorConstants.XBOX_2_DEADBAND);
@@ -194,6 +222,17 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // XBOX 1 Configs
     if (OperatorConstants.USING_XBOX_1) {
+      if (SwerveConstants.USING_SWERVE) {
+        xbox1.a().onTrue(new AbsoluteDriveWithFocus(swerveSub, limelightSub,
+            () -> -xbox1.getLeftY(),
+            () -> -xbox1.getLeftX()));
+      }
+
+      // if (IntakeConstants.IS_USING_INTAKE && ElevatorConstants.IS_USING_ELEVATOR) {
+      // xbox1.y().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
+      // xbox1.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
+      // xbox1.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
+      // }
 
       if (IntakeConstants.IS_USING_INTAKE && IntakeConstants.DEBUG) {
         // TODO - Remove the debug commands for real testing
@@ -267,7 +306,7 @@ public class RobotContainer {
     }
   }
 
-  public Command getAutoInput() {
+  public Command getAutonomousCommand() {
     return autoChooser.getSelected();
   }
 

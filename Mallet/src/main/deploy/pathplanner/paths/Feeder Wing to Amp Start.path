@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0,
-        "y": 5.33
+        "x": 2.0659450559308326,
+        "y": 5.341624716139017
       },
       "isLocked": false,
       "linkedName": "Feeder Wing Note"
@@ -20,8 +20,8 @@
         "y": 6.69
       },
       "prevControl": {
-        "x": 1.722372629579382,
-        "y": 6.69
+        "x": 1.716223949284234,
+        "y": 6.785843360253675
       },
       "nextControl": null,
       "isLocked": false,
