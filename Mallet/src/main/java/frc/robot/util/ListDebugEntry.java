@@ -22,7 +22,12 @@ public class ListDebugEntry {
      */
     public ListDebugEntry(ShuffleboardTab tab, String listTitle,
             String entryName, Object defaultValue, BuiltInWidgets widgetType, boolean enabled) {
-
+        if (enabled) {
+            entry = tab.getLayout(listTitle, BuiltInLayouts.kList)
+                    .add(entryName, defaultValue)
+                    .withWidget(widgetType)
+                    .getEntry();
+        }
     }
 
     public void set(Object value) {

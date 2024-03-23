@@ -252,21 +252,21 @@ public class ElevatorSubsystem extends SubsystemBase {
       entry_rightEncoder = new ListDebugEntry(shuffleDebugTab, "Elevator", "Right Encoder Value", 0,
           BuiltInWidgets.kTextView);
 
-      // PID Init
+      // PID Init CURRENTLY DISABLED
       entry_pid_kp = new ListDebugEntry(shuffleDebugTab, "Elevator PID", "P Gain", ElevatorConstants.PID_KP,
-          BuiltInWidgets.kTextView);
+          BuiltInWidgets.kTextView, false);
       entry_pid_ki = new ListDebugEntry(shuffleDebugTab, "Elevator PID", "I Gain", ElevatorConstants.PID_KI,
-          BuiltInWidgets.kTextView);
+          BuiltInWidgets.kTextView, false);
       entry_pid_kd = new ListDebugEntry(shuffleDebugTab, "Elevator PID", "D Gain", ElevatorConstants.PID_KD,
-          BuiltInWidgets.kTextView);
+          BuiltInWidgets.kTextView, false);
       entry_pid_kiz = new ListDebugEntry(shuffleDebugTab, "Elevator PID", "Iz Gain", ElevatorConstants.PID_KIZ,
-          BuiltInWidgets.kTextView);
+          BuiltInWidgets.kTextView, false);
       entry_pid_kff = new ListDebugEntry(shuffleDebugTab, "Elevator PID", "FF Gain", ElevatorConstants.PID_KFF,
-          BuiltInWidgets.kTextView);
+          BuiltInWidgets.kTextView, false);
 
       // Smart Motion
       entry_smart_motion_allowed_err = new ListDebugEntry(shuffleDebugTab, "Elevator PID", "Allowed Error",
-          ElevatorConstants.SM_ALLOWED_ERR, BuiltInWidgets.kTextView);
+          ElevatorConstants.SM_ALLOWED_ERR, BuiltInWidgets.kTextView, false);
     }
   }
 

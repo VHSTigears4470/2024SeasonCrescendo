@@ -48,6 +48,7 @@
       "/Shuffleboard/Debug Tab/Elevator Command List/Elevator Up No Soft Limit": "Command",
       "/Shuffleboard/Debug Tab/Elevator Command List/Elevator Zero": "Command",
       "/Shuffleboard/Debug Tab/Elevator Command List/IntakeAndSuckPosition": "Command",
+      "/Shuffleboard/Debug Tab/Elevator Command List/IntakePosition": "Command",
       "/Shuffleboard/Debug Tab/Intake Command List/Intake Extend": "Command",
       "/Shuffleboard/Debug Tab/Intake Command List/Intake Pusher Extend": "Command",
       "/Shuffleboard/Debug Tab/Intake Command List/Intake Pusher Retract": "Command",
