@@ -12,12 +12,6 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "Shoot Speaker"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Middle Start to Amp Wing"

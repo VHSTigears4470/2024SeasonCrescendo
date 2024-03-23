@@ -12,12 +12,6 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "Shoot Speaker"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Feeder Start to Feeder Wing"
