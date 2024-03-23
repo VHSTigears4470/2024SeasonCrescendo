@@ -13,30 +13,29 @@ import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.NoteLimelight;
 import frc.robot.subsystems.SwerveSubsystem;
 import java.util.List;
-import java.util.function.DoubleSupplier;
 import swervelib.SwerveController;
 import swervelib.math.SwerveMath;
 
 /**
  * An example command that uses an example subsystem.
  */
-public class DriveForwardWithFocus extends Command {
+public class DriveForwardWithFocusNote extends Command {
 
   private final SwerveSubsystem swerve;
   private final NoteLimelight limelight;
   private boolean initRotation = false;
-  private final double maxOffset = 20; //TODO - cahnge this
-  private final double minOffset = 0.5; //TODO - change this
+  private final double minOffset = 0.5; // TODO - change this
   private final double sensitivity = 0.5; // Sensetivity of the movement //TODO - Change this
 
   /**
-   * Rotates to the note and drives forward - if there is no note, it will still go forward but not rotate
+   * Rotates to the note and drives forward - if there is no note, it will still
+   * go forward but not rotate
    * Will never end unless forced to
    *
-   * @param swerve            The swerve drivebase subsystem.
-   * @param limelight         The limelight subsystem
+   * @param swerve    The swerve drivebase subsystem.
+   * @param limelight The limelight subsystem
    */
-  public DriveForwardWithFocus(SwerveSubsystem swerve, NoteLimelight limelight) {
+  public DriveForwardWithFocusNote(SwerveSubsystem swerve, NoteLimelight limelight) {
     this.swerve = swerve;
     this.limelight = limelight;
 
@@ -55,25 +54,20 @@ public class DriveForwardWithFocus extends Command {
     // direction to go to
     double headingError;
     // Checks whether the robot has a note to rotate to
-    if(limelight.hasTarget()){
+    if (limelight.hasTarget()) {
       // Calculates the offset / speed to rotate to. Has a max of speed of maxOffset
       headingError = limelight.getXOffset();
     } else {
       headingError = 0;
     }
-    double steeringAdjust = SwerveConstants.ANGLE_KP * headingError;
-    // Formats steeringAdjust to be a number from -maxSpeed to maxSpeed
-    steeringAdjust = Math.signum(steeringAdjust) * Math.min(Math.abs(steeringAdjust), SwerveConstants.ANGLE_MAX_TURN_SPEED);
-    // Multiply it by a negative or positive depending on if it need to be inverted
-    // it or not
-    steeringAdjust *= 1;
+    // Get the desired chassis rotation in radians
+    Rotation2d desiredHeading = swerve.getPose().getRotation().plus(Rotation2d.fromDegrees(headingError));
 
     // Get the desired chassis speeds based on a 2 joystick module.
     ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(
-      swerve.getPose().getRotation().getCos() * sensitivity, 
-      swerve.getPose().getRotation().getSin() * sensitivity, 
-      new Rotation2d(steeringAdjust * Math.PI)
-    );
+        desiredHeading.getCos() * sensitivity,
+        desiredHeading.getSin() * sensitivity,
+        desiredHeading);
 
     // Prevent Movement After Auto
     if (initRotation) {

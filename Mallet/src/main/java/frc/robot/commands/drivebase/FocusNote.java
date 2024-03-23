@@ -17,10 +17,11 @@ import frc.robot.Constants.SwerveConstants;
  * Gets the offset and using robot's current heading, sets desired heading to
  * face the note
  */
-public class FaceNoteInstant extends Command {
+public class FocusNote extends Command {
 
     private final SwerveSubsystem swerve;
     private final NoteLimelight limelight;
+    private double headingError = Double.MAX_VALUE;
 
     /**
      * Creates a new Command.
@@ -30,7 +31,7 @@ public class FaceNoteInstant extends Command {
      * 
      * @param swerve The subsystem used by this command.
      */
-    public FaceNoteInstant(SwerveSubsystem swerve, NoteLimelight limelight) {
+    public FocusNote(SwerveSubsystem swerve, NoteLimelight limelight) {
         this.swerve = swerve;
         this.limelight = limelight;
         // Use addRequirements() here to declare subsystem dependencies.
@@ -48,7 +49,6 @@ public class FaceNoteInstant extends Command {
     public void execute() {
         // Grabs the heading error from the network table and uses it to create a
         // direction to go to
-        double headingError;
 
         if (limelight.hasTarget()) {
             headingError = limelight.getXOffset();
@@ -75,6 +75,6 @@ public class FaceNoteInstant extends Command {
     @Override
     public boolean isFinished() {
         // Finishes once the note has been centered (if there is no note, ends)
-        return limelight.hasTarget() && Math.abs(limelight.getXOffset()) < SwerveConstants.OFFSET_THRESHOLD;
+        return !limelight.hasTarget() && Math.abs(headingError) < SwerveConstants.OFFSET_THRESHOLD;
     }
 }

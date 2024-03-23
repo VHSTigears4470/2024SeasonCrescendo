@@ -20,7 +20,6 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public final class Constants {
     public static final class OperatorConstants {
@@ -72,6 +71,9 @@ public final class Constants {
         public static final double WHEEL_LOCK_TIME = 10;
 
         public static final double SWERVE_AUTO_VELOCITY = 1;
+
+        // TOLERANCES
+        public static final double HEADING_TOLERANCE = 10;
     }
 
     public static final class DifferentialConstants {
