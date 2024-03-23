@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1560395010012754,
-        "y": 3.0211409007528927
+        "x": 2.288364008007637,
+        "y": 2.9374496663685266
       },
       "isLocked": false,
       "linkedName": "Feeder Start"
@@ -20,12 +20,12 @@
         "y": 2.6539532483920087
       },
       "prevControl": {
-        "x": 6.74184577813165,
-        "y": 0.40395324839200875
+        "x": 6.4610987989748505,
+        "y": 0.22371305406117684
       },
       "nextControl": {
-        "x": 6.74184577813165,
-        "y": 3.6539532483920087
+        "x": 6.856604880082064,
+        "y": 3.6473465987419735
       },
       "isLocked": false,
       "linkedName": null
@@ -51,7 +51,7 @@
       "rotateFast": false
     },
     {
-      "waypointRelativePos": 1.0,
+      "waypointRelativePos": 0.5,
       "rotationDegrees": 0,
       "rotateFast": true
     }
