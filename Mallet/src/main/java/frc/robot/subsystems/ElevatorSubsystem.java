@@ -248,9 +248,9 @@ public class ElevatorSubsystem extends SubsystemBase {
           desiredReferencePosition,
           BuiltInWidgets.kTextView);
       entry_leftEncoder = new ListDebugEntry(shuffleDebugTab, "Elevator", "Left Encoder Value", 0,
-          BuiltInWidgets.kTextView);
+          BuiltInWidgets.kEncoder);
       entry_rightEncoder = new ListDebugEntry(shuffleDebugTab, "Elevator", "Right Encoder Value", 0,
-          BuiltInWidgets.kTextView);
+          BuiltInWidgets.kEncoder);
 
       // PID Init CURRENTLY DISABLED
       entry_pid_kp = new ListDebugEntry(shuffleDebugTab, "Elevator PID", "P Gain", ElevatorConstants.PID_KP,

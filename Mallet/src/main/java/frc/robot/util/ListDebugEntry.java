@@ -31,7 +31,7 @@ public class ListDebugEntry {
     }
 
     public void set(Object value) {
-        if (value == null) {
+        if (entry == null) {
             return;
         }
         entry.setValue(value);

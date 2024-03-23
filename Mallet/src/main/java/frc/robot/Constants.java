@@ -69,7 +69,7 @@ public final class Constants {
     }
 
     public static final class SwerveConstants {
-        public static final boolean USING_SWERVE = false;
+        public static final boolean USING_SWERVE = true;
         public static final boolean DEBUG = true;
 
         public static final PIDFConfig X_AUTO_PID = new PIDFConfig(0.000000005, 0, 0);

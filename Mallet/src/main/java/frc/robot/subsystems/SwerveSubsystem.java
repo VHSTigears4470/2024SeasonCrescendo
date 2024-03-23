@@ -50,6 +50,7 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.util.ListDebugEntry;
 
 public class SwerveSubsystem extends SubsystemBase {
 
@@ -61,7 +62,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   // Shuffleboard
   private ShuffleboardTab shuffleDebugTab;
-  private GenericEntry entry_swerveHeading;
+  private ListDebugEntry entry_swerveHeading;
 
   // Photon Pose
   private Supplier<EstimatedRobotPose> rightPhotonPose;
@@ -676,22 +677,19 @@ public class SwerveSubsystem extends SubsystemBase {
   private void initializeShuffleboard() {
     if (IntakeConstants.DEBUG) {
       shuffleDebugTab = Shuffleboard.getTab("Debug Tab");
-      entry_swerveHeading = shuffleDebugTab.getLayout("Swerve", BuiltInLayouts.kList)
-          .add("Swerve Heading", 0)
-          .withWidget(BuiltInWidgets.kGyro)
-          .getEntry();
+      entry_swerveHeading = new ListDebugEntry(shuffleDebugTab, "Swerve", "Swerve Heading", 0, BuiltInWidgets.kGyro,
+          true);
     }
   }
 
   private void updateShuffleboard() {
     if (IntakeConstants.DEBUG) {
-      entry_swerveHeading.setValue(swerveDrive.getOdometryHeading().getDegrees());
+      entry_swerveHeading.set(swerveDrive.getOdometryHeading().getDegrees());
     }
   }
 
   @Override
   public void periodic() {
-    updateVisionMeasurement();
     updateShuffleboard();
   }
 
