@@ -14,6 +14,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.NoteLimelight;
 import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.util.DeadbandCommandXboxController;
 import swervelib.SwerveDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -288,6 +289,8 @@ public class RobotContainer {
           && ElevatorConstants.DEBUG) {
         // Positions
         shuffleDebugElevatorCommandList.add("Default Position", new DefaultPosition(intakeSub, elevatorSub))
+            .withWidget(BuiltInWidgets.kCommand);
+        shuffleDebugElevatorCommandList.add("IntakePosition", new IntakePosition(intakeSub, elevatorSub))
             .withWidget(BuiltInWidgets.kCommand);
         shuffleDebugElevatorCommandList.add("IntakeAndSuckPosition", new IntakePositionAndSuck(intakeSub, elevatorSub))
             .withWidget(BuiltInWidgets.kCommand);

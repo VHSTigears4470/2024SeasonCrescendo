@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.util;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
