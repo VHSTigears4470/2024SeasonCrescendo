@@ -72,11 +72,8 @@ public class DriveForwardWithFocusNote extends Command {
     // Prevent Movement After Auto
     if (initRotation) {
       if (headingError < minOffset) {
-        // Get the curretHeading
-        Rotation2d firstLoopHeading = swerve.getHeading();
-
-        // Set the Current Heading to the desired Heading
-        desiredSpeeds = swerve.getTargetSpeeds(0, 0, firstLoopHeading.getSin(), firstLoopHeading.getCos());
+        // Set the Current Heading and not moving
+        desiredSpeeds = swerve.getTargetSpeeds(0, 0, swerve.getHeading());
       }
       // Dont Init Rotation Again
       initRotation = false;
