@@ -1,6 +1,5 @@
 package frc.robot.commands.command_groups;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -19,8 +18,8 @@ public class DefaultPosition extends SequentialCommandGroup {
                 // out of bounds
                 new ElevatorSetHeightState(elevatorSubsystem, ElevatorConstants.ELEVATOR_STATE.DOWN),
                 new WaitUntilCommand(elevatorSubsystem::isAtPos),
-                new IntakePositionUp(intakeSubsystem),
                 new IntakeSetZeroVoltage(intakeSubsystem), // Sequential because use same subsystem
-                new IntakePusherRetract(intakeSubsystem));
+                new IntakePusherRetract(intakeSubsystem),
+                new IntakePositionUp(intakeSubsystem));
     }
 }
