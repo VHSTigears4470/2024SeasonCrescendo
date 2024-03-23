@@ -93,7 +93,7 @@ public final class Constants {
         public static final double MAX_ACCELERATION = 2;
         public static final double MAX_SPEED_METERS = 2;
 
-        public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
+        public static final double ROBOT_MASS = (141) * 0.453592; // 32lbs * kg per pound
         public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(0)), ROBOT_MASS);
         public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
         public static final double WHEEL_LOCK_TIME = 10;
@@ -180,7 +180,7 @@ public final class Constants {
 
         // SENSORS
         public static final int BOTTOM_BREAKBEAM_DIO = 1; // TODO: Update
-        public static final int TOP_BREAKBEAM_DIO = 3; // TODO: Update
+        public static final int TOP_BREAKBEAM_DIO = 4; // TODO: Update
 
         // PID
         public static final double PID_KP = 0.0000010015; // TODO: Tune
@@ -191,7 +191,7 @@ public final class Constants {
         /** Max positive voltage (must be positive) */
         public static final double PID_KMAX_OUTPUT = 3.5; // TODO: Tune
         /** Max negative voltage (must be negative) */
-        public static final double PID_KMIN_OUTPUT = -3.5; // TODO: Tune
+        public static final double PID_KMIN_OUTPUT = -2; // TODO: Tune
 
         // SMART MOTION
         public static final int SM_ID = 0;

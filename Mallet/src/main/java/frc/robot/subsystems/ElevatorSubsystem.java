@@ -9,16 +9,15 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.ElevatorConstants.ELEVATOR_STATE;
+import frc.robot.util.ListDebugEntry;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
@@ -49,21 +48,24 @@ public class ElevatorSubsystem extends SubsystemBase {
   // Shuffleboard
   private ShuffleboardTab shuffleDebugTab;
   private ShuffleboardTab shuffleDriverTab;
-  private GenericEntry entry_botBeam;
-  private GenericEntry entry_topBeam;
-  private GenericEntry entry_leftEncoder;
-  private GenericEntry entry_rightEncoder;
+
+  private ListDebugEntry entry_botBeam;
+  private ListDebugEntry entry_topBeam;
+  private ListDebugEntry entry_minLimit;
+  private ListDebugEntry entry_maxLimit;
+  private ListDebugEntry entry_desiredPosition;
+  private ListDebugEntry entry_leftEncoder;
+  private ListDebugEntry entry_rightEncoder;
 
   // PID Entries
-  private GenericEntry entry_pid_kp;
-  private GenericEntry entry_pid_ki;
-  private GenericEntry entry_pid_kd;
-  private GenericEntry entry_pid_kiz;
-  private GenericEntry entry_pid_kff;
-  private GenericEntry entry_smart_motion_allowed_err;
-  private GenericEntry entry_smart_motion_pos;
+  private ListDebugEntry entry_pid_kp;
+  private ListDebugEntry entry_pid_ki;
+  private ListDebugEntry entry_pid_kd;
+  private ListDebugEntry entry_pid_kiz;
+  private ListDebugEntry entry_pid_kff;
+  private ListDebugEntry entry_smart_motion_allowed_err;
   // Driver Tab
-  private GenericEntry entry_elevatorState;
+  private ListDebugEntry entry_elevatorState;
 
   /**
    * Initialize Elevator Subsystem
@@ -172,23 +174,28 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void handleBreakbeams() {
-    if (botBreakbeamTripped() && !botBreakbeamTripped) {
-      zeroEncoders();
-      botBreakbeamTripped = true;
-      leftMotor.setVoltage(0); // Stop motor
+    if (botBreakbeamTripped()) {
+      if (!botBreakbeamTripped) {
+        zeroEncoders();
+        desiredReferencePosition = 0;
+        botBreakbeamTripped = true;
+        leftMotor.setVoltage(0); // Stop motor
+        pidController.setReference(lowestPos, ControlType.kSmartMotion);
+      }
       pidController.setOutputRange(0, ElevatorConstants.PID_KMAX_OUTPUT); // Only allowed to go up
-      pidController.setReference(lowestPos, ControlType.kSmartMotion);
     } else if (!botBreakbeamTripped() && botBreakbeamTripped) {
       botBreakbeamTripped = false;
       pidController.setOutputRange(ElevatorConstants.PID_KMIN_OUTPUT, ElevatorConstants.PID_KMAX_OUTPUT);
     }
-    if (topBreakbeamTripped() && !topBreakbeamTripped) {
-      highestPos = leftEncoder.getPosition();
-
-      topBreakbeamTripped = true;
-      leftMotor.setVoltage(0); // Stop motor
+    if (topBreakbeamTripped()) {
+      if (!topBreakbeamTripped) {
+        highestPos = leftEncoder.getPosition();
+        desiredReferencePosition = highestPos;
+        topBreakbeamTripped = true;
+        leftMotor.setVoltage(0); // Stop motor
+        pidController.setReference(highestPos, ControlType.kSmartMotion);
+      }
       pidController.setOutputRange(ElevatorConstants.PID_KMIN_OUTPUT, 0); // Only allowed to go down
-      pidController.setReference(highestPos, ControlType.kSmartMotion);
     } else if (!topBreakbeamTripped() && topBreakbeamTripped) {
       topBreakbeamTripped = false;
       pidController.setOutputRange(ElevatorConstants.PID_KMIN_OUTPUT, ElevatorConstants.PID_KMAX_OUTPUT);
@@ -224,80 +231,67 @@ public class ElevatorSubsystem extends SubsystemBase {
   // Init Shuffleboard
   private void initalizeShuffleboard() {
     shuffleDriverTab = Shuffleboard.getTab("Driver's Tab");
-    entry_elevatorState = shuffleDriverTab.getLayout("Elevator", BuiltInLayouts.kList)
-        .add("Elevator Height State", "Down").withWidget(BuiltInWidgets.kTextView).getEntry();
+
+    entry_elevatorState = new ListDebugEntry(shuffleDriverTab, getSubsystem(), "Elevator Height State", "Down",
+        BuiltInWidgets.kTextView);
     if (ElevatorConstants.DEBUG) {
       shuffleDebugTab = Shuffleboard.getTab("Debug Tab");
-      entry_botBeam = shuffleDebugTab.getLayout("Elevator", BuiltInLayouts.kList)
-          .add("Bottom Breakbeam Tripped", false)
-          .withWidget(BuiltInWidgets.kBooleanBox)
-          .getEntry();
-      entry_topBeam = shuffleDebugTab.getLayout("Elevator", BuiltInLayouts.kList)
-          .add("Top Breakbeam Tripped", false)
-          .withWidget(BuiltInWidgets.kBooleanBox)
-          .getEntry();
-      entry_leftEncoder = shuffleDebugTab.getLayout("Elevator", BuiltInLayouts.kList)
-          .add("Left Encoder Value", 0)
-          .withWidget(BuiltInWidgets.kTextView)
-          .getEntry();
-      entry_rightEncoder = shuffleDebugTab.getLayout("Elevator", BuiltInLayouts.kList)
-          .add("Right Encoder Value", 0)
-          .withWidget(BuiltInWidgets.kTextView)
-          .getEntry();
+      entry_botBeam = new ListDebugEntry(shuffleDebugTab, "Elevator", "Bottom Breakbeam Tripped", false,
+          BuiltInWidgets.kBooleanBox);
+      entry_topBeam = new ListDebugEntry(shuffleDebugTab, "Elevator", "Top Breakbeam Tripped", false,
+          BuiltInWidgets.kBooleanBox);
+      entry_minLimit = new ListDebugEntry(shuffleDebugTab, "Elevator", "Min Limit", lowestPos,
+          BuiltInWidgets.kTextView);
+      entry_maxLimit = new ListDebugEntry(shuffleDebugTab, "Elevator", "Max Limit", highestPos,
+          BuiltInWidgets.kTextView);
+      entry_desiredPosition = new ListDebugEntry(shuffleDebugTab, "Elevator", "Desired Position",
+          desiredReferencePosition,
+          BuiltInWidgets.kTextView);
+      entry_leftEncoder = new ListDebugEntry(shuffleDebugTab, "Elevator", "Left Encoder Value", 0,
+          BuiltInWidgets.kTextView);
+      entry_rightEncoder = new ListDebugEntry(shuffleDebugTab, "Elevator", "Right Encoder Value", 0,
+          BuiltInWidgets.kTextView);
 
       // PID Init
-      entry_pid_kp = shuffleDebugTab.getLayout("Elevator PID", BuiltInLayouts.kList)
-          .add("P Gain", ElevatorConstants.PID_KP)
-          .withWidget(BuiltInWidgets.kTextView)
-          .getEntry();
-      entry_pid_ki = shuffleDebugTab.getLayout("Elevator PID", BuiltInLayouts.kList)
-          .add("I Gain", ElevatorConstants.PID_KI)
-          .withWidget(BuiltInWidgets.kTextView)
-          .getEntry();
-      entry_pid_kd = shuffleDebugTab.getLayout("Elevator PID", BuiltInLayouts.kList)
-          .add("D Gain", ElevatorConstants.PID_KD)
-          .withWidget(BuiltInWidgets.kTextView)
-          .getEntry();
-      entry_pid_kiz = shuffleDebugTab.getLayout("Elevator PID", BuiltInLayouts.kList)
-          .add("Iz Gain", ElevatorConstants.PID_KIZ)
-          .withWidget(BuiltInWidgets.kTextView)
-          .getEntry();
-      entry_pid_kff = shuffleDebugTab.getLayout("Elevator PID", BuiltInLayouts.kList)
-          .add("FF Gain", ElevatorConstants.PID_KFF)
-          .withWidget(BuiltInWidgets.kTextView)
-          .getEntry();
+      entry_pid_kp = new ListDebugEntry(shuffleDebugTab, "Elevator PID", "P Gain", ElevatorConstants.PID_KP,
+          BuiltInWidgets.kTextView);
+      entry_pid_ki = new ListDebugEntry(shuffleDebugTab, "Elevator PID", "I Gain", ElevatorConstants.PID_KI,
+          BuiltInWidgets.kTextView);
+      entry_pid_kd = new ListDebugEntry(shuffleDebugTab, "Elevator PID", "D Gain", ElevatorConstants.PID_KD,
+          BuiltInWidgets.kTextView);
+      entry_pid_kiz = new ListDebugEntry(shuffleDebugTab, "Elevator PID", "Iz Gain", ElevatorConstants.PID_KIZ,
+          BuiltInWidgets.kTextView);
+      entry_pid_kff = new ListDebugEntry(shuffleDebugTab, "Elevator PID", "FF Gain", ElevatorConstants.PID_KFF,
+          BuiltInWidgets.kTextView);
 
       // Smart Motion
-      entry_smart_motion_allowed_err = shuffleDebugTab.getLayout("Elevator PID", BuiltInLayouts.kList)
-          .add("Allowed Error", ElevatorConstants.SM_ALLOWED_ERR)
-          .withWidget(BuiltInWidgets.kTextView)
-          .getEntry();
-      entry_smart_motion_pos = shuffleDebugTab.getLayout("Elevator PID", BuiltInLayouts.kList)
-          .add("Position", leftEncoder.getPosition())
-          .withWidget(BuiltInWidgets.kTextView)
-          .getEntry();
+      entry_smart_motion_allowed_err = new ListDebugEntry(shuffleDebugTab, "Elevator PID", "Allowed Error",
+          ElevatorConstants.SM_ALLOWED_ERR, BuiltInWidgets.kTextView);
     }
   }
 
   // Updates Shuffleboard
   private void updateShuffleboard() {
-    entry_elevatorState.setString(currState == ELEVATOR_STATE.DOWN ? "DOWN" : "UP");
+    entry_elevatorState.set(currState == ELEVATOR_STATE.DOWN ? "DOWN" : "UP");
     if (ElevatorConstants.DEBUG) {
-      entry_botBeam.setBoolean(botBreakbeamTripped());
-      entry_topBeam.setBoolean(topBreakbeamTripped());
-      entry_leftEncoder.setDouble(leftEncoder.getPosition());
-      entry_rightEncoder.setDouble(rightEncoder.getPosition());
-      entry_smart_motion_pos.setDouble(desiredReferencePosition);
+      entry_botBeam.set(botBreakbeamTripped());
+      entry_topBeam.set(topBreakbeamTripped());
+      entry_minLimit.set(lowestPos);
+      entry_maxLimit.set(highestPos);
+      entry_desiredPosition.set(desiredReferencePosition);
+      entry_leftEncoder.set(leftEncoder.getPosition());
+      entry_rightEncoder.set(rightEncoder.getPosition());
 
       int slotId = ElevatorConstants.SM_ID;
-      pidController.setP(entry_pid_kp.getDouble(pidController.getP(slotId)), slotId);
-      pidController.setI(entry_pid_ki.getDouble(pidController.getI(slotId)), slotId);
-      pidController.setD(entry_pid_kd.getDouble(pidController.getD(slotId)), slotId);
-      pidController.setIZone(entry_pid_kiz.getDouble(pidController.getIZone(slotId)), slotId);
-      pidController.setFF(entry_pid_kff.getDouble(pidController.getFF(slotId)), slotId);
+      pidController.setP((double) entry_pid_kp.get(pidController.getP(slotId)), slotId);
+      pidController.setI((double) entry_pid_ki.get(pidController.getI(slotId)), slotId);
+      pidController.setD((double) entry_pid_kd.get(pidController.getD(slotId)), slotId);
+      pidController.setIZone((double) entry_pid_kiz.get(pidController.getIZone(slotId)), slotId);
+      pidController.setFF((double) entry_pid_kff.get(pidController.getFF(slotId)), slotId);
 
       pidController.setSmartMotionAllowedClosedLoopError(
-          entry_smart_motion_allowed_err.getDouble(pidController.getSmartMotionAllowedClosedLoopError(slotId)), slotId);
+          (double) entry_smart_motion_allowed_err.get(pidController.getSmartMotionAllowedClosedLoopError(slotId)),
+          slotId);
     }
   }
 
