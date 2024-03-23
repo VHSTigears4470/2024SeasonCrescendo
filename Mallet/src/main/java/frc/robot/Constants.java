@@ -30,8 +30,35 @@ public final class Constants {
 
         public static final int XBOX_2_ID = 1;
         public static final double XBOX_2_DEADBAND = 0.2;
+    }
 
+    public static final class AutoConstants {
         public static final int numOfDirections = 4;
+
+        // String Names for starting Position
+        public static final String AMP_SIDE_START = "Amp Side to";
+        public static final String MIDDLE_SIDE_START = "Middle Side to";
+        public static final String FEEDER_SIDE_START = "Feeder Side to";
+
+        // String Names for Cycles
+        public static final String AMP_WING_CYCLE_ENDING = "Amp Wing Cycle";
+        public static final String MIDDLE_WING_CYCLE_ENDING = "Middle Wing Cycle";
+        public static final String FEEDER_WING_CYCLE_ENDING = "Feeder Wing Cycle";
+        
+        // String Names for Center Note Paths
+        public static final String AMP_CENTER_NOTE_ENDING = "Amp Center Note";
+        public static final String AMP_MIDDLE_CENTER_NOTE_ENDING = "Amp Middle Center Note";
+        public static final String MIDDLE_CENTER_NOTE_ENDING = "Middle Center Note";
+        public static final String FEEDER_MIDDLE_CENTER_NOTE_ENDING = "Feeder Middle Center Note";
+        public static final String FEEDER_CENTER_NOTE_ENDING = "Feeder Center Note";
+
+        // String Names for Named Commands
+        public static final String CLIMB_POSITION = "Climb Position";
+        public static final String DEFAULT_POSITION = "Default Position";
+        public static final String INTAKE_NOTE = "Intake Note";
+        public static final String SHOOT_AMP = "Shoot Amp";
+        public static final String SHOOT_SPEAKER = "Shoot Speaker";
+        public static final String DRIVE_TIL_HAVE_NOTE = "Drive Till Have Note";
     }
 
     public static final class CycleTimes {

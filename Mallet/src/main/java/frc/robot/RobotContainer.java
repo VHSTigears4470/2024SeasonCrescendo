@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DifferentialConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IntakeConstants;
@@ -178,22 +179,22 @@ public class RobotContainer {
     basePositionChooser.addOption("Feeder Side", "Feeder Side to ");
 
     // Fills with number of wanted directions
-    for (int i = 0; i < OperatorConstants.numOfDirections; i++) {
+    for (int i = 0; i < AutoConstants.numOfDirections; i++) {
       autoDirections.add(new SendableChooser<String>());
     }
 
     // Fills each Combo Chooser with all options
     for (SendableChooser<String> currentNoteChooser : autoDirections) {
       currentNoteChooser.setDefaultOption("Do Nothing", "Nothing"); // Depends on whether at the speaker or not
-      currentNoteChooser.addOption("Amp Wing Cycle", "Amp Wing Cycle");
-      currentNoteChooser.addOption("Middle Wing Cycle", "Middle Wing Cycle");
-      currentNoteChooser.addOption("Feeder Wing Cycle", "Feeder Wing Cycle");
+      currentNoteChooser.addOption("Amp Wing Cycle", AutoConstants.AMP_WING_CYCLE);
+      currentNoteChooser.addOption("Middle Wing Cycle", AutoConstants.MIDDLE_WING_CYCLE);
+      currentNoteChooser.addOption("Feeder Wing Cycle", AutoConstants.FEEDER_WING_CYCLE);
 
-      currentNoteChooser.addOption("Amp Center Note", "Amp Center Note");
-      currentNoteChooser.addOption("Amp Middle Center Note", "Amp Middle Center Note");
-      currentNoteChooser.addOption("Middle Center Note", "Middle Center Note");
-      currentNoteChooser.addOption("Feeder Middle Center Note", "Feeder Middle Center Note");
-      currentNoteChooser.addOption("Feeder Center Note", "Feeder Center Note");
+      currentNoteChooser.addOption("Amp Center Note", AutoConstants.AMP_CENTER_NOTE);
+      currentNoteChooser.addOption("Amp Middle Center Note", AutoConstants.AMP_MIDDLE_CENTER_NOTE);
+      currentNoteChooser.addOption("Middle Center Note", AutoConstants.MIDDLE_CENTER_NOTE);
+      currentNoteChooser.addOption("Feeder Middle Center Note", AutoConstants.FEEDER_MIDDLE_CENTER_NOTE);
+      currentNoteChooser.addOption("Feeder Center Note", AutoConstants.FEEDER_CENTER_NOTE);
 
       // Named commands
       if (IntakeConstants.IS_USING_INTAKE) {
@@ -216,15 +217,15 @@ public class RobotContainer {
 
   public void initializeCommandNames() {
     if (Constants.IntakeConstants.IS_USING_INTAKE && Constants.ElevatorConstants.IS_USING_ELEVATOR) {
-      NamedCommands.registerCommand("Climb Position", new ClimbPosition(intakeSub, elevatorSub));
-      NamedCommands.registerCommand("Default Position", new DefaultPosition(intakeSub, elevatorSub));
-      NamedCommands.registerCommand("Intake Note", new IntakePositionAndSuck(intakeSub, elevatorSub));
-      NamedCommands.registerCommand("Shoot Amp", new ShootAmpAndReset(intakeSub, elevatorSub));
-      NamedCommands.registerCommand("Shoot Speaker", new ShootSpeakerAndReset(intakeSub, elevatorSub));
+      NamedCommands.registerCommand(AutoConstants.CLIMB_POSITION, new ClimbPosition(intakeSub, elevatorSub));
+      NamedCommands.registerCommand(AutoConstants.DEFAULT_POSITION, new DefaultPosition(intakeSub, elevatorSub));
+      NamedCommands.registerCommand(AutoConstants.INTAKE_NOTE, new IntakePositionAndSuck(intakeSub, elevatorSub));
+      NamedCommands.registerCommand(AutoConstants.SHOOT_AMP, new ShootAmpAndReset(intakeSub, elevatorSub));
+      NamedCommands.registerCommand(AutoConstants.SHOOT_SPEAKER, new ShootSpeakerAndReset(intakeSub, elevatorSub));
     }
     if (Constants.IntakeConstants.IS_USING_INTAKE && Constants.ElevatorConstants.IS_USING_ELEVATOR
         && Constants.SwerveConstants.USING_SWERVE) {
-      NamedCommands.registerCommand("Drive Till Have Note", new DriveTillHaveNote(intakeSub, elevatorSub, swerveSub));
+      NamedCommands.registerCommand(AutoConstants.DRIVE_TIL_HAVE_NOTE, new DriveTillHaveNote(intakeSub, elevatorSub, swerveSub));
     }
   }
 
