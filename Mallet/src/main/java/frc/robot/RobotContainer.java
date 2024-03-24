@@ -68,7 +68,7 @@ public class RobotContainer {
   public static DeadbandCommandXboxController xbox2; // Operator
 
   // SMARTDASHBOARD
-  private SendableChooser<Command> autoChooser;
+  private SendableChooser<Command> autoPresetChooser;
 
   // private GenericEntry
   private SendableChooser<String> basePositionChooser;
@@ -169,6 +169,7 @@ public class RobotContainer {
     // Init Auto Chooser
     basePositionChooser = new SendableChooser<String>();
     autoDirections = new ArrayList<SendableChooser<String>>();
+    autoPresetChooser = new SendableChooser<Command>();
 
     // Base starting position and position to shoot into speaker with
     basePositionChooser.setDefaultOption("Amp Side", "Amp Side to ");
@@ -212,6 +213,28 @@ public class RobotContainer {
           .add("#" + (i + 1) + " Note", autoDirections.get(i))
           .withWidget(BuiltInWidgets.kComboBoxChooser);
     }
+
+    // Init auto preset chooser
+    autoPresetChooser.setDefaultOption("Use Modular", null);
+    autoPresetChooser.addOption("Preset One (Amp Side)", 
+      new ShootSpeakerAndReset(intakeSub, elevatorSub)
+      .andThen(swerveSub.getAutonomousCommand(AutoConstants.AMP_SIDE_START + AutoConstants.AMP_WING_CYCLE_ENDING, false))
+      .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub))
+      .andThen(swerveSub.getAutonomousCommand(AutoConstants.AMP_CENTER_NOTE_ENDING, false))
+    );
+    autoPresetChooser.addOption("Preset Two (Middle Side)", 
+      new ShootSpeakerAndReset(intakeSub, elevatorSub)
+      .andThen(swerveSub.getAutonomousCommand(AutoConstants.MIDDLE_SIDE_START + AutoConstants.MIDDLE_WING_CYCLE_ENDING, false))
+      .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub))
+      .andThen(swerveSub.getAutonomousCommand(AutoConstants.MIDDLE_CENTER_NOTE_ENDING, false))
+    );
+    autoPresetChooser.addOption("Preset Three (Feeder Side)",
+      new ShootSpeakerAndReset(intakeSub, elevatorSub)
+      .andThen(swerveSub.getAutonomousCommand(AutoConstants.FEEDER_SIDE_START + AutoConstants.FEEDER_WING_CYCLE_ENDING, false))
+      .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub))
+      .andThen(swerveSub.getAutonomousCommand(AutoConstants.FEEDER_CENTER_NOTE_ENDING, false))
+    );
+    shuffleDebugTab.add("Presets", autoPresetChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
   }
 
   public void initializeCommandNames() {

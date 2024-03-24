@@ -25,6 +25,7 @@ public final class Constants {
     public static final class OperatorConstants {
         public static final boolean USING_XBOX_1 = true;
         public static final boolean USING_XBOX_2 = false;
+
         public static final int XBOX_1_ID = 0;
         public static final double XBOX_1_DEADBAND = 0.2;
 
@@ -270,25 +271,24 @@ public final class Constants {
         public static final boolean USING_RIGHT_PHOTON = true;
         public static final boolean USING_LEFT_PHOTON = true;
 
-        public static final String RIGHT_PHOTON_NAME = "right photon"; // TODO - Change both names
-        public static final String LEFT_PHOTON_NAME = "left photon";
+        public static final String RIGHT_PHOTON_NAME = "rightCamera"; // TODO - Change both names
+        public static final String LEFT_PHOTON_NAME = "leftCamera";
 
         public static final PoseStrategy PHOTON_CAMERA_STRAT = PoseStrategy.LOWEST_AMBIGUITY;
 
-        // Right Camera w/ its real position
+        // Right Camera w/ its real position offset from center of robot and from ground
         public static final Transform3d ROBOT_TO_RIGHT_PHOTON = new Transform3d(
                 new Translation3d(Units.inchesToMeters(-11.88), Units.inchesToMeters(-6.88),
                         Units.inchesToMeters(31.09)),
                 new Rotation3d(0, Math.toRadians(10.62), Math.toRadians(-45))); // TODO - Need to modify position of
                                                                                 // Right
 
-        // Left Camera w/ its real position
+        // Left Camera w/ its real position offset from center of robot and from ground
         public static final Transform3d ROBOT_TO_LEFT_PHOTON = new Transform3d(
                 new Translation3d(Units.inchesToMeters(-11.88), Units.inchesToMeters(6.88),
                         Units.inchesToMeters(31.09)),
                 new Rotation3d(0, Math.toRadians(10.62), Math.toRadians(46))); // TODO - Need to modify position of Left
 
-        // TODO - Review the var under to see if needs to be deleted
         // Min target ambiguity. Targets w/ higher ambiguity will be discarded
         public static final double APRILTAG_AMBIGUITY_THRESHOLD = 0.2;
         public static final double POSE_AMBIGUITY_SHIFTER = 0.2;
