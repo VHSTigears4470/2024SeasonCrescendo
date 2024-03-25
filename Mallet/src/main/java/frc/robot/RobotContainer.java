@@ -13,6 +13,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.NoteLimelight;
 import frc.robot.subsystems.PhotonSubsystem;
+import frc.robot.subsystems.PoseEstimation;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -59,6 +60,7 @@ public class RobotContainer {
   private static IntakeSubsystem intakeSub;
   private static ElevatorSubsystem elevatorSub;
   private static PhotonSubsystem photonSub;
+  private static PoseEstimation poseEstimate = new PoseEstimation(swerveSub);
   private static NoteLimelight limelightSub;
 
   // INIT XBOX CONTROLLER
