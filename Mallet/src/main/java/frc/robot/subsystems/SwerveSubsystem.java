@@ -24,9 +24,11 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -48,7 +50,6 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.util.ListDebugEntryDouble;
 
 public class SwerveSubsystem extends SubsystemBase {
 
@@ -60,7 +61,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   // Shuffleboard
   private ShuffleboardTab shuffleDebugTab;
-  private ListDebugEntryDouble entry_swerveHeading;
+  private GenericEntry entry_swerveHeading;
 
   // Photon Pose
   private Supplier<EstimatedRobotPose> rightPhotonPose;
@@ -675,15 +676,17 @@ public class SwerveSubsystem extends SubsystemBase {
   private void initializeShuffleboard() {
     if (IntakeConstants.DEBUG) {
       shuffleDebugTab = Shuffleboard.getTab("Debug Tab");
-      entry_swerveHeading = new ListDebugEntryDouble(shuffleDebugTab, "Swerve", "Swerve Heading", 0.0,
-          BuiltInWidgets.kGyro,
-          true);
+      entry_swerveHeading = shuffleDebugTab.getLayout("Swerve", BuiltInLayouts.kList)
+          .add("Swerve Heading", 0)
+          .withWidget(BuiltInWidgets.kGyro)
+          .getEntry();
+
     }
   }
 
   private void updateShuffleboard() {
     if (IntakeConstants.DEBUG) {
-      entry_swerveHeading.set(swerveDrive.getOdometryHeading().getDegrees());
+      entry_swerveHeading.setValue(swerveDrive.getOdometryHeading().getDegrees());
     }
   }
 

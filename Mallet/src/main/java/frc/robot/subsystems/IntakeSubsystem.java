@@ -5,17 +5,16 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.util.ListDebugEntryBool;
-import frc.robot.util.ListDebugEntryDouble;
-import frc.robot.util.ListDebugEntryString;
 
 public class IntakeSubsystem extends SubsystemBase {
     // Variables for intake pneumatics deployment and retractaction
@@ -35,9 +34,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
     // Shuffleboard
     private ShuffleboardTab shuffleDebugTab;
-    private ListDebugEntryDouble entry_compressorPressure;
-    private ListDebugEntryBool entry_compressorSwitch;
-    private ListDebugEntryBool entry_noteBreakBeam;
+    private GenericEntry entry_compressorPressure;
+    private GenericEntry entry_compressorSwitch;
+    private GenericEntry entry_noteBreakBeam;
 
     public IntakeSubsystem() {
         // Pneumatics initialization
@@ -133,21 +132,28 @@ public class IntakeSubsystem extends SubsystemBase {
     private void initializeShuffleboard() {
         if (IntakeConstants.DEBUG) {
             shuffleDebugTab = Shuffleboard.getTab("Debug Tab");
-            entry_compressorPressure = new ListDebugEntryDouble(shuffleDebugTab, "Intake", "Compressor Pressure", 0.0,
-                    BuiltInWidgets.kTextView, false);
-            entry_compressorSwitch = new ListDebugEntryBool(shuffleDebugTab, "Intake", "Compressor Switch", false,
-                    BuiltInWidgets.kBooleanBox, true);
-            entry_noteBreakBeam = new ListDebugEntryBool(shuffleDebugTab, "Intake", "Note Break Beam Tripped", false,
-                    BuiltInWidgets.kBooleanBox, true);
+            entry_compressorPressure = shuffleDebugTab.getLayout("Intake", BuiltInLayouts.kList)
+                    .add("Compressor Pressure", 0)
+                    .withWidget(BuiltInWidgets.kTextView)
+                    .getEntry();
+            entry_compressorSwitch = shuffleDebugTab.getLayout("Intake", BuiltInLayouts.kList)
+                    .add("Compressor Switch", false)
+                    .withWidget(BuiltInWidgets.kBooleanBox)
+                    .getEntry();
+            entry_noteBreakBeam = shuffleDebugTab.getLayout("Intake", BuiltInLayouts.kList)
+                    .add("Note Break Beam Tripped", false)
+                    .withWidget(BuiltInWidgets.kBooleanBox)
+                    .getEntry();
+
         }
     }
 
     /*** Updates Shuffleboard */
     private void updateShuffleboard() {
         if (IntakeConstants.DEBUG) {
-            entry_compressorPressure.set(compressor.getPressure());
-            entry_compressorSwitch.set(compressor.getPressureSwitchValue());
-            entry_noteBreakBeam.set(noteBreambeamTripped());
+            entry_compressorPressure.setDouble(compressor.getPressure());
+            entry_compressorSwitch.setBoolean(compressor.getPressureSwitchValue());
+            entry_noteBreakBeam.setBoolean(noteBreambeamTripped());
         }
     }
 
