@@ -13,7 +13,9 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.util.ListDebugEntry;
+import frc.robot.util.ListDebugEntryBool;
+import frc.robot.util.ListDebugEntryDouble;
+import frc.robot.util.ListDebugEntryString;
 
 public class IntakeSubsystem extends SubsystemBase {
     // Variables for intake pneumatics deployment and retractaction
@@ -33,9 +35,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
     // Shuffleboard
     private ShuffleboardTab shuffleDebugTab;
-    private ListDebugEntry entry_compressorPressure;
-    private ListDebugEntry entry_compressorSwitch;
-    private ListDebugEntry entry_noteBreakBeam;
+    private ListDebugEntryDouble entry_compressorPressure;
+    private ListDebugEntryBool entry_compressorSwitch;
+    private ListDebugEntryBool entry_noteBreakBeam;
 
     public IntakeSubsystem() {
         // Pneumatics initialization
@@ -131,11 +133,11 @@ public class IntakeSubsystem extends SubsystemBase {
     private void initializeShuffleboard() {
         if (IntakeConstants.DEBUG) {
             shuffleDebugTab = Shuffleboard.getTab("Debug Tab");
-            entry_compressorPressure = new ListDebugEntry(shuffleDebugTab, "Intake", "Compressor Pressure", 0,
+            entry_compressorPressure = new ListDebugEntryDouble(shuffleDebugTab, "Intake", "Compressor Pressure", 0.0,
                     BuiltInWidgets.kTextView, false);
-            entry_compressorSwitch = new ListDebugEntry(shuffleDebugTab, "Intake", "Compressor Switch", false,
+            entry_compressorSwitch = new ListDebugEntryBool(shuffleDebugTab, "Intake", "Compressor Switch", false,
                     BuiltInWidgets.kBooleanBox, true);
-            entry_noteBreakBeam = new ListDebugEntry(shuffleDebugTab, "Intake", "Note Break Beam Tripped", false,
+            entry_noteBreakBeam = new ListDebugEntryBool(shuffleDebugTab, "Intake", "Note Break Beam Tripped", false,
                     BuiltInWidgets.kBooleanBox, true);
         }
     }

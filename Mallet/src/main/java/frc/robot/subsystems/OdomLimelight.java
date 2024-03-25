@@ -9,13 +9,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 import frc.robot.Constants.OdometryLLConstants;
 import frc.robot.Constants.OdometryLLConstants.ODOM_LL_PIPELINE;
-import frc.robot.util.ListDebugEntry;
+import frc.robot.util.ListDebugEntryString;
 
 public class OdomLimelight extends SubsystemBase {
 
     // Shuffleboard
     private ShuffleboardTab shuffleDebugTab;
-    private ListDebugEntry entry_pipelineName;
+    private ListDebugEntryString entry_pipelineName;
 
     public OdomLimelight() {
         // Default pipeline
@@ -75,7 +75,7 @@ public class OdomLimelight extends SubsystemBase {
     private void initializeShuffleboard() {
         if (OdometryLLConstants.DEBUG) {
             shuffleDebugTab = Shuffleboard.getTab("Debug Tab");
-            entry_pipelineName = new ListDebugEntry(shuffleDebugTab, "Odometry Limelight", "Current Pipeline",
+            entry_pipelineName = new ListDebugEntryString(shuffleDebugTab, "Odometry Limelight", "Current Pipeline",
                     "Default",
                     BuiltInWidgets.kTextView, false);
         }

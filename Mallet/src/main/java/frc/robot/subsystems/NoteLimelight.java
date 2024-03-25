@@ -7,17 +7,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 import frc.robot.Constants.NoteLLConstants;
 import frc.robot.Constants.NoteLLConstants.NOTE_LL_PIPELINE;
-import frc.robot.util.ListDebugEntry;
+import frc.robot.util.ListDebugEntryBool;
+import frc.robot.util.ListDebugEntryDouble;
+import frc.robot.util.ListDebugEntryString;
 
 public class NoteLimelight extends SubsystemBase {
 
     // Shuffleboard
     private ShuffleboardTab shuffleDebugTab;
-    private ListDebugEntry entry_pipelineName;
-    private ListDebugEntry entry_tvEntry;
-    private ListDebugEntry entry_txEntry;
-    private ListDebugEntry entry_tyEntry;
-    private ListDebugEntry entry_taEntry;
+    private ListDebugEntryString entry_pipelineName;
+    private ListDebugEntryBool entry_tvEntry;
+    private ListDebugEntryDouble entry_txEntry;
+    private ListDebugEntryDouble entry_tyEntry;
+    private ListDebugEntryDouble entry_taEntry;
 
     public NoteLimelight() {
         // Default pipeline
@@ -80,15 +82,16 @@ public class NoteLimelight extends SubsystemBase {
             shuffleDebugTab = Shuffleboard.getTab("Debug Tab");
             // convert to ListDebugEntry
 
-            entry_pipelineName = new ListDebugEntry(shuffleDebugTab, "Note Limelight", "Current Pipeline", "Default",
+            entry_pipelineName = new ListDebugEntryString(shuffleDebugTab, "Note Limelight", "Current Pipeline",
+                    "Default",
                     BuiltInWidgets.kTextView, false);
-            entry_tvEntry = new ListDebugEntry(shuffleDebugTab, "Note Limelight", "Is Target", false,
+            entry_tvEntry = new ListDebugEntryBool(shuffleDebugTab, "Note Limelight", "Is Target", false,
                     BuiltInWidgets.kBooleanBox, true);
-            entry_txEntry = new ListDebugEntry(shuffleDebugTab, "Note Limelight", "X Offset", 0,
+            entry_txEntry = new ListDebugEntryDouble(shuffleDebugTab, "Note Limelight", "X Offset", 0.0,
                     BuiltInWidgets.kTextView, true);
-            entry_tyEntry = new ListDebugEntry(shuffleDebugTab, "Note Limelight", "Y Offset", 0,
+            entry_tyEntry = new ListDebugEntryDouble(shuffleDebugTab, "Note Limelight", "Y Offset", 0.0,
                     BuiltInWidgets.kTextView, true);
-            entry_taEntry = new ListDebugEntry(shuffleDebugTab, "Note Limelight", "Area", 0,
+            entry_taEntry = new ListDebugEntryDouble(shuffleDebugTab, "Note Limelight", "Area", 0.0,
                     BuiltInWidgets.kTextView, true);
         }
     }

@@ -17,7 +17,9 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.ElevatorConstants.ELEVATOR_STATE;
-import frc.robot.util.ListDebugEntry;
+import frc.robot.util.ListDebugEntryString;
+import frc.robot.util.ListDebugEntryDouble;
+import frc.robot.util.ListDebugEntryBool;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
@@ -49,23 +51,23 @@ public class ElevatorSubsystem extends SubsystemBase {
   private ShuffleboardTab shuffleDebugTab;
   private ShuffleboardTab shuffleDriverTab;
 
-  private ListDebugEntry entry_botBeam;
-  private ListDebugEntry entry_topBeam;
-  private ListDebugEntry entry_minLimit;
-  private ListDebugEntry entry_maxLimit;
-  private ListDebugEntry entry_desiredPosition;
-  private ListDebugEntry entry_leftEncoder;
-  private ListDebugEntry entry_rightEncoder;
+  private ListDebugEntryBool entry_botBeam;
+  private ListDebugEntryBool entry_topBeam;
+  private ListDebugEntryDouble entry_minLimit;
+  private ListDebugEntryDouble entry_maxLimit;
+  private ListDebugEntryDouble entry_desiredPosition;
+  private ListDebugEntryDouble entry_leftEncoder;
+  private ListDebugEntryDouble entry_rightEncoder;
 
   // PID Entries
-  private ListDebugEntry entry_pid_kp;
-  private ListDebugEntry entry_pid_ki;
-  private ListDebugEntry entry_pid_kd;
-  private ListDebugEntry entry_pid_kiz;
-  private ListDebugEntry entry_pid_kff;
-  private ListDebugEntry entry_smart_motion_allowed_err;
+  private ListDebugEntryDouble entry_pid_kp;
+  private ListDebugEntryDouble entry_pid_ki;
+  private ListDebugEntryDouble entry_pid_kd;
+  private ListDebugEntryDouble entry_pid_kiz;
+  private ListDebugEntryDouble entry_pid_kff;
+  private ListDebugEntryDouble entry_smart_motion_allowed_err;
   // Driver Tab
-  private ListDebugEntry entry_elevatorState;
+  private ListDebugEntryString entry_elevatorState;
 
   /**
    * Initialize Elevator Subsystem
@@ -232,40 +234,40 @@ public class ElevatorSubsystem extends SubsystemBase {
   private void initalizeShuffleboard() {
     shuffleDriverTab = Shuffleboard.getTab("Driver's Tab");
 
-    entry_elevatorState = new ListDebugEntry(shuffleDriverTab, getSubsystem(), "Elevator Height State", "Down",
+    entry_elevatorState = new ListDebugEntryString(shuffleDriverTab, getSubsystem(), "Elevator Height State", "Down",
         BuiltInWidgets.kTextView);
     if (ElevatorConstants.DEBUG) {
       shuffleDebugTab = Shuffleboard.getTab("Debug Tab");
-      entry_botBeam = new ListDebugEntry(shuffleDebugTab, "Elevator", "Bottom Breakbeam Tripped", false,
+      entry_botBeam = new ListDebugEntryBool(shuffleDebugTab, "Elevator", "Bottom Breakbeam Tripped", false,
           BuiltInWidgets.kBooleanBox);
-      entry_topBeam = new ListDebugEntry(shuffleDebugTab, "Elevator", "Top Breakbeam Tripped", false,
+      entry_topBeam = new ListDebugEntryBool(shuffleDebugTab, "Elevator", "Top Breakbeam Tripped", false,
           BuiltInWidgets.kBooleanBox);
-      entry_minLimit = new ListDebugEntry(shuffleDebugTab, "Elevator", "Min Limit", lowestPos,
+      entry_minLimit = new ListDebugEntryDouble(shuffleDebugTab, "Elevator", "Min Limit", lowestPos,
           BuiltInWidgets.kTextView);
-      entry_maxLimit = new ListDebugEntry(shuffleDebugTab, "Elevator", "Max Limit", highestPos,
+      entry_maxLimit = new ListDebugEntryDouble(shuffleDebugTab, "Elevator", "Max Limit", highestPos,
           BuiltInWidgets.kTextView);
-      entry_desiredPosition = new ListDebugEntry(shuffleDebugTab, "Elevator", "Desired Position",
+      entry_desiredPosition = new ListDebugEntryDouble(shuffleDebugTab, "Elevator", "Desired Position",
           desiredReferencePosition,
           BuiltInWidgets.kTextView);
-      entry_leftEncoder = new ListDebugEntry(shuffleDebugTab, "Elevator", "Left Encoder Value", 0,
+      entry_leftEncoder = new ListDebugEntryDouble(shuffleDebugTab, "Elevator", "Left Encoder Value", 0.0,
           BuiltInWidgets.kEncoder);
-      entry_rightEncoder = new ListDebugEntry(shuffleDebugTab, "Elevator", "Right Encoder Value", 0,
+      entry_rightEncoder = new ListDebugEntryDouble(shuffleDebugTab, "Elevator", "Right Encoder Value", 0.0,
           BuiltInWidgets.kEncoder);
 
       // PID Init CURRENTLY DISABLED
-      entry_pid_kp = new ListDebugEntry(shuffleDebugTab, "Elevator PID", "P Gain", ElevatorConstants.PID_KP,
+      entry_pid_kp = new ListDebugEntryDouble(shuffleDebugTab, "Elevator PID", "P Gain", ElevatorConstants.PID_KP,
           BuiltInWidgets.kTextView, false);
-      entry_pid_ki = new ListDebugEntry(shuffleDebugTab, "Elevator PID", "I Gain", ElevatorConstants.PID_KI,
+      entry_pid_ki = new ListDebugEntryDouble(shuffleDebugTab, "Elevator PID", "I Gain", ElevatorConstants.PID_KI,
           BuiltInWidgets.kTextView, false);
-      entry_pid_kd = new ListDebugEntry(shuffleDebugTab, "Elevator PID", "D Gain", ElevatorConstants.PID_KD,
+      entry_pid_kd = new ListDebugEntryDouble(shuffleDebugTab, "Elevator PID", "D Gain", ElevatorConstants.PID_KD,
           BuiltInWidgets.kTextView, false);
-      entry_pid_kiz = new ListDebugEntry(shuffleDebugTab, "Elevator PID", "Iz Gain", ElevatorConstants.PID_KIZ,
+      entry_pid_kiz = new ListDebugEntryDouble(shuffleDebugTab, "Elevator PID", "Iz Gain", ElevatorConstants.PID_KIZ,
           BuiltInWidgets.kTextView, false);
-      entry_pid_kff = new ListDebugEntry(shuffleDebugTab, "Elevator PID", "FF Gain", ElevatorConstants.PID_KFF,
+      entry_pid_kff = new ListDebugEntryDouble(shuffleDebugTab, "Elevator PID", "FF Gain", ElevatorConstants.PID_KFF,
           BuiltInWidgets.kTextView, false);
 
       // Smart Motion
-      entry_smart_motion_allowed_err = new ListDebugEntry(shuffleDebugTab, "Elevator PID", "Allowed Error",
+      entry_smart_motion_allowed_err = new ListDebugEntryDouble(shuffleDebugTab, "Elevator PID", "Allowed Error",
           ElevatorConstants.SM_ALLOWED_ERR, BuiltInWidgets.kTextView, false);
     }
   }

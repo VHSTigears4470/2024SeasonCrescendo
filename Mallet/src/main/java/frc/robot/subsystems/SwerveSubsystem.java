@@ -24,11 +24,9 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -50,7 +48,7 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.util.ListDebugEntry;
+import frc.robot.util.ListDebugEntryDouble;
 
 public class SwerveSubsystem extends SubsystemBase {
 
@@ -62,7 +60,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   // Shuffleboard
   private ShuffleboardTab shuffleDebugTab;
-  private ListDebugEntry entry_swerveHeading;
+  private ListDebugEntryDouble entry_swerveHeading;
 
   // Photon Pose
   private Supplier<EstimatedRobotPose> rightPhotonPose;
@@ -677,7 +675,8 @@ public class SwerveSubsystem extends SubsystemBase {
   private void initializeShuffleboard() {
     if (IntakeConstants.DEBUG) {
       shuffleDebugTab = Shuffleboard.getTab("Debug Tab");
-      entry_swerveHeading = new ListDebugEntry(shuffleDebugTab, "Swerve", "Swerve Heading", 0, BuiltInWidgets.kGyro,
+      entry_swerveHeading = new ListDebugEntryDouble(shuffleDebugTab, "Swerve", "Swerve Heading", 0.0,
+          BuiltInWidgets.kGyro,
           true);
     }
   }

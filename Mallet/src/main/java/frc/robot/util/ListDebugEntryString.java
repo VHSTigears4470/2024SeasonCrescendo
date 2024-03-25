@@ -5,11 +5,11 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
-public class ListDebugEntry {
+public class ListDebugEntryString {
     private GenericEntry entry = null;
 
-    public ListDebugEntry(ShuffleboardTab tab, String listTitle,
-            String entryName, Object defaultValue, BuiltInWidgets widgetType) {
+    public ListDebugEntryString(ShuffleboardTab tab, String listTitle,
+            String entryName, String defaultValue, BuiltInWidgets widgetType) {
         entry = tab.getLayout(listTitle, BuiltInLayouts.kList)
                 .add(entryName, defaultValue)
                 .withWidget(widgetType)
@@ -20,8 +20,8 @@ public class ListDebugEntry {
      * Additional enabled argument for just not creating it to avoid having to make
      * too many changes
      */
-    public ListDebugEntry(ShuffleboardTab tab, String listTitle,
-            String entryName, Object defaultValue, BuiltInWidgets widgetType, boolean enabled) {
+    public ListDebugEntryString(ShuffleboardTab tab, String listTitle,
+            String entryName, String defaultValue, BuiltInWidgets widgetType, boolean enabled) {
         if (enabled) {
             entry = tab.getLayout(listTitle, BuiltInLayouts.kList)
                     .add(entryName, defaultValue)
@@ -30,18 +30,18 @@ public class ListDebugEntry {
         }
     }
 
-    public void set(Object value) {
+    public void set(String value) {
         if (entry == null) {
             return;
         }
-        entry.setValue(value);
+        entry.setString(value);
     }
 
-    public Object get(Object defaultValue) {
+    public String get(String defaultValue) {
         if (entry == null) {
             return defaultValue;
         }
-        Object value = entry.get().getValue();
+        String value = entry.get().getString();
         return (value != null) ? value : defaultValue;
     }
 }
