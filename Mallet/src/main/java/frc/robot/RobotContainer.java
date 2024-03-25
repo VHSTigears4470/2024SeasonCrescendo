@@ -172,9 +172,9 @@ public class RobotContainer {
     autoPresetChooser = new SendableChooser<Command>();
 
     // Base starting position and position to shoot into speaker with
-    basePositionChooser.setDefaultOption("Amp Side", "Amp Side to ");
-    basePositionChooser.addOption("Middle Side", "Middle Side to ");
-    basePositionChooser.addOption("Feeder Side", "Feeder Side to ");
+    basePositionChooser.setDefaultOption("Amp Side", AutoConstants.AMP_SIDE_START);
+    basePositionChooser.addOption("Middle Side", AutoConstants.MIDDLE_SIDE_START);
+    basePositionChooser.addOption("Feeder Side", AutoConstants.FEEDER_SIDE_START);
 
     // Fills with number of wanted directions
     for (int i = 0; i < AutoConstants.numOfDirections; i++) {
@@ -185,9 +185,13 @@ public class RobotContainer {
     for (SendableChooser<String> compiledCommandEnd : autoDirections) {
       compiledCommandEnd.setDefaultOption("Do Nothing", "Nothing"); // Depends on whether at the speaker or not
       if (SwerveConstants.USING_SWERVE) {
-        compiledCommandEnd.addOption("Amp Wing Cycle", AutoConstants.AMP_WING_CYCLE_ENDING);
-        compiledCommandEnd.addOption("Middle Wing Cycle", AutoConstants.MIDDLE_WING_CYCLE_ENDING);
-        compiledCommandEnd.addOption("Feeder Wing Cycle", AutoConstants.FEEDER_WING_CYCLE_ENDING);
+        compiledCommandEnd.addOption("Amp Side", AutoConstants.AMP_SIDE_START);
+        compiledCommandEnd.addOption("Middle Side", AutoConstants.MIDDLE_SIDE_START);
+        compiledCommandEnd.addOption("Feeder Side", AutoConstants.FEEDER_SIDE_START);
+
+        compiledCommandEnd.addOption("Amp Wing Cycle", AutoConstants.AMP_WING_NOTE_ENDING);
+        compiledCommandEnd.addOption("Middle Wing Cycle", AutoConstants.MIDDLE_WING_NOTE_ENDING);
+        compiledCommandEnd.addOption("Feeder Wing Cycle", AutoConstants.FEEDER_WING_NOTE_ENDING);
 
         compiledCommandEnd.addOption("Amp Center Note", AutoConstants.AMP_CENTER_NOTE_ENDING);
         compiledCommandEnd.addOption("Amp Middle Center Note", AutoConstants.AMP_MIDDLE_CENTER_NOTE_ENDING);
@@ -200,6 +204,8 @@ public class RobotContainer {
       if (IntakeConstants.IS_USING_INTAKE) {
         compiledCommandEnd.addOption("Shoot speaker", "Shoot Speaker");
         compiledCommandEnd.addOption("Shoot amp", "Shoot Amp");
+        
+        compiledCommandEnd.addOption("Drive Til Have Note", AutoConstants.DRIVE_TIL_HAVE_NOTE);
       }
     }
     // Adds the base position to the shuffleboard list
@@ -216,24 +222,32 @@ public class RobotContainer {
 
     // Init auto preset chooser
     autoPresetChooser.setDefaultOption("Use Modular", null);
-    autoPresetChooser.addOption("Preset One (Amp Side)", 
-      new ShootSpeakerAndReset(intakeSub, elevatorSub)
-      .andThen(swerveSub.getAutonomousCommand(AutoConstants.AMP_SIDE_START + AutoConstants.AMP_WING_CYCLE_ENDING, false))
-      .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub))
-      .andThen(swerveSub.getAutonomousCommand(AutoConstants.AMP_CENTER_NOTE_ENDING, false))
-    );
-    autoPresetChooser.addOption("Preset Two (Middle Side)", 
-      new ShootSpeakerAndReset(intakeSub, elevatorSub)
-      .andThen(swerveSub.getAutonomousCommand(AutoConstants.MIDDLE_SIDE_START + AutoConstants.MIDDLE_WING_CYCLE_ENDING, false))
-      .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub))
-      .andThen(swerveSub.getAutonomousCommand(AutoConstants.MIDDLE_CENTER_NOTE_ENDING, false))
-    );
-    autoPresetChooser.addOption("Preset Three (Feeder Side)",
-      new ShootSpeakerAndReset(intakeSub, elevatorSub)
-      .andThen(swerveSub.getAutonomousCommand(AutoConstants.FEEDER_SIDE_START + AutoConstants.FEEDER_WING_CYCLE_ENDING, false))
-      .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub))
-      .andThen(swerveSub.getAutonomousCommand(AutoConstants.FEEDER_CENTER_NOTE_ENDING, false))
-    );
+    if(SwerveConstants.USING_SWERVE && ElevatorConstants.IS_USING_ELEVATOR && IntakeConstants.IS_USING_INTAKE) {
+      autoPresetChooser.addOption("Preset One (Amp Side)", 
+        new ShootSpeakerAndReset(intakeSub, elevatorSub)
+        .andThen(swerveSub.getAutonomousCommand(AutoConstants.AMP_SIDE_START + " to " + AutoConstants.AMP_WING_NOTE_ENDING, false))
+        .andThen(new DriveTillHaveNote(intakeSub, elevatorSub, swerveSub))
+        .andThen(swerveSub.getAutonomousCommand(AutoConstants.AMP_WING_NOTE_ENDING + " to " + AutoConstants.AMP_SIDE_START, false))
+        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub))
+        .andThen(swerveSub.getAutonomousCommand(AutoConstants.AMP_SIDE_START + " to " + AutoConstants.AMP_CENTER_NOTE_ENDING, false))
+      );
+      autoPresetChooser.addOption("Preset Two (Middle Side)", 
+        new ShootSpeakerAndReset(intakeSub, elevatorSub)
+        .andThen(swerveSub.getAutonomousCommand(AutoConstants.MIDDLE_SIDE_START + " to " + AutoConstants.MIDDLE_WING_NOTE_ENDING, false))
+        .andThen(new DriveTillHaveNote(intakeSub, elevatorSub, swerveSub))
+        .andThen(swerveSub.getAutonomousCommand(AutoConstants.MIDDLE_WING_NOTE_ENDING + " to " + AutoConstants.MIDDLE_SIDE_START, false))
+        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub))
+        .andThen(swerveSub.getAutonomousCommand(AutoConstants.MIDDLE_SIDE_START + " to " + AutoConstants.MIDDLE_CENTER_NOTE_ENDING, false))
+      );
+      autoPresetChooser.addOption("Preset Three (Feeder Side)",
+        new ShootSpeakerAndReset(intakeSub, elevatorSub)
+        .andThen(swerveSub.getAutonomousCommand(AutoConstants.FEEDER_SIDE_START + " to " + AutoConstants.FEEDER_WING_NOTE_ENDING, false))
+        .andThen(new DriveTillHaveNote(intakeSub, elevatorSub, swerveSub))
+        .andThen(swerveSub.getAutonomousCommand(AutoConstants.FEEDER_WING_NOTE_ENDING + " to " + AutoConstants.FEEDER_SIDE_START, false))
+        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub))
+        .andThen(swerveSub.getAutonomousCommand(AutoConstants.FEEDER_SIDE_START + " to " + AutoConstants.FEEDER_CENTER_NOTE_ENDING, false))
+      );
+    }
     shuffleDebugTab.add("Presets", autoPresetChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
   }
 
@@ -357,8 +371,8 @@ public class RobotContainer {
     // nothing (at first)
     SequentialCommandGroup compiledCommand = new SequentialCommandGroup();
 
-    // Where the robot starts
-    String baseStart = basePositionChooser.getSelected();
+    // Where the robot starts at each direction
+    String startPos = basePositionChooser.getSelected();
 
     for (SendableChooser<String> choice : autoDirections) {
       // Default choosen command does nothing
@@ -374,10 +388,11 @@ public class RobotContainer {
       }
       // If path planner command
       else {
-        Command pathPlannerComand = swerveSub.getAutonomousCommand(baseStart + selected, false);
+        Command pathPlannerComand = swerveSub.getAutonomousCommand(startPos + " to " + selected, false);
         if (pathPlannerComand != null) {
           choosenCommand = pathPlannerComand;
         }
+        startPos = selected;
       }
 
       // Apends it to the sequential command

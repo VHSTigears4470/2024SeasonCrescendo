@@ -37,21 +37,21 @@ public final class Constants {
         public static final int numOfDirections = 8;
 
         // String Names for starting Position
-        public static final String AMP_SIDE_START = "Amp Side to";
-        public static final String MIDDLE_SIDE_START = "Middle Side to";
-        public static final String FEEDER_SIDE_START = "Feeder Side to";
+        public static final String AMP_SIDE_START = "Amp Start";
+        public static final String MIDDLE_SIDE_START = "Middle Start";
+        public static final String FEEDER_SIDE_START = "Feeder Start";
 
         // String Names for Cycles
-        public static final String AMP_WING_CYCLE_ENDING = "Amp Wing Cycle";
-        public static final String MIDDLE_WING_CYCLE_ENDING = "Middle Wing Cycle";
-        public static final String FEEDER_WING_CYCLE_ENDING = "Feeder Wing Cycle";
+        public static final String AMP_WING_NOTE_ENDING = "Amp Wing";
+        public static final String MIDDLE_WING_NOTE_ENDING = "Middle Wing";
+        public static final String FEEDER_WING_NOTE_ENDING = "Feeder Wing";
 
         // String Names for Center Note Paths
-        public static final String AMP_CENTER_NOTE_ENDING = "Amp Center Note";
-        public static final String AMP_MIDDLE_CENTER_NOTE_ENDING = "Amp Middle Center Note";
-        public static final String MIDDLE_CENTER_NOTE_ENDING = "Middle Center Note";
-        public static final String FEEDER_MIDDLE_CENTER_NOTE_ENDING = "Feeder Middle Center Note";
-        public static final String FEEDER_CENTER_NOTE_ENDING = "Feeder Center Note";
+        public static final String AMP_CENTER_NOTE_ENDING = "Center Left";
+        public static final String AMP_MIDDLE_CENTER_NOTE_ENDING = "Center Middle Left";
+        public static final String MIDDLE_CENTER_NOTE_ENDING = "Center Middle";
+        public static final String FEEDER_MIDDLE_CENTER_NOTE_ENDING = "Center Right Middle";
+        public static final String FEEDER_CENTER_NOTE_ENDING = "Center Right";
 
         // String Names for Named Commands
         public static final String CLIMB_POSITION = "Climb Position";
