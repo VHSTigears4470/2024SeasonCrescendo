@@ -193,7 +193,7 @@ public final class Constants {
         /** Max positive voltage (must be positive) */
         public static final double PID_KMAX_OUTPUT = 3.5; // TODO: Tune
         /** Max negative voltage (must be negative) */
-        public static final double PID_KMIN_OUTPUT = -2; // TODO: Tune
+        public static final double PID_KMIN_OUTPUT = -1; // TODO: Tune
 
         // SMART MOTION
         public static final int SM_ID = 0;
