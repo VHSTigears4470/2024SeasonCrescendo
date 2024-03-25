@@ -56,6 +56,7 @@ public final class Constants {
         // String Names for Named Commands
         public static final String CLIMB_POSITION = "Climb Position";
         public static final String DEFAULT_POSITION = "Default Position";
+        public static final String INTAKE_POSITION = "Intake Position";
         public static final String INTAKE_NOTE = "Intake Note";
         public static final String SHOOT_AMP = "Shoot Amp";
         public static final String SHOOT_SPEAKER = "Shoot Speaker";

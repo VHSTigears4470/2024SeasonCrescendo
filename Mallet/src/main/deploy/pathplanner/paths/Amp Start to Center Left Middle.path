@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.609343607312807,
-        "y": 7.372804129494515
+        "x": 3.961348586204281,
+        "y": 7.1879976935309315
       },
       "isLocked": false,
       "linkedName": "Amp Start"
@@ -20,8 +20,8 @@
         "y": 5.79
       },
       "prevControl": {
-        "x": 6.5,
-        "y": 6.79
+        "x": 6.801531707328818,
+        "y": 8.024489982629254
       },
       "nextControl": null,
       "isLocked": false,
@@ -41,7 +41,25 @@
     }
   ],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.4,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Intake Position"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,

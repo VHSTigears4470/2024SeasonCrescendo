@@ -15,11 +15,10 @@ public class DriveTillHaveNote extends SequentialCommandGroup {
         addRequirements(intake, elevatorSubsystem, swerve);
         swerve.getHeading();
         addCommands(
-                new IntakePosition(intake, elevatorSubsystem),
-                new WaitUntilCommand(elevatorSubsystem::isAtPos),
-                new ParallelRaceGroup(
-                        new IntakeSetIntakeVoltageEndWithBreakbeam(intake),
-                        new DriveForward(swerve, SwerveConstants.SWERVE_AUTO_VELOCITY)),
-                new DefaultPosition(intake, elevatorSubsystem));
+            new WaitUntilCommand(elevatorSubsystem::isAtPos),
+            new ParallelRaceGroup(
+                    new IntakeSetIntakeVoltageEndWithBreakbeam(intake),
+                    new DriveForward(swerve, SwerveConstants.SWERVE_AUTO_VELOCITY))
+        );
     }
 }

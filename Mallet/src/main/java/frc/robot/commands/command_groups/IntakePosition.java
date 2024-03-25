@@ -14,6 +14,7 @@ public class IntakePosition extends SequentialCommandGroup {
         addCommands(
                 new IntakePusherRetract(intakeSubsystem),
                 new IntakePositionDown(intakeSubsystem),
-                new ElevatorSetHeightState(elevatorSubsystem, ELEVATOR_STATE.DOWN));
+                new ElevatorSetHeightState(elevatorSubsystem, ELEVATOR_STATE.DOWN)
+        );
     }
 }
