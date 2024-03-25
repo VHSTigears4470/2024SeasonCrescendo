@@ -108,8 +108,12 @@ public class PoseEstimation extends SubsystemBase {
   public void periodic() {
     if (Constants.PhotonConstants.USING_VISION) {
       // Adds both camera reported pose to swerve
-      estimatorChecker(rightEstimator);
-      estimatorChecker(leftEstimator);
+      if(PhotonConstants.USING_RIGHT_PHOTON) {
+        estimatorChecker(rightEstimator);
+      }
+      if(PhotonConstants.USING_LEFT_PHOTON) {
+        estimatorChecker(leftEstimator);
+      }
     } else {
       allNotifier.close();
     }
