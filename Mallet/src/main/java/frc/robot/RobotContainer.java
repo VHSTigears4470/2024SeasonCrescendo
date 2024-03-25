@@ -349,6 +349,10 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
+    // If the user did not press "Use Modular", then return the preset command they selected
+    if(autoPresetChooser.getSelected() != null) {
+      return autoPresetChooser.getSelected();
+    }
     // Object to store sequential command. This is done to init a command that does
     // nothing (at first)
     SequentialCommandGroup compiledCommand = new SequentialCommandGroup();
