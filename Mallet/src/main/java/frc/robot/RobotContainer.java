@@ -204,7 +204,7 @@ public class RobotContainer {
       if (IntakeConstants.IS_USING_INTAKE) {
         compiledCommandEnd.addOption("Shoot speaker", "Shoot Speaker");
         compiledCommandEnd.addOption("Shoot amp", "Shoot Amp");
-        
+
         compiledCommandEnd.addOption("Drive Til Have Note", AutoConstants.DRIVE_TIL_HAVE_NOTE);
       }
     }
@@ -222,31 +222,37 @@ public class RobotContainer {
 
     // Init auto preset chooser
     autoPresetChooser.setDefaultOption("Use Modular", null);
-    if(SwerveConstants.USING_SWERVE && ElevatorConstants.IS_USING_ELEVATOR && IntakeConstants.IS_USING_INTAKE) {
-      autoPresetChooser.addOption("Preset One (Amp Side)", 
-        new ShootSpeakerAndReset(intakeSub, elevatorSub)
-        .andThen(swerveSub.getAutonomousCommand(AutoConstants.AMP_SIDE_START + " to " + AutoConstants.AMP_WING_NOTE_ENDING, false))
-        .andThen(new DriveTillHaveNote(intakeSub, elevatorSub, swerveSub))
-        .andThen(swerveSub.getAutonomousCommand(AutoConstants.AMP_WING_NOTE_ENDING + " to " + AutoConstants.AMP_SIDE_START, false))
-        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub))
-        .andThen(swerveSub.getAutonomousCommand(AutoConstants.AMP_SIDE_START + " to " + AutoConstants.AMP_CENTER_NOTE_ENDING, false))
-      );
-      autoPresetChooser.addOption("Preset Two (Middle Side)", 
-        new ShootSpeakerAndReset(intakeSub, elevatorSub)
-        .andThen(swerveSub.getAutonomousCommand(AutoConstants.MIDDLE_SIDE_START + " to " + AutoConstants.MIDDLE_WING_NOTE_ENDING, false))
-        .andThen(new DriveTillHaveNote(intakeSub, elevatorSub, swerveSub))
-        .andThen(swerveSub.getAutonomousCommand(AutoConstants.MIDDLE_WING_NOTE_ENDING + " to " + AutoConstants.MIDDLE_SIDE_START, false))
-        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub))
-        .andThen(swerveSub.getAutonomousCommand(AutoConstants.MIDDLE_SIDE_START + " to " + AutoConstants.MIDDLE_CENTER_NOTE_ENDING, false))
-      );
+    if (SwerveConstants.USING_SWERVE && ElevatorConstants.IS_USING_ELEVATOR && IntakeConstants.IS_USING_INTAKE) {
+      autoPresetChooser.addOption("Preset One (Amp Side)",
+          new ShootSpeakerAndReset(intakeSub, elevatorSub)
+              .andThen(swerveSub.getAutonomousCommand(
+                  AutoConstants.AMP_SIDE_START + " to " + AutoConstants.AMP_WING_NOTE_ENDING, false))
+              .andThen(new DriveTillHaveNote(intakeSub, elevatorSub, swerveSub))
+              .andThen(swerveSub.getAutonomousCommand(
+                  AutoConstants.AMP_WING_NOTE_ENDING + " to " + AutoConstants.AMP_SIDE_START, false))
+              .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub))
+              .andThen(swerveSub.getAutonomousCommand(
+                  AutoConstants.AMP_SIDE_START + " to " + AutoConstants.AMP_CENTER_NOTE_ENDING, false)));
+      autoPresetChooser.addOption("Preset Two (Middle Side)",
+          new ShootSpeakerAndReset(intakeSub, elevatorSub)
+              .andThen(swerveSub.getAutonomousCommand(
+                  AutoConstants.MIDDLE_SIDE_START + " to " + AutoConstants.MIDDLE_WING_NOTE_ENDING, false))
+              .andThen(new DriveTillHaveNote(intakeSub, elevatorSub, swerveSub))
+              .andThen(swerveSub.getAutonomousCommand(
+                  AutoConstants.MIDDLE_WING_NOTE_ENDING + " to " + AutoConstants.MIDDLE_SIDE_START, false))
+              .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub))
+              .andThen(swerveSub.getAutonomousCommand(
+                  AutoConstants.MIDDLE_SIDE_START + " to " + AutoConstants.MIDDLE_CENTER_NOTE_ENDING, false)));
       autoPresetChooser.addOption("Preset Three (Feeder Side)",
-        new ShootSpeakerAndReset(intakeSub, elevatorSub)
-        .andThen(swerveSub.getAutonomousCommand(AutoConstants.FEEDER_SIDE_START + " to " + AutoConstants.FEEDER_WING_NOTE_ENDING, false))
-        .andThen(new DriveTillHaveNote(intakeSub, elevatorSub, swerveSub))
-        .andThen(swerveSub.getAutonomousCommand(AutoConstants.FEEDER_WING_NOTE_ENDING + " to " + AutoConstants.FEEDER_SIDE_START, false))
-        .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub))
-        .andThen(swerveSub.getAutonomousCommand(AutoConstants.FEEDER_SIDE_START + " to " + AutoConstants.FEEDER_CENTER_NOTE_ENDING, false))
-      );
+          new ShootSpeakerAndReset(intakeSub, elevatorSub)
+              .andThen(swerveSub.getAutonomousCommand(
+                  AutoConstants.FEEDER_SIDE_START + " to " + AutoConstants.FEEDER_WING_NOTE_ENDING, false))
+              .andThen(new DriveTillHaveNote(intakeSub, elevatorSub, swerveSub))
+              .andThen(swerveSub.getAutonomousCommand(
+                  AutoConstants.FEEDER_WING_NOTE_ENDING + " to " + AutoConstants.FEEDER_SIDE_START, false))
+              .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub))
+              .andThen(swerveSub.getAutonomousCommand(
+                  AutoConstants.FEEDER_SIDE_START + " to " + AutoConstants.FEEDER_CENTER_NOTE_ENDING, false)));
     }
     shuffleDebugTab.add("Presets", autoPresetChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
   }
@@ -256,7 +262,7 @@ public class RobotContainer {
       NamedCommands.registerCommand(AutoConstants.CLIMB_POSITION, new ClimbPosition(intakeSub, elevatorSub));
       NamedCommands.registerCommand(AutoConstants.DEFAULT_POSITION, new DefaultPosition(intakeSub, elevatorSub));
       NamedCommands.registerCommand(AutoConstants.INTAKE_POSITION, new IntakePosition(intakeSub, elevatorSub));
-      
+
       NamedCommands.registerCommand(AutoConstants.INTAKE_NOTE, new IntakePositionAndSuck(intakeSub, elevatorSub));
       NamedCommands.registerCommand(AutoConstants.SHOOT_AMP, new ShootAmpAndReset(intakeSub, elevatorSub));
       NamedCommands.registerCommand(AutoConstants.SHOOT_SPEAKER, new ShootSpeakerAndReset(intakeSub, elevatorSub));
@@ -333,6 +339,11 @@ public class RobotContainer {
             .withWidget(BuiltInWidgets.kCommand);
         shuffleDebugElevatorCommandList.add("IntakeAndSuckPosition", new IntakePositionAndSuck(intakeSub, elevatorSub))
             .withWidget(BuiltInWidgets.kCommand);
+        shuffleDebugElevatorCommandList.add("ShootAmp&Default", new ShootAmpAndReset(intakeSub, elevatorSub))
+            .withWidget(BuiltInWidgets.kCommand);
+        shuffleDebugElevatorCommandList.add("ShootSpeaker&Default", new ShootSpeakerAndReset(intakeSub, elevatorSub))
+            .withWidget(BuiltInWidgets.kCommand);
+
       }
     }
     // XBOX 2 Configs
@@ -363,8 +374,9 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    // If the user did not press "Use Modular", then return the preset command they selected
-    if(autoPresetChooser.getSelected() != null) {
+    // If the user did not press "Use Modular", then return the preset command they
+    // selected
+    if (autoPresetChooser.getSelected() != null) {
       return autoPresetChooser.getSelected();
     }
     // Object to store sequential command. This is done to init a command that does

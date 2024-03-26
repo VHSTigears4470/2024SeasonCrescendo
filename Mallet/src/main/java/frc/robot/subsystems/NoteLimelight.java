@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -7,19 +9,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 import frc.robot.Constants.NoteLLConstants;
 import frc.robot.Constants.NoteLLConstants.NOTE_LL_PIPELINE;
-import frc.robot.util.ListDebugEntryBool;
-import frc.robot.util.ListDebugEntryDouble;
-import frc.robot.util.ListDebugEntryString;
 
 public class NoteLimelight extends SubsystemBase {
 
     // Shuffleboard
     private ShuffleboardTab shuffleDebugTab;
-    private ListDebugEntryString entry_pipelineName;
-    private ListDebugEntryBool entry_tvEntry;
-    private ListDebugEntryDouble entry_txEntry;
-    private ListDebugEntryDouble entry_tyEntry;
-    private ListDebugEntryDouble entry_taEntry;
+    private GenericEntry entry_pipelineName;
+    private GenericEntry entry_tvEntry;
+    private GenericEntry entry_txEntry;
+    private GenericEntry entry_tyEntry;
+    private GenericEntry entry_taEntry;
 
     public NoteLimelight() {
         // Default pipeline
@@ -82,28 +81,33 @@ public class NoteLimelight extends SubsystemBase {
             shuffleDebugTab = Shuffleboard.getTab("Debug Tab");
             // convert to ListDebugEntry
 
-            entry_pipelineName = new ListDebugEntryString(shuffleDebugTab, "Note Limelight", "Current Pipeline",
-                    "Default",
-                    BuiltInWidgets.kTextView, false);
-            entry_tvEntry = new ListDebugEntryBool(shuffleDebugTab, "Note Limelight", "Is Target", false,
-                    BuiltInWidgets.kBooleanBox, true);
-            entry_txEntry = new ListDebugEntryDouble(shuffleDebugTab, "Note Limelight", "X Offset", 0.0,
-                    BuiltInWidgets.kTextView, true);
-            entry_tyEntry = new ListDebugEntryDouble(shuffleDebugTab, "Note Limelight", "Y Offset", 0.0,
-                    BuiltInWidgets.kTextView, true);
-            entry_taEntry = new ListDebugEntryDouble(shuffleDebugTab, "Note Limelight", "Area", 0.0,
-                    BuiltInWidgets.kTextView, true);
+            entry_pipelineName = shuffleDebugTab.getLayout("Note Limelight", BuiltInLayouts.kList)
+                    .add("Current Pipeline", "Default")
+                    .withWidget(BuiltInWidgets.kTextView)
+                    .getEntry();
+            entry_tvEntry = shuffleDebugTab.getLayout("Note Limelight", BuiltInLayouts.kList)
+                    .add("Is Target", false)
+                    .withWidget(BuiltInWidgets.kTextView).getEntry();
+            entry_txEntry = shuffleDebugTab.getLayout("Note Limelight", BuiltInLayouts.kList)
+                    .add("X Offset", 0)
+                    .withWidget(BuiltInWidgets.kTextView).getEntry();
+            entry_tyEntry = shuffleDebugTab.getLayout("Note Limelight", BuiltInLayouts.kList)
+                    .add("Y Offset", 0)
+                    .withWidget(BuiltInWidgets.kTextView).getEntry();
+            entry_taEntry = shuffleDebugTab.getLayout("Note Limelight", BuiltInLayouts.kList)
+                    .add("Area", 0)
+                    .withWidget(BuiltInWidgets.kTextView).getEntry();
         }
     }
 
     /*** Updates Shuffleboard */
     private void updateShuffleboard() {
         if (NoteLLConstants.DEBUG) {
-            entry_pipelineName.set(getPipeline().toString());
-            entry_tvEntry.set(hasTarget());
-            entry_txEntry.set(getXOffset());
-            entry_tyEntry.set(getYOffset());
-            entry_taEntry.set(getArea());
+            entry_pipelineName.setString(getPipeline().toString());
+            entry_tvEntry.setBoolean(hasTarget());
+            entry_txEntry.setDouble(getXOffset());
+            entry_tyEntry.setDouble(getYOffset());
+            entry_taEntry.setDouble(getArea());
         }
     }
 

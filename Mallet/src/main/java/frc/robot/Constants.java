@@ -71,7 +71,7 @@ public final class Constants {
     }
 
     public static final class SwerveConstants {
-        public static final boolean USING_SWERVE = false;
+        public static final boolean USING_SWERVE = true;
         public static final boolean DEBUG = true;
 
         public static final PIDFConfig X_AUTO_PID = new PIDFConfig(0.000000005, 0, 0);
@@ -95,7 +95,7 @@ public final class Constants {
         public static final double MAX_ACCELERATION = 2;
         public static final double MAX_SPEED_METERS = 2;
 
-        public static final double ROBOT_MASS = (141) * 0.453592; // 32lbs * kg per pound
+        public static final double ROBOT_MASS = Units.lbsToKilograms(128); //
         public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(0)), ROBOT_MASS);
         public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
         public static final double WHEEL_LOCK_TIME = 10;
@@ -135,8 +135,10 @@ public final class Constants {
         public static final int NOTES_FORWARD_CHANNEL_ID = 11;
         public static final int NOTES_REVERSE_CHANNEL_ID = 10;
         public static final Value INTAKE_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse;
-        public static final Value PISTON_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse; // Need to change later for
-                                                                                           // piston
+        public static final Value PISTON_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse;
+
+        public static final double SECONDS_TILL_RETRACT = 3;
+        public static final double SECONDS_TILL_EXTEND = 1.5;
 
         // MOTORS
         public static final int TOP_MOTOR_ID = 9; // Leader
@@ -153,11 +155,7 @@ public final class Constants {
         public static final double AMP_OUTPUT_VOLTAGE = 3; // unsigned, polarity set in subsystem
 
         // SENSORS
-        public static final int NOTE_BREAKBEAM_DIO = 2; // TODO: Set DIO
-
-        public static enum INTAKE_POSITION_STATE {
-            RETRACTED, UNRETRACTED
-        };
+        public static final int NOTE_BREAKBEAM_DIO = 3; // TODO: Set DIO
     }
 
     public static class ElevatorConstants {
@@ -175,7 +173,7 @@ public final class Constants {
                                                                // direction is positive voltage
 
         // HEIGHT CALCULATIONS
-        private static final double GEAR_RADIUS = 2.1 / 2; // Sprocket WCP-0560, outermost radius 1.981, 1.756 inner
+        private static final double GEAR_RADIUS = 2.15 / 2; // Sprocket WCP-0560, outermost radius 1.981, 1.756 inner
         private static final double GEAR_CIRCUMFRENCE = 2 * Math.PI * GEAR_RADIUS;
         private static final double GEAR_RATIO = 60;
         public static final double CONVERSION_RATIO = GEAR_CIRCUMFRENCE / GEAR_RATIO * 2; // * 2 for 2 stages
@@ -193,12 +191,16 @@ public final class Constants {
         /** Max positive voltage (must be positive) */
         public static final double PID_KMAX_OUTPUT = 3.5; // TODO: Tune
         /** Max negative voltage (must be negative) */
-        public static final double PID_KMIN_OUTPUT = -2; // TODO: Tune
+        public static final double PID_KMIN_OUTPUT = -1; // TODO: Tune
 
         // SMART MOTION
         public static final int SM_ID = 0;
         private static final double SM_MAX_INCHES_VEL = 12; // Elevator maximum inches per second
         public static final double SM_MAX_RPM_VEL = SM_MAX_INCHES_VEL / GEAR_CIRCUMFRENCE
+                * GEAR_RATIO * 60; // Elevator maximum revolutions per minute -> revolutions -> gear ratio
+
+        private static final double SM_MAX_INCHES_VEL_DOWN = .7; // Elevator maximum inches per second
+        public static final double SM_MAX_RPM_VEL_DOWN = SM_MAX_INCHES_VEL_DOWN / GEAR_CIRCUMFRENCE
                 * GEAR_RATIO * 60; // Elevator maximum revolutions per minute -> revolutions -> gear ratio
 
         private static final double SM_MIN_INCHES_VEL = 0; // Elevator minimum inches per second
@@ -214,7 +216,7 @@ public final class Constants {
         // ELEVATOR STATES
         // TODO: Find correct heights
         public static final double LOW_INIT_HEIGHT = 0;
-        public static final double HIGH_INIT_HEIGHT = 30;// 28 inches up
+        public static final double HIGH_INIT_HEIGHT = 28;// 28 inches up
         public static final double CLIMB_HEIGHT = 16;
 
         public static enum ELEVATOR_STATE {

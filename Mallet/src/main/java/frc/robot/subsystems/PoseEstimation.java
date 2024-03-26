@@ -40,27 +40,27 @@ public class PoseEstimation extends SubsystemBase {
   public PoseEstimation(SwerveSubsystem swerveSub) {
     this.swerveSub = swerveSub;
 
-    if(PhotonConstants.USING_RIGHT_PHOTON) {
-        rightEstimator = new PhotonRunnable(new PhotonCamera(PhotonConstants.RIGHT_PHOTON_NAME), 
-            Constants.PhotonConstants.ROBOT_TO_RIGHT_PHOTON);
+    if (PhotonConstants.USING_RIGHT_PHOTON) {
+      rightEstimator = new PhotonRunnable(new PhotonCamera(PhotonConstants.RIGHT_PHOTON_NAME),
+          Constants.PhotonConstants.ROBOT_TO_RIGHT_PHOTON);
     } else {
-        rightEstimator = null;
+      rightEstimator = null;
     }
 
-    if(PhotonConstants.USING_LEFT_PHOTON) {
-        leftEstimator =  new PhotonRunnable(new PhotonCamera(PhotonConstants.LEFT_PHOTON_NAME),
-            Constants.PhotonConstants.ROBOT_TO_LEFT_PHOTON);
+    if (PhotonConstants.USING_LEFT_PHOTON) {
+      leftEstimator = new PhotonRunnable(new PhotonCamera(PhotonConstants.LEFT_PHOTON_NAME),
+          Constants.PhotonConstants.ROBOT_TO_LEFT_PHOTON);
     } else {
-        leftEstimator = null;
+      leftEstimator = null;
     }
-    
-    allNotifier =  new Notifier(() -> {
-        if(PhotonConstants.USING_RIGHT_PHOTON) {
-            rightEstimator.run();
-        }
-        if(PhotonConstants.USING_LEFT_PHOTON) {
-            leftEstimator.run();
-        }
+
+    allNotifier = new Notifier(() -> {
+      if (PhotonConstants.USING_RIGHT_PHOTON) {
+        rightEstimator.run();
+      }
+      if (PhotonConstants.USING_LEFT_PHOTON) {
+        leftEstimator.run();
+      }
     });
 
     // Start PhotonVision thread
@@ -108,10 +108,10 @@ public class PoseEstimation extends SubsystemBase {
   public void periodic() {
     if (Constants.PhotonConstants.USING_VISION) {
       // Adds both camera reported pose to swerve
-      if(PhotonConstants.USING_RIGHT_PHOTON) {
+      if (PhotonConstants.USING_RIGHT_PHOTON) {
         estimatorChecker(rightEstimator);
       }
-      if(PhotonConstants.USING_LEFT_PHOTON) {
+      if (PhotonConstants.USING_LEFT_PHOTON) {
         estimatorChecker(leftEstimator);
       }
     } else {
@@ -133,7 +133,8 @@ public class PoseEstimation extends SubsystemBase {
    * Reterns the pose
    * Sample Output (X.XX, Y.YY) D.D degrees
    * D is degrees
-   * @return Returns X, Y, and Degrees 
+   * 
+   * @return Returns X, Y, and Degrees
    */
   private String getFormattedPose() {
     Pose2d pose = swerveSub.getPose();
@@ -179,7 +180,8 @@ public class PoseEstimation extends SubsystemBase {
   /**
    * 
    * @param estimation Camera to get data from
-   * @return A matrix of 3 by 1 that represents the confidence for x, y, and theta in radians
+   * @return A matrix of 3 by 1 that represents the confidence for x, y, and theta
+   *         in radians
    */
   private Matrix<N3, N1> confidenceCalculator(EstimatedRobotPose estimation) {
     // Defaults to very untrustworthy
@@ -196,29 +198,29 @@ public class PoseEstimation extends SubsystemBase {
         smallestDistance = distance;
     }
     // If number of tags is not one, then set factor multiplier to one
-    // Otherwise, calculate ambiguity factor 
-    double poseAmbiguityFactor = estimation.targetsUsed.size() != 1 ? 1 : Math.max(
+    // Otherwise, calculate ambiguity factor
+    double poseAmbiguityFactor = estimation.targetsUsed.size() != 1 ? 1
+        : Math.max(
             1,
             (estimation.targetsUsed.get(0).getPoseAmbiguity()
                 + Constants.PhotonConstants.POSE_AMBIGUITY_SHIFTER)
                 * Constants.PhotonConstants.POSE_AMBIGUITY_MULTIPLIER);
     double confidenceMultiplier = Math.max(
         1,
-        (
+        (Math.max(
+            1,
             Math.max(
-                1,
-                Math.max(
-                    0, smallestDistance - Constants.PhotonConstants.NOISY_DISTANCE_METERS
-                ) * Constants.PhotonConstants.DISTANCE_WEIGHT
-            )* poseAmbiguityFactor
-        )/ (1 + ((estimation.targetsUsed.size() - 1) * Constants.PhotonConstants.TAG_PRESENCE_WEIGHT))
-      );
-    
+                0, smallestDistance - Constants.PhotonConstants.NOISY_DISTANCE_METERS)
+                * Constants.PhotonConstants.DISTANCE_WEIGHT)
+            * poseAmbiguityFactor)
+            / (1 + ((estimation.targetsUsed.size() - 1) * Constants.PhotonConstants.TAG_PRESENCE_WEIGHT)));
+
     return Constants.PhotonConstants.VISION_MEASUREMENT_STANDARD_DEVIATIONS.times(confidenceMultiplier);
   }
 
   /**
    * If possible, adds vision meausrement to swerve
+   * 
    * @param estimator Camera to get pose from
    */
   public void estimatorChecker(PhotonRunnable estimator) {

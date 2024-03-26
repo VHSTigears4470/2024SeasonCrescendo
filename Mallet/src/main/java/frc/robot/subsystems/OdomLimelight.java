@@ -1,7 +1,9 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -9,13 +11,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 import frc.robot.Constants.OdometryLLConstants;
 import frc.robot.Constants.OdometryLLConstants.ODOM_LL_PIPELINE;
-import frc.robot.util.ListDebugEntryString;
 
 public class OdomLimelight extends SubsystemBase {
 
     // Shuffleboard
     private ShuffleboardTab shuffleDebugTab;
-    private ListDebugEntryString entry_pipelineName;
+    private GenericEntry entry_pipelineName;
 
     public OdomLimelight() {
         // Default pipeline
@@ -75,16 +76,18 @@ public class OdomLimelight extends SubsystemBase {
     private void initializeShuffleboard() {
         if (OdometryLLConstants.DEBUG) {
             shuffleDebugTab = Shuffleboard.getTab("Debug Tab");
-            entry_pipelineName = new ListDebugEntryString(shuffleDebugTab, "Odometry Limelight", "Current Pipeline",
-                    "Default",
-                    BuiltInWidgets.kTextView, false);
+            entry_pipelineName = shuffleDebugTab.getLayout("Odometry Limelight", BuiltInLayouts.kList)
+                    .add("Current Pipeline", "Default")
+                    .withWidget(BuiltInWidgets.kTextView)
+                    .getEntry();
+
         }
     }
 
     /*** Updates Shuffleboard */
     private void updateShuffleboard() {
         if (OdometryLLConstants.DEBUG) {
-            entry_pipelineName.set(getPipeline().toString());
+            entry_pipelineName.setString(getPipeline().toString());
         }
     }
 
