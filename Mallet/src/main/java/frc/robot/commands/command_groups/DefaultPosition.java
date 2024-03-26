@@ -17,9 +17,9 @@ public class DefaultPosition extends SequentialCommandGroup {
                 // Delay retraction of intake to allow for elevator to go down first to prevent
                 // out of bounds
                 new ElevatorSetHeightState(elevatorSubsystem, ElevatorConstants.ELEVATOR_STATE.DOWN),
-                new WaitUntilCommand(elevatorSubsystem::isAtPos),
                 new IntakeSetZeroVoltage(intakeSubsystem), // Sequential because use same subsystem
                 new IntakePusherRetract(intakeSubsystem),
+                new WaitUntilCommand(elevatorSubsystem::isAtPos),
                 new IntakePositionUp(intakeSubsystem));
     }
 }

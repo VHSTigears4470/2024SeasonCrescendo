@@ -321,6 +321,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     handleBreakbeams();
     updateShuffleboard();
     disabledPeriodic();
+    if (desiredReferencePosition < leftEncoder.getPosition()) {
+      pidController.setSmartMotionMaxVelocity(ElevatorConstants.SM_MAX_RPM_VEL_DOWN, 0);
+    } else if (desiredReferencePosition > leftEncoder.getPosition()) {
+      pidController.setSmartMotionMaxVelocity(ElevatorConstants.SM_MAX_RPM_VEL, 0);
+    }
   }
 
   public void disabledPeriodic() {

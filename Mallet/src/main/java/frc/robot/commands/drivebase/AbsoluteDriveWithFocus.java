@@ -44,7 +44,8 @@ public class AbsoluteDriveWithFocus extends Command {
      *               towards the left wall when
      *               looking through the driver station glass.
      */
-    public AbsoluteDriveWithFocus(SwerveSubsystem swerve, NoteLimelight limelight, DoubleSupplier vX, DoubleSupplier vY) {
+    public AbsoluteDriveWithFocus(SwerveSubsystem swerve, NoteLimelight limelight, DoubleSupplier vX,
+            DoubleSupplier vY) {
         this.swerve = swerve;
         this.limelight = limelight;
         this.vX = vX;
@@ -63,14 +64,15 @@ public class AbsoluteDriveWithFocus extends Command {
         // Grabs the heading error from the network table and uses it to create a
         // direction to go to
         double headingError;
-        if(limelight.hasTarget()){
+        if (limelight.hasTarget()) {
             headingError = limelight.getXOffset();
-        }else{
+        } else {
             headingError = 0;
         }
         double steeringAdjust = SwerveConstants.ANGLE_KP * headingError;
         // Formats steeringAdjust to be a number from -maxSpeed to maxSpeed
-        steeringAdjust = Math.signum(steeringAdjust) * Math.min(Math.abs(steeringAdjust), SwerveConstants.ANGLE_MAX_TURN_SPEED);
+        steeringAdjust = Math.signum(steeringAdjust)
+                * Math.min(Math.abs(steeringAdjust), SwerveConstants.ANGLE_MAX_TURN_SPEED);
         // Multiply it by a negative or positive depending on if it need to be inverted
         // it or not
         steeringAdjust *= 1;
