@@ -1,0 +1,97 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.5,
+        "y": 5.53
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.7745108003920005,
+        "y": 4.622753552476564
+      },
+      "isLocked": false,
+      "linkedName": "Middle Start"
+    },
+    {
+      "anchor": {
+        "x": 3.6979768869482927,
+        "y": 1.4040241079699063
+      },
+      "prevControl": {
+        "x": 2.948762924722001,
+        "y": 2.0613087307586286
+      },
+      "nextControl": {
+        "x": 4.388062846067581,
+        "y": 0.7986124202543017
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.5,
+        "y": 0.72
+      },
+      "prevControl": {
+        "x": 5.478174169871815,
+        "y": 0.72
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Center Right Note"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.1,
+      "rotationDegrees": 180.0,
+      "rotateFast": false
+    },
+    {
+      "waypointRelativePos": 0.6,
+      "rotationDegrees": 0.0,
+      "rotateFast": true
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 1.25,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Intake Position"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.0,
+    "rotateFast": true
+  },
+  "reversed": false,
+  "folder": "Start & Center",
+  "previewStartingState": {
+    "rotation": 180.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

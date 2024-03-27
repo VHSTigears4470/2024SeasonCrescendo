@@ -23,12 +23,12 @@ public class ElevatorChangePosition extends Command {
 
   @Override
   public void initialize() {
-    elevator.changePosition(incAmt);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    elevator.changePosition(incAmt);
   }
 
   // Called once the command ends or is interrupted.
@@ -39,7 +39,7 @@ public class ElevatorChangePosition extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return false;
   }
 
 }

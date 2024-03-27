@@ -1,0 +1,76 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.0,
+        "y": 4.08
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.0659450559308326,
+        "y": 5.341624716139017
+      },
+      "isLocked": false,
+      "linkedName": "Feeder Wing Note"
+    },
+    {
+      "anchor": {
+        "x": 0.7223726295793819,
+        "y": 6.69
+      },
+      "prevControl": {
+        "x": 1.716223949284234,
+        "y": 6.785843360253675
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Amp Start"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.75,
+      "rotationDegrees": -120.0,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Default Position"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -120.0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Start & Wing",
+  "previewStartingState": {
+    "rotation": 0.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

@@ -10,12 +10,18 @@ import com.pathplanner.lib.util.ReplanningConfig;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
@@ -31,6 +37,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.io.File;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
+import org.photonvision.EstimatedRobotPose;
 
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
@@ -47,9 +56,16 @@ public class SwerveSubsystem extends SubsystemBase {
   /** Swerve drive object. */
   private final SwerveDrive swerveDrive;
 
+  /** Swerve pose estimator */
+  // private final SwerveDrivePoseEstimator swervePoseEstimator;
+
   // Shuffleboard
   private ShuffleboardTab shuffleDebugTab;
   private GenericEntry entry_swerveHeading;
+
+  // Photon Pose
+  private Supplier<EstimatedRobotPose> rightPhotonPose;
+  private Supplier<EstimatedRobotPose> leftPhotonPose;
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -63,7 +79,42 @@ public class SwerveSubsystem extends SubsystemBase {
     if (RobotBase.isSimulation())
       SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try {
+
+      // TODO create gyro class for rotation 2D, set gyro angle based on path planner,
+      // give it to estimator, get module positions from YAGSL, get initial Pose2D
+      // from pathplanner
       swerveDrive = new SwerveParser(directory).createSwerveDrive(SwerveConstants.MAX_SPEED_METERS);
+      // swervePoseEstimator = new SwerveDrivePoseEstimator(getKinematics(), );
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+
+    swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via
+                                             // angle. Ex. Xbox Controller
+    setupPathPlanner();
+    initializeShuffleboard();
+  }
+
+  /**
+   * Initialize {@link SwerveDrive} with the directory provided.
+   *
+   * @param directory          Directory of swerve drive config files.
+   * @param limelightRobotPose Supplier for Robot Pose
+   * @param limeightTimestamp  Supplier for Timestamp Pose was taken
+   */
+  public SwerveSubsystem(File directory, Supplier<Pose2d> rightPhotonPose, Supplier<Pose2d> leftPhotonPose) {
+    // Configure the Telemetry before creating the SwerveDrive to avoid
+    // unnecessary objects being created.
+    SwerveDriveTelemetry.verbosity = SwerveConstants.TELEMETRY_VERBOSITY;
+    if (RobotBase.isSimulation())
+      SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+    try {
+
+      // TODO create gyro class for rotation 2D, set gyro angle based on path planner,
+      // give it to estimator, get module positions from YAGSL, get initial Pose2D
+      // from pathplanner
+      swerveDrive = new SwerveParser(directory).createSwerveDrive(SwerveConstants.MAX_SPEED_METERS);
+      // swervePoseEstimator = new SwerveDrivePoseEstimator(getKinematics(), );
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -128,15 +179,32 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public Command getAutonomousCommand(String pathName, boolean setOdomToStart) {
     // Load the path you want to follow using its name in the GUI
-    PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+    try {
+      PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
 
-    if (setOdomToStart) {
-      resetOdometry(new Pose2d(path.getPoint(0).position, getHeading()));
+      if (setOdomToStart) {
+        resetOdometry(new Pose2d(path.getPoint(0).position, getHeading()));
+      }
+
+      // Create a path following command using AutoBuilder. This will also trigger
+      // event markers.
+      return AutoBuilder.followPath(path);
+
+    } catch (RuntimeException e) {
+      return null;
     }
+  }
 
+  /**
+   * Get the path follower with events.
+   *
+   * @param pathName PathPlanner path name.
+   * @return {@link AutoBuilder#followPath(PathPlannerPath)} path command.
+   */
+  public Command getAutonomousCommand(String pathName) {
     // Create a path following command using AutoBuilder. This will also trigger
     // event markers.
-    return AutoBuilder.followPath(path);
+    return new PathPlannerAuto(pathName);
   }
 
   /**
@@ -203,6 +271,75 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   /**
+   * Use PathPlanner Path finding to go to a point on the field.
+   *
+   * @param rotDegree rotation change
+   * @return PathFinding command
+   */
+  public Command driveToPose(double rotDegree) {
+    return driveToPose(createPose(rotDegree));
+  }
+
+  /**
+   * Use PathPlanner Path finding to go to a point on the field.
+   *
+   * @param x x change
+   * @param y y change
+   * @return PathFinding command
+   */
+  public Command driveToPose(double x, double y) {
+    return driveToPose(createPose(x, y));
+  }
+
+  /**
+   * Use PathPlanner Path finding to go to a point on the field.
+   *
+   * @param pose Target {@link Pose2d} to go to.
+   * @param x    x change
+   * @param y    y change
+   * @return PathFinding command
+   */
+  public Command driveToPose(double x, double y, double rotDegree) {
+    return driveToPose(createPose(x, y, rotDegree));
+  }
+
+  /**
+   * Creates a pose with rotation and position (position are taken from the robot)
+   * 
+   * @param rotDegree Change in degrees
+   * @return A pose2d
+   */
+  public Pose2d createPose(double rotDegree) {
+    return new Pose2d(swerveDrive.getPose().getX(), swerveDrive.getPose().getY(),
+        new Rotation2d(swerveDrive.getPose().getRotation().getDegrees() + rotDegree * 2 * Math.PI));
+  }
+
+  /**
+   * Creaes a pose with rotation and position (rotation are taken from the robot)
+   * 
+   * @param x Change in x position
+   * @param y Change in y position
+   * @return A pose2d
+   */
+  public Pose2d createPose(double x, double y) {
+    return new Pose2d(swerveDrive.getPose().getX() + x, swerveDrive.getPose().getX() + y,
+        swerveDrive.getPose().getRotation());
+  }
+
+  /**
+   * Creaes a pose with rotation and position (rotation are taken from the robot)
+   * 
+   * @param x         Change in x position
+   * @param y         Change in y position
+   * @param rotDegree Change in rotation
+   * @return A pose2d
+   */
+  public Pose2d createPose(double x, double y, double rotDegree) {
+    return new Pose2d(swerveDrive.getPose().getX() + x, swerveDrive.getPose().getX() + y,
+        new Rotation2d(swerveDrive.getPose().getRotation().getDegrees() + rotDegree));
+  }
+
+  /**
    * Command to drive the robot using translative values and heading as a
    * setpoint.
    *
@@ -244,9 +381,36 @@ public class SwerveSubsystem extends SubsystemBase {
     // correction for this kind of control.
     return run(() -> {
       // Make the robot move
-      driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(translationX.getAsDouble(),
+      driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(
+          translationX.getAsDouble(),
           translationY.getAsDouble(),
           rotation.getAsDouble() * Math.PI,
+          swerveDrive.getYaw().getRadians(),
+          swerveDrive.getMaximumVelocity()));
+    });
+  }
+
+  /**
+   * Command to drive the robot using translative values and heading as a
+   * setpoint.
+   *
+   * @param translationX Translation in the X direction.
+   * @param translationY Translation in the Y direction.
+   * @param RotationX    Rotation as a value between [-1, 1] converted to radians.
+   * @param RotationY    Rotation as a value between [-1, 1] converted to radians.
+   * @return Drive command.
+   */
+  public Command simDriveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier RotationX,
+      DoubleSupplier RotationY) {
+    swerveDrive.setHeadingCorrection(true); // Normally you would want heading
+    // correction for this kind of control.
+    return run(() -> {
+      // Make the robot move
+      driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(
+          translationX.getAsDouble(),
+          translationY.getAsDouble(),
+          RotationX.getAsDouble(),
+          RotationY.getAsDouble(),
           swerveDrive.getYaw().getRadians(),
           swerveDrive.getMaximumVelocity()));
     });
@@ -259,6 +423,62 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public void driveFieldOriented(ChassisSpeeds velocity) {
     swerveDrive.driveFieldOriented(velocity);
+  }
+
+  /**
+   * Adds a vision measurement to the swerve
+   * 
+   * @param robotPose Pose of robot
+   * @param timestamp Time the pose was taken in seconds
+   */
+  public void addVisionMeasurement(Pose2d robotPose, double timestamp) {
+    // Checks pose is not null
+    if (robotPose != null) {
+      swerveDrive.addVisionMeasurement(robotPose, timestamp);
+    }
+  }
+
+  /**
+   * Adds a vision measurement to the swerve
+   * 
+   * @param robotPose  Pose of robot
+   * @param timestamp  Time the pose was taken in seconds
+   * @param covariance The covariance of the measurement
+   */
+  public void addVisionMeasurement(Pose2d robotPose, double timestamp, Matrix<N3, N1> covariance) {
+    // Checks pose is not null
+    if (robotPose != null) {
+      swerveDrive.addVisionMeasurement(robotPose, timestamp, covariance);
+    }
+  }
+
+  /**
+   * Updates the vision measurement, should be called after setupVisionMeasurement
+   * has been called
+   * otherwise will not do anything
+   */
+  public void updateVisionMeasurement() {
+    // Checks is the rightPhotonPose has been declared and has a pose to give
+    if (rightPhotonPose != null && rightPhotonPose.get() != null) {
+      addVisionMeasurement(rightPhotonPose.get().estimatedPose.toPose2d(), rightPhotonPose.get().timestampSeconds);
+    }
+    // Checks is the leftPhotonPose has been declared and has a pose to give
+    if (leftPhotonPose != null && leftPhotonPose.get() != null) {
+      addVisionMeasurement(leftPhotonPose.get().estimatedPose.toPose2d(), leftPhotonPose.get().timestampSeconds);
+    }
+  }
+
+  /**
+   * Sets up the vision measurement for swerve; after calling this function,
+   * use updateVisionMeasurement, note addVisionMeasurement
+   * 
+   * @param robotPose Supplier for the pose of the robot
+   * @param timestamp Supplier for the time the pose was taken in seconds
+   */
+  public void setupVisionMeasurement(Supplier<EstimatedRobotPose> leftPhotonPose,
+      Supplier<EstimatedRobotPose> rightPhotonPose) {
+    this.leftPhotonPose = leftPhotonPose;
+    this.rightPhotonPose = rightPhotonPose;
   }
 
   /**
@@ -298,16 +518,6 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   /**
-   * Gets the current pose (position and rotation) of the robot, as reported by
-   * odometry.
-   *
-   * @return The robot's pose
-   */
-  public Pose2d getPose() {
-    return swerveDrive.getPose();
-  }
-
-  /**
    * Set chassis speeds with closed-loop velocity control.
    *
    * @param chassisSpeeds Chassis Speeds to set.
@@ -342,6 +552,20 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.setMotorIdleMode(brake);
   }
 
+  public void setPosition(Pose2d pose, Rotation3d rotation) {
+    resetOdometry(pose);
+    swerveDrive.setGyroOffset(rotation);
+  }
+
+  /**
+   * Gets the SwerveDrivePoseEstimator
+   * 
+   * @return The SwerveDrivePoseEstimator
+   */
+  public SwerveDrivePoseEstimator getSwerveDrivePoseEstimator() {
+    return swerveDrive.swerveDrivePoseEstimator;
+  }
+
   /**
    * Gets the current yaw angle of the robot, as reported by the imu. CCW
    * positive, not wrapped.
@@ -350,6 +574,16 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public Rotation2d getHeading() {
     return swerveDrive.getYaw();
+  }
+
+  /**
+   * Gets the current pose (position and rotation) of the robot, as reported by
+   * odometry.
+   *
+   * @return The robot's pose
+   */
+  public Pose2d getPose() {
+    return swerveDrive.getPose();
   }
 
   /**
@@ -446,12 +680,13 @@ public class SwerveSubsystem extends SubsystemBase {
           .add("Swerve Heading", 0)
           .withWidget(BuiltInWidgets.kGyro)
           .getEntry();
+
     }
   }
 
   private void updateShuffleboard() {
     if (IntakeConstants.DEBUG) {
-      entry_swerveHeading.setValue(swerveDrive.getOdometryHeading());
+      entry_swerveHeading.setValue(swerveDrive.getOdometryHeading().getDegrees());
     }
   }
 

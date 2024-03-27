@@ -7,11 +7,9 @@ package frc.robot.commands.drivebase;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.subsystems.NoteLimelight;
 import frc.robot.subsystems.SwerveSubsystem;
 import java.util.List;
 import java.util.function.DoubleSupplier;
@@ -23,13 +21,8 @@ import swervelib.math.SwerveMath;
  */
 public class AbsoluteDriveWithFocus extends Command {
     private final SwerveSubsystem swerve;
+    private final NoteLimelight limelight;
     private final DoubleSupplier vX, vY;
-    private final double Kp = -0.1; // Proportional control constant
-    private final double minCommand = 0.05;
-    private final double maxSpeed = 0.5; // Max speed of drivetrain (used for both positive and negative directions)
-    private NetworkTableInstance inst;
-    private NetworkTable table;
-    private NetworkTableEntry tx;
 
     /**
      * Used to drive a swerve robot in full field-centric mode. vX and vY supply
@@ -51,24 +44,13 @@ public class AbsoluteDriveWithFocus extends Command {
      *               towards the left wall when
      *               looking through the driver station glass.
      */
-    public AbsoluteDriveWithFocus(SwerveSubsystem swerve, DoubleSupplier vX, DoubleSupplier vY,
-            String focusObject) {
+    public AbsoluteDriveWithFocus(SwerveSubsystem swerve, NoteLimelight limelight, DoubleSupplier vX,
+            DoubleSupplier vY) {
         this.swerve = swerve;
+        this.limelight = limelight;
         this.vX = vX;
         this.vY = vY;
 
-        // Init Network Tables
-        inst = NetworkTableInstance.getDefault();
-        table = inst.getTable("limelight");
-        tx = table.getEntry("tx");
-
-        // Sets the correct pipeline
-        if (focusObject.toLowerCase().equals("pole"))
-            table.getEntry("pipeline").setDouble(0); // pole pipeline
-        else if (focusObject.toLowerCase().equals("cube"))
-            table.getEntry("pipeline").setDouble(2); // cube pipeline
-        else
-            table.getEntry("pipeline").setDouble(3); // cone pipeline
         addRequirements(swerve);
     }
 
@@ -81,16 +63,21 @@ public class AbsoluteDriveWithFocus extends Command {
     public void execute() {
         // Grabs the heading error from the network table and uses it to create a
         // direction to go to
-        double headingError = tx.getDouble(0.0);
-        double steeringAdjust = Kp * headingError + Math.signum(headingError) * minCommand;
-        // Formats steeringAdjust to be a number from -1 to 1
-        steeringAdjust = Math.signum(steeringAdjust) * Math.min(Math.abs(steeringAdjust), maxSpeed);
+        double headingError;
+        if (limelight.hasTarget()) {
+            headingError = limelight.getXOffset();
+        } else {
+            headingError = 0;
+        }
+        double steeringAdjust = SwerveConstants.ANGLE_KP * headingError;
+        // Formats steeringAdjust to be a number from -maxSpeed to maxSpeed
+        steeringAdjust = Math.signum(steeringAdjust)
+                * Math.min(Math.abs(steeringAdjust), SwerveConstants.ANGLE_MAX_TURN_SPEED);
         // Multiply it by a negative or positive depending on if it need to be inverted
         // it or not
         steeringAdjust *= 1;
 
         // Get the desired chassis speeds based on a 2 joystick module.
-
         ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(vX.getAsDouble(), vY.getAsDouble(),
                 new Rotation2d(steeringAdjust * Math.PI));
 
