@@ -19,11 +19,12 @@ public class IntakeNoteWhileFocus extends SequentialCommandGroup {
         // Does nothing if a note is already in the intake
         addCommands(
                 new ConditionalCommand(
-                        new SequentialCommandGroup(new ParallelCommandGroup(
-                                // Sets robot to intake position
-                                new IntakePosition(intakeSubsystem, elevatorSubsystem),
-                                // Centers robot before going
-                                new FocusNote(swerveSubsystem, limelight)),
+                        new SequentialCommandGroup(
+                                new ParallelCommandGroup(
+                                        // Sets robot to intake position
+                                        new IntakePosition(intakeSubsystem, elevatorSubsystem),
+                                        // Centers robot before going
+                                        new FocusNote(swerveSubsystem, limelight)),
                                 // Go forward with adjustments until robot is gets a
                                 // note
                                 new ParallelRaceGroup(

@@ -137,8 +137,8 @@ public final class Constants {
         public static final Value INTAKE_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse;
         public static final Value PISTON_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse;
 
-        public static final double SECONDS_TILL_RETRACT = 3;
-        public static final double SECONDS_TILL_EXTEND = 1.5;
+        public static final double SECONDS_TILL_UP = 3;
+        public static final double SECONDS_TILL_DOWN = 1.5;
 
         // MOTORS
         public static final int TOP_MOTOR_ID = 9; // Leader
