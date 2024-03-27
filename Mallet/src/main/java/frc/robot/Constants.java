@@ -71,7 +71,7 @@ public final class Constants {
     }
 
     public static final class SwerveConstants {
-        public static final boolean USING_SWERVE = true;
+        public static final boolean USING_SWERVE = false;
         public static final boolean DEBUG = true;
 
         public static final PIDFConfig X_AUTO_PID = new PIDFConfig(0.000000005, 0, 0);
@@ -216,8 +216,8 @@ public final class Constants {
         // ELEVATOR STATES
         // TODO: Find correct heights
         public static final double LOW_INIT_HEIGHT = 0;
-        public static final double HIGH_INIT_HEIGHT = 28;// 28 inches up
-        public static final double CLIMB_HEIGHT = 16;
+        public static final double HIGH_INIT_HEIGHT = 33.5; // amp height / .5 inch below hall sensor
+        public static final double CLIMB_HEIGHT = 20;
 
         public static enum ELEVATOR_STATE {
             UP, DOWN, CLIMB
