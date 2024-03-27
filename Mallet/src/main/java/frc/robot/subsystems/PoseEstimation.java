@@ -40,25 +40,25 @@ public class PoseEstimation extends SubsystemBase {
   public PoseEstimation(SwerveSubsystem swerveSub) {
     this.swerveSub = swerveSub;
 
-    if (PhotonConstants.USING_RIGHT_PHOTON) {
-      rightEstimator = new PhotonRunnable(new PhotonCamera(PhotonConstants.RIGHT_PHOTON_NAME),
-          Constants.PhotonConstants.ROBOT_TO_RIGHT_PHOTON);
+    if (PhotonConstants.USING_REAR_PHOTON) {
+      rightEstimator = new PhotonRunnable(new PhotonCamera(PhotonConstants.REAR_PHOTON_NAME),
+          Constants.PhotonConstants.ROBOT_TO_REAR_PHOTON);
     } else {
       rightEstimator = null;
     }
 
-    if (PhotonConstants.USING_LEFT_PHOTON) {
-      leftEstimator = new PhotonRunnable(new PhotonCamera(PhotonConstants.LEFT_PHOTON_NAME),
-          Constants.PhotonConstants.ROBOT_TO_LEFT_PHOTON);
+    if (PhotonConstants.USING_ANGLED_PHOTON) {
+      leftEstimator = new PhotonRunnable(new PhotonCamera(PhotonConstants.ANGLED_PHOTON_NAME),
+          Constants.PhotonConstants.ROBOT_TO_ANGLED_PHOTON);
     } else {
       leftEstimator = null;
     }
 
     allNotifier = new Notifier(() -> {
-      if (PhotonConstants.USING_RIGHT_PHOTON) {
+      if (PhotonConstants.USING_REAR_PHOTON) {
         rightEstimator.run();
       }
-      if (PhotonConstants.USING_LEFT_PHOTON) {
+      if (PhotonConstants.USING_ANGLED_PHOTON) {
         leftEstimator.run();
       }
     });
@@ -108,10 +108,10 @@ public class PoseEstimation extends SubsystemBase {
   public void periodic() {
     if (Constants.PhotonConstants.USING_VISION) {
       // Adds both camera reported pose to swerve
-      if (PhotonConstants.USING_RIGHT_PHOTON) {
+      if (PhotonConstants.USING_REAR_PHOTON) {
         estimatorChecker(rightEstimator);
       }
-      if (PhotonConstants.USING_LEFT_PHOTON) {
+      if (PhotonConstants.USING_ANGLED_PHOTON) {
         estimatorChecker(leftEstimator);
       }
     } else {

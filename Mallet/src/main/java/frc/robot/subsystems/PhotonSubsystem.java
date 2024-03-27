@@ -26,19 +26,19 @@ public class PhotonSubsystem extends SubsystemBase {
     public PhotonSubsystem() {
         aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
 
-        if (PhotonConstants.USING_RIGHT_PHOTON) {
-            rightPhoton = new PhotonCamera(PhotonConstants.RIGHT_PHOTON_NAME);
+        if (PhotonConstants.USING_REAR_PHOTON) {
+            rightPhoton = new PhotonCamera(PhotonConstants.REAR_PHOTON_NAME);
             photonRightPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PhotonConstants.PHOTON_CAMERA_STRAT,
-                    rightPhoton, PhotonConstants.ROBOT_TO_RIGHT_PHOTON);
+                    rightPhoton, PhotonConstants.ROBOT_TO_REAR_PHOTON);
         } else {
             rightPhoton = null;
             photonRightPoseEstimator = null;
         }
 
-        if (PhotonConstants.USING_LEFT_PHOTON) {
-            leftPhoton = new PhotonCamera(PhotonConstants.LEFT_PHOTON_NAME);
+        if (PhotonConstants.USING_ANGLED_PHOTON) {
+            leftPhoton = new PhotonCamera(PhotonConstants.ANGLED_PHOTON_NAME);
             photonLeftPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PhotonConstants.PHOTON_CAMERA_STRAT,
-                    leftPhoton, PhotonConstants.ROBOT_TO_LEFT_PHOTON);
+                    leftPhoton, PhotonConstants.ROBOT_TO_ANGLED_PHOTON);
         } else {
             leftPhoton = null;
             photonLeftPoseEstimator = null;
@@ -53,7 +53,7 @@ public class PhotonSubsystem extends SubsystemBase {
      */
     public EstimatedRobotPose getEstimatedRobotPoseFromLeftPhoton(Pose2d prevEstimatPose2d) {
         // Checks if robot has a left photon camera
-        if (PhotonConstants.USING_LEFT_PHOTON) {
+        if (PhotonConstants.USING_ANGLED_PHOTON) {
             return null;
         }
         photonLeftPoseEstimator.setReferencePose(prevEstimatPose2d);
@@ -72,7 +72,7 @@ public class PhotonSubsystem extends SubsystemBase {
      */
     public EstimatedRobotPose getEstimatedRobotPoseFromRightPhoton(Pose2d prevEstimatPose2d) {
         // Checks if robot has a right photon camera
-        if (PhotonConstants.USING_RIGHT_PHOTON) {
+        if (PhotonConstants.USING_REAR_PHOTON) {
             return null;
         }
         photonRightPoseEstimator.setReferencePose(prevEstimatPose2d);
