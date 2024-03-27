@@ -79,6 +79,8 @@ public class NoteLimelight extends SubsystemBase {
     private void initializeShuffleboard() {
         if (NoteLLConstants.DEBUG) {
             shuffleDebugTab = Shuffleboard.getTab("Debug Tab");
+            // convert to ListDebugEntry
+
             entry_pipelineName = shuffleDebugTab.getLayout("Note Limelight", BuiltInLayouts.kList)
                     .add("Current Pipeline", "Default")
                     .withWidget(BuiltInWidgets.kTextView)

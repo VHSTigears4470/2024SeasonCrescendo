@@ -20,26 +20,47 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public final class Constants {
-    public static class OperatorConstants {
-        // DEADBANDS
-        public static final double LEFT_X_DEADBAND = 0.05;
-        public static final double LEFT_Y_DEADBAND = 0.05;
-        public static final double RIGHT_X_DEADBAND = 0.01;
-        public static final double RIGHT_Y_DEADBAND = 0.01;
-    }
-
-    public static final class RobotContainerConstants {
+    public static final class OperatorConstants {
         public static final boolean USING_XBOX_1 = true;
         public static final boolean USING_XBOX_2 = false;
+
         public static final int XBOX_1_ID = 0;
         public static final double XBOX_1_DEADBAND = 0.2;
 
         public static final int XBOX_2_ID = 1;
         public static final double XBOX_2_DEADBAND = 0.2;
+    }
 
+    public static final class AutoConstants {
+        public static final int numOfDirections = 8;
+
+        // String Names for starting Position
+        public static final String AMP_SIDE_START = "Amp Start";
+        public static final String MIDDLE_SIDE_START = "Middle Start";
+        public static final String FEEDER_SIDE_START = "Feeder Start";
+
+        // String Names for Cycles
+        public static final String AMP_WING_NOTE_ENDING = "Amp Wing";
+        public static final String MIDDLE_WING_NOTE_ENDING = "Middle Wing";
+        public static final String FEEDER_WING_NOTE_ENDING = "Feeder Wing";
+
+        // String Names for Center Note Paths
+        public static final String AMP_CENTER_NOTE_ENDING = "Center Left";
+        public static final String AMP_MIDDLE_CENTER_NOTE_ENDING = "Center Middle Left";
+        public static final String MIDDLE_CENTER_NOTE_ENDING = "Center Middle";
+        public static final String FEEDER_MIDDLE_CENTER_NOTE_ENDING = "Center Right Middle";
+        public static final String FEEDER_CENTER_NOTE_ENDING = "Center Right";
+
+        // String Names for Named Commands
+        public static final String CLIMB_POSITION = "Climb Position";
+        public static final String DEFAULT_POSITION = "Default Position";
+        public static final String INTAKE_POSITION = "Intake Position";
+        public static final String INTAKE_NOTE = "Intake Note";
+        public static final String SHOOT_AMP = "Shoot Amp";
+        public static final String SHOOT_SPEAKER = "Shoot Speaker";
+        public static final String DRIVE_TIL_HAVE_NOTE = "Drive Till Have Note";
     }
 
     public static final class CycleTimes {
@@ -50,8 +71,8 @@ public final class Constants {
     }
 
     public static final class SwerveConstants {
-        public static final boolean USING_SWERVE = true;
-        public static final boolean DEBUG = false;
+        public static final boolean USING_SWERVE = false;
+        public static final boolean DEBUG = true;
 
         public static final PIDFConfig X_AUTO_PID = new PIDFConfig(0.000000005, 0, 0);
         public static final PIDFConfig Y_AUTO_PID = new PIDFConfig(0.000000005, 0, 0);
@@ -74,12 +95,15 @@ public final class Constants {
         public static final double MAX_ACCELERATION = 2;
         public static final double MAX_SPEED_METERS = 2;
 
-        public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
-        public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
+        public static final double ROBOT_MASS = Units.lbsToKilograms(128); //
+        public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(0)), ROBOT_MASS);
         public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
         public static final double WHEEL_LOCK_TIME = 10;
 
         public static final double SWERVE_AUTO_VELOCITY = 1;
+
+        // TOLERANCES
+        public static final double HEADING_TOLERANCE = 10;
     }
 
     public static final class DifferentialConstants {
@@ -87,7 +111,7 @@ public final class Constants {
         public static final boolean DEBUG = true;
 
         // PWM MOTORS
-        public static final int FL_MOTOR_PWM = 3;
+        public static final int FL_MOTOR_PWM = 5;
         public static final int FR_MOTOR_PWM = 0;
         public static final int BL_MOTOR_PWM = 2;
         public static final int BR_MOTOR_PWM = 1;
@@ -111,8 +135,10 @@ public final class Constants {
         public static final int NOTES_FORWARD_CHANNEL_ID = 11;
         public static final int NOTES_REVERSE_CHANNEL_ID = 10;
         public static final Value INTAKE_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse;
-        public static final Value PISTON_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse; // Need to change later for
-                                                                                           // piston
+        public static final Value PISTON_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse;
+
+        public static final double SECONDS_TILL_RETRACT = 3;
+        public static final double SECONDS_TILL_EXTEND = 1.5;
 
         // MOTORS
         public static final int TOP_MOTOR_ID = 9; // Leader
@@ -129,15 +155,11 @@ public final class Constants {
         public static final double AMP_OUTPUT_VOLTAGE = 3; // unsigned, polarity set in subsystem
 
         // SENSORS
-        public static final int NOTE_BREAKBEAM_DIO = 2; // TODO: Set DIO
-
-        public static enum INTAKE_POSITION_STATE {
-            RETRACTED, UNRETRACTED
-        };
+        public static final int NOTE_BREAKBEAM_DIO = 3; // TODO: Set DIO
     }
 
     public static class ElevatorConstants {
-        public static final boolean IS_USING_ELEVATOR = false;
+        public static final boolean IS_USING_ELEVATOR = true;
         public static final boolean DEBUG = true;
 
         // MOTORS
@@ -151,30 +173,34 @@ public final class Constants {
                                                                // direction is positive voltage
 
         // HEIGHT CALCULATIONS
-        private static final double GEAR_RADIUS = 1.756 / 2; // Sprocket WCP-0560, outermost radius 1.981, 1.756 inner
+        private static final double GEAR_RADIUS = 2.15 / 2; // Sprocket WCP-0560, outermost radius 1.981, 1.756 inner
         private static final double GEAR_CIRCUMFRENCE = 2 * Math.PI * GEAR_RADIUS;
         private static final double GEAR_RATIO = 60;
-        public static final double CONVERSION_RATIO = GEAR_CIRCUMFRENCE / GEAR_RATIO * 2;
+        public static final double CONVERSION_RATIO = GEAR_CIRCUMFRENCE / GEAR_RATIO * 2; // * 2 for 2 stages
 
         // SENSORS
         public static final int BOTTOM_BREAKBEAM_DIO = 1; // TODO: Update
-        public static final int TOP_BREAKBEAM_DIO = 3; // TODO: Update
+        public static final int TOP_BREAKBEAM_DIO = 4; // TODO: Update
 
         // PID
-        public static final double PID_KP = 0.00000011015; // TODO: Tune
+        public static final double PID_KP = 0.0000010015; // TODO: Tune
         public static final double PID_KI = 0; // TODO: Tune
         public static final double PID_KD = 0.0000000; // TODO: Tune
         public static final double PID_KIZ = 0.005; // TODO: Tune
-        public static final double PID_KFF = 0.00031; // TODO: Tune
+        public static final double PID_KFF = 0.00071; // TODO: Tune
         /** Max positive voltage (must be positive) */
-        public static final double PID_KMAX_OUTPUT = 3; // TODO: Tune
+        public static final double PID_KMAX_OUTPUT = 3.5; // TODO: Tune
         /** Max negative voltage (must be negative) */
-        public static final double PID_KMIN_OUTPUT = -3; // TODO: Tune
+        public static final double PID_KMIN_OUTPUT = -1; // TODO: Tune
 
         // SMART MOTION
         public static final int SM_ID = 0;
-        private static final double SM_MAX_INCHES_VEL = 6; // Elevator maximum inches per second
+        private static final double SM_MAX_INCHES_VEL = 12; // Elevator maximum inches per second
         public static final double SM_MAX_RPM_VEL = SM_MAX_INCHES_VEL / GEAR_CIRCUMFRENCE
+                * GEAR_RATIO * 60; // Elevator maximum revolutions per minute -> revolutions -> gear ratio
+
+        private static final double SM_MAX_INCHES_VEL_DOWN = .7; // Elevator maximum inches per second
+        public static final double SM_MAX_RPM_VEL_DOWN = SM_MAX_INCHES_VEL_DOWN / GEAR_CIRCUMFRENCE
                 * GEAR_RATIO * 60; // Elevator maximum revolutions per minute -> revolutions -> gear ratio
 
         private static final double SM_MIN_INCHES_VEL = 0; // Elevator minimum inches per second
@@ -190,8 +216,8 @@ public final class Constants {
         // ELEVATOR STATES
         // TODO: Find correct heights
         public static final double LOW_INIT_HEIGHT = 0;
-        public static final double HIGH_INIT_HEIGHT = 14;// 28 inches up
-        public static final double CLIMB_HEIGHT = 16;
+        public static final double HIGH_INIT_HEIGHT = 33.5; // amp height / .5 inch below hall sensor
+        public static final double CLIMB_HEIGHT = 20;
 
         public static enum ELEVATOR_STATE {
             UP, DOWN, CLIMB
@@ -245,28 +271,26 @@ public final class Constants {
 
         public static final boolean USING_VISION = true;
 
-        public static final boolean USING_RIGHT_PHOTON = true;
-        public static final boolean USING_LEFT_PHOTON = true;
+        public static final boolean USING_REAR_PHOTON = true;
+        public static final boolean USING_ANGLED_PHOTON = true;
 
-        public static final String RIGHT_PHOTON_NAME = "right photon"; // TODO - Change both names
-        public static final String LEFT_PHOTON_NAME = "left photon";
+        public static final String REAR_PHOTON_NAME = "rightCamera"; // TODO - Change both names
+        public static final String ANGLED_PHOTON_NAME = "leftCamera";
 
         public static final PoseStrategy PHOTON_CAMERA_STRAT = PoseStrategy.LOWEST_AMBIGUITY;
 
-        // Right Camera w/ its real position
-        public static final Transform3d ROBOT_TO_RIGHT_PHOTON = new Transform3d(
-                new Translation3d(Units.inchesToMeters(-11.88), Units.inchesToMeters(-6.88),
-                        Units.inchesToMeters(31.09)),
-                new Rotation3d(0, Math.toRadians(10.62), Math.toRadians(-45))); // TODO - Need to modify position of
-                                                                                // Right
+        // Rear Camera w/ its real position offset from center of robot and from ground
+        public static final Transform3d ROBOT_TO_REAR_PHOTON = new Transform3d(
+                new Translation3d(Units.inchesToMeters(-11.75), Units.inchesToMeters(2.25),
+                        Units.inchesToMeters(19.3772)),
+                new Rotation3d(0, Math.toRadians(0), Math.toRadians(180)));
 
-        // Left Camera w/ its real position
-        public static final Transform3d ROBOT_TO_LEFT_PHOTON = new Transform3d(
-                new Translation3d(Units.inchesToMeters(-11.88), Units.inchesToMeters(6.88),
-                        Units.inchesToMeters(31.09)),
-                new Rotation3d(0, Math.toRadians(10.62), Math.toRadians(46))); // TODO - Need to modify position of Left
+        // Right Camera w/ its real position offset from center of robot and from ground
+        public static final Transform3d ROBOT_TO_ANGLED_PHOTON = new Transform3d(
+                new Translation3d(Units.inchesToMeters(0.05), Units.inchesToMeters(-9.6036),
+                        Units.inchesToMeters(6.6108)),
+                new Rotation3d(Math.toRadians(0), Math.toRadians(-30), Math.toRadians(-90)));
 
-        // TODO - Review the var under to see if needs to be deleted
         // Min target ambiguity. Targets w/ higher ambiguity will be discarded
         public static final double APRILTAG_AMBIGUITY_THRESHOLD = 0.2;
         public static final double POSE_AMBIGUITY_SHIFTER = 0.2;

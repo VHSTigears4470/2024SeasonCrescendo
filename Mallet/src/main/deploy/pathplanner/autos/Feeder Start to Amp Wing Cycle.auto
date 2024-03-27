@@ -12,15 +12,9 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "Shoot Speaker"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "Feeder Start to Feeder Wing"
+            "pathName": "Feeder Start to Amp Wing"
           }
         },
         {
@@ -32,7 +26,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Feeder Wing to Feeder Start"
+            "pathName": "Amp Wing to Feeder Start"
           }
         }
       ]

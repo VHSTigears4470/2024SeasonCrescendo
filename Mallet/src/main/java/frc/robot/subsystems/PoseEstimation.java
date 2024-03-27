@@ -6,11 +6,13 @@ import static edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition.kRedAlli
 
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -22,24 +24,44 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 //import frc.robot.Constants.DrivetrainConstants;
+import frc.robot.Constants.PhotonConstants;
 
 public class PoseEstimation extends SubsystemBase {
   private final Field2d field2d = new Field2d();
-  private final PhotonRunnable rightEstimator = new PhotonRunnable(new PhotonCamera("rightCamera"),
-      Constants.PhotonConstants.ROBOT_TO_RIGHT_PHOTON);
-  private final PhotonRunnable leftEstimator = new PhotonRunnable(new PhotonCamera("leftCamera"),
-      Constants.PhotonConstants.ROBOT_TO_LEFT_PHOTON);
+  private final PhotonRunnable rightEstimator;
+  private final PhotonRunnable leftEstimator;
 
-  private final Notifier allNotifier = new Notifier(() -> {
-    rightEstimator.run();
-    leftEstimator.run();
-  });
+  private final Notifier allNotifier;
 
+  // Where the robot reports (0, 0) (aka the origin)
   private OriginPosition originPosition = kBlueAllianceWallRightSide;
   private SwerveSubsystem swerveSub;
 
   public PoseEstimation(SwerveSubsystem swerveSub) {
     this.swerveSub = swerveSub;
+
+    if (PhotonConstants.USING_REAR_PHOTON) {
+      rightEstimator = new PhotonRunnable(new PhotonCamera(PhotonConstants.REAR_PHOTON_NAME),
+          Constants.PhotonConstants.ROBOT_TO_REAR_PHOTON);
+    } else {
+      rightEstimator = null;
+    }
+
+    if (PhotonConstants.USING_ANGLED_PHOTON) {
+      leftEstimator = new PhotonRunnable(new PhotonCamera(PhotonConstants.ANGLED_PHOTON_NAME),
+          Constants.PhotonConstants.ROBOT_TO_ANGLED_PHOTON);
+    } else {
+      leftEstimator = null;
+    }
+
+    allNotifier = new Notifier(() -> {
+      if (PhotonConstants.USING_REAR_PHOTON) {
+        rightEstimator.run();
+      }
+      if (PhotonConstants.USING_ANGLED_PHOTON) {
+        leftEstimator.run();
+      }
+    });
 
     // Start PhotonVision thread
     allNotifier.setName("runAll");
@@ -69,6 +91,7 @@ public class PoseEstimation extends SubsystemBase {
         break;
       default:
         // No valid alliance data. Nothing we can do about it
+        break;
     }
 
     if (allianceChanged) {
@@ -84,8 +107,13 @@ public class PoseEstimation extends SubsystemBase {
   @Override
   public void periodic() {
     if (Constants.PhotonConstants.USING_VISION) {
-      estimatorChecker(rightEstimator);
-      estimatorChecker(leftEstimator);
+      // Adds both camera reported pose to swerve
+      if (PhotonConstants.USING_REAR_PHOTON) {
+        estimatorChecker(rightEstimator);
+      }
+      if (PhotonConstants.USING_ANGLED_PHOTON) {
+        estimatorChecker(leftEstimator);
+      }
     } else {
       allNotifier.close();
     }
@@ -93,7 +121,7 @@ public class PoseEstimation extends SubsystemBase {
     // estimatorChecker(backEstimator);
 
     // Set the pose on the dashboard
-    var dashboardPose = swerveSub.getPose();
+    Pose2d dashboardPose = swerveSub.getPose();
     if (originPosition == kRedAllianceWallRightSide) {
       // Flip the pose when red, since the dashboard field photo cannot be rotated
       dashboardPose = flipAlliance(dashboardPose);
@@ -101,8 +129,15 @@ public class PoseEstimation extends SubsystemBase {
     field2d.setRobotPose(dashboardPose);
   }
 
+  /**
+   * Reterns the pose
+   * Sample Output (X.XX, Y.YY) D.D degrees
+   * D is degrees
+   * 
+   * @return Returns X, Y, and Degrees
+   */
   private String getFormattedPose() {
-    var pose = swerveSub.getPose();
+    Pose2d pose = swerveSub.getPose();
     return String.format("(%.3f, %.3f) %.2f degrees",
         pose.getX(),
         pose.getY(),
@@ -142,16 +177,29 @@ public class PoseEstimation extends SubsystemBase {
   // yValues.clear();
   // }
 
+  /**
+   * 
+   * @param estimation Camera to get data from
+   * @return A matrix of 3 by 1 that represents the confidence for x, y, and theta
+   *         in radians
+   */
   private Matrix<N3, N1> confidenceCalculator(EstimatedRobotPose estimation) {
+    // Defaults to very untrustworthy
     double smallestDistance = Double.POSITIVE_INFINITY;
-    for (var target : estimation.targetsUsed) {
-      var t3d = target.getBestCameraToTarget();
-      var distance = Math.sqrt(Math.pow(t3d.getX(), 2) + Math.pow(t3d.getY(), 2) + Math.pow(t3d.getZ(), 2));
+
+    // Looks at each AprilTag used to calculate pose and determine the confidence
+    // Sets distance to best one (aka closest)
+    for (PhotonTrackedTarget target : estimation.targetsUsed) {
+      // Distance in 3d space from camera to april tag
+      Transform3d t3d = target.getBestCameraToTarget();
+      // Calculates actual linear distance from camera to target
+      double distance = Math.sqrt(Math.pow(t3d.getX(), 2) + Math.pow(t3d.getY(), 2) + Math.pow(t3d.getZ(), 2));
       if (distance < smallestDistance)
         smallestDistance = distance;
     }
-    double poseAmbiguityFactor = estimation.targetsUsed.size() != 1
-        ? 1
+    // If number of tags is not one, then set factor multiplier to one
+    // Otherwise, calculate ambiguity factor
+    double poseAmbiguityFactor = estimation.targetsUsed.size() != 1 ? 1
         : Math.max(
             1,
             (estimation.targetsUsed.get(0).getPoseAmbiguity()
@@ -161,23 +209,31 @@ public class PoseEstimation extends SubsystemBase {
         1,
         (Math.max(
             1,
-            Math.max(0, smallestDistance - Constants.PhotonConstants.NOISY_DISTANCE_METERS)
+            Math.max(
+                0, smallestDistance - Constants.PhotonConstants.NOISY_DISTANCE_METERS)
                 * Constants.PhotonConstants.DISTANCE_WEIGHT)
             * poseAmbiguityFactor)
-            / (1
-                + ((estimation.targetsUsed.size() - 1) * Constants.PhotonConstants.TAG_PRESENCE_WEIGHT)));
+            / (1 + ((estimation.targetsUsed.size() - 1) * Constants.PhotonConstants.TAG_PRESENCE_WEIGHT)));
 
     return Constants.PhotonConstants.VISION_MEASUREMENT_STANDARD_DEVIATIONS.times(confidenceMultiplier);
   }
 
+  /**
+   * If possible, adds vision meausrement to swerve
+   * 
+   * @param estimator Camera to get pose from
+   */
   public void estimatorChecker(PhotonRunnable estimator) {
-    var cameraPose = estimator.grabLatestEstimatedPose();
+    EstimatedRobotPose cameraPose = estimator.grabLatestEstimatedPose();
+    // Check if there is actually a pose
     if (cameraPose != null) {
       // New pose from vision
       var pose2d = cameraPose.estimatedPose.toPose2d();
+      // Orientates to right coords
       if (originPosition == kRedAllianceWallRightSide) {
         pose2d = flipAlliance(pose2d);
       }
+      // Adds vision to swerve
       swerveSub.addVisionMeasurement(pose2d, cameraPose.timestampSeconds,
           confidenceCalculator(cameraPose));
     }

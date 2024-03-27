@@ -5,10 +5,11 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -38,6 +39,8 @@ public class IntakeSubsystem extends SubsystemBase {
     private GenericEntry entry_compressorSwitch;
     private GenericEntry entry_noteBreakBeam;
 
+    private Value intakeState;
+
     public IntakeSubsystem() {
         // Pneumatics initialization
         compressor = new Compressor(IntakeConstants.REVPH_MODULE_ID, IntakeConstants.MODULE_TYPE);
@@ -49,6 +52,8 @@ public class IntakeSubsystem extends SubsystemBase {
                 IntakeConstants.LEFT_INTAKE_REVERSE_CHANNEL_ID,
                 IntakeConstants.LEFT_INTAKE_FORWARD_CHANNEL_ID);
         leftIntakePositionSolenoid.set(IntakeConstants.INTAKE_DEFAULT_POSITION);
+        intakeState = IntakeConstants.INTAKE_DEFAULT_POSITION;
+
         notePusherSolenoid = new DoubleSolenoid(IntakeConstants.REVPH_MODULE_ID, IntakeConstants.MODULE_TYPE,
                 IntakeConstants.NOTES_REVERSE_CHANNEL_ID,
                 IntakeConstants.NOTES_FORWARD_CHANNEL_ID); // Update Later
@@ -78,6 +83,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public void retractIntake() {
         leftIntakePositionSolenoid.set(DoubleSolenoid.Value.kReverse);
         rightIntakePositionSolenoid.set(DoubleSolenoid.Value.kReverse);
+        intakeState = DoubleSolenoid.Value.kReverse;
     }
 
     /*** Sets the feeder pistons ready for intaking */
@@ -89,6 +95,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public void extendIntake() {
         leftIntakePositionSolenoid.set(DoubleSolenoid.Value.kForward);
         rightIntakePositionSolenoid.set(DoubleSolenoid.Value.kForward);
+        intakeState = DoubleSolenoid.Value.kForward;
     }
 
     /*** Feeds the note into the intake */
@@ -128,6 +135,10 @@ public class IntakeSubsystem extends SubsystemBase {
         return !noteBreakbeam.get(); // Inverted because it is true when not tripped
     }
 
+    public Value getIntakeState() {
+        return intakeState;
+    }
+
     /*** Inits Shuffleboard */
     private void initializeShuffleboard() {
         if (IntakeConstants.DEBUG) {
@@ -144,6 +155,7 @@ public class IntakeSubsystem extends SubsystemBase {
                     .add("Note Break Beam Tripped", false)
                     .withWidget(BuiltInWidgets.kBooleanBox)
                     .getEntry();
+
         }
     }
 

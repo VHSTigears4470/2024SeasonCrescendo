@@ -48,7 +48,6 @@ import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
-import frc.robot.Robot;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.SwerveConstants;
 
@@ -180,15 +179,20 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public Command getAutonomousCommand(String pathName, boolean setOdomToStart) {
     // Load the path you want to follow using its name in the GUI
-    PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+    try {
+      PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
 
-    if (setOdomToStart) {
-      resetOdometry(new Pose2d(path.getPoint(0).position, getHeading()));
+      if (setOdomToStart) {
+        resetOdometry(new Pose2d(path.getPoint(0).position, getHeading()));
+      }
+
+      // Create a path following command using AutoBuilder. This will also trigger
+      // event markers.
+      return AutoBuilder.followPath(path);
+
+    } catch (RuntimeException e) {
+      return null;
     }
-
-    // Create a path following command using AutoBuilder. This will also trigger
-    // event markers.
-    return AutoBuilder.followPath(path);
   }
 
   /**
@@ -291,8 +295,8 @@ public class SwerveSubsystem extends SubsystemBase {
    * Use PathPlanner Path finding to go to a point on the field.
    *
    * @param pose Target {@link Pose2d} to go to.
-   * @param x x change
-   * @param y y change
+   * @param x    x change
+   * @param y    y change
    * @return PathFinding command
    */
   public Command driveToPose(double x, double y, double rotDegree) {
@@ -301,35 +305,38 @@ public class SwerveSubsystem extends SubsystemBase {
 
   /**
    * Creates a pose with rotation and position (position are taken from the robot)
+   * 
    * @param rotDegree Change in degrees
    * @return A pose2d
    */
-  public Pose2d createPose(double rotDegree)
-  {
-    return new Pose2d(swerveDrive.getPose().getX(), swerveDrive.getPose().getY(), new Rotation2d(swerveDrive.getPose().getRotation().getDegrees() + rotDegree * 2 * Math.PI));
+  public Pose2d createPose(double rotDegree) {
+    return new Pose2d(swerveDrive.getPose().getX(), swerveDrive.getPose().getY(),
+        new Rotation2d(swerveDrive.getPose().getRotation().getDegrees() + rotDegree * 2 * Math.PI));
   }
 
   /**
    * Creaes a pose with rotation and position (rotation are taken from the robot)
-   * @param x Change in x position 
-   * @param y Change in y position 
+   * 
+   * @param x Change in x position
+   * @param y Change in y position
    * @return A pose2d
    */
-  public Pose2d createPose(double x, double y)
-  {
-    return new Pose2d(swerveDrive.getPose().getX() + x, swerveDrive.getPose().getX() + y, swerveDrive.getPose().getRotation());
+  public Pose2d createPose(double x, double y) {
+    return new Pose2d(swerveDrive.getPose().getX() + x, swerveDrive.getPose().getX() + y,
+        swerveDrive.getPose().getRotation());
   }
 
   /**
    * Creaes a pose with rotation and position (rotation are taken from the robot)
-   * @param x Change in x position 
-   * @param y Change in y position 
+   * 
+   * @param x         Change in x position
+   * @param y         Change in y position
    * @param rotDegree Change in rotation
    * @return A pose2d
    */
-  public Pose2d createPose(double x, double y, double rotDegree)
-  {
-    return new Pose2d(swerveDrive.getPose().getX() + x, swerveDrive.getPose().getX() + y, new Rotation2d(swerveDrive.getPose().getRotation().getDegrees() + rotDegree));
+  public Pose2d createPose(double x, double y, double rotDegree) {
+    return new Pose2d(swerveDrive.getPose().getX() + x, swerveDrive.getPose().getX() + y,
+        new Rotation2d(swerveDrive.getPose().getRotation().getDegrees() + rotDegree));
   }
 
   /**
@@ -673,18 +680,18 @@ public class SwerveSubsystem extends SubsystemBase {
           .add("Swerve Heading", 0)
           .withWidget(BuiltInWidgets.kGyro)
           .getEntry();
+
     }
   }
 
   private void updateShuffleboard() {
     if (IntakeConstants.DEBUG) {
-      // entry_swerveHeading.setValue(swerveDrive.getOdometryHeading());
+      entry_swerveHeading.setValue(swerveDrive.getOdometryHeading().getDegrees());
     }
   }
 
   @Override
   public void periodic() {
-    updateVisionMeasurement();
     updateShuffleboard();
   }
 
