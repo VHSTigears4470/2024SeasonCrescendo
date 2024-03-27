@@ -279,18 +279,17 @@ public final class Constants {
 
         public static final PoseStrategy PHOTON_CAMERA_STRAT = PoseStrategy.LOWEST_AMBIGUITY;
 
-        // Right Camera w/ its real position offset from center of robot and from ground
+        // Rear Camera w/ its real position offset from center of robot and from ground
         public static final Transform3d ROBOT_TO_REAR_PHOTON = new Transform3d(
                 new Translation3d(Units.inchesToMeters(-11.75), Units.inchesToMeters(2.25),
                         Units.inchesToMeters(19.3772)),
-                new Rotation3d(0, Math.toRadians(0), Math.toRadians(180))); // TODO - Need to modify position of
-                                                                                // Right
+                new Rotation3d(0, Math.toRadians(0), Math.toRadians(180)));
 
-        // Left Camera w/ its real position offset from center of robot and from ground
+        // Right Camera w/ its real position offset from center of robot and from ground
         public static final Transform3d ROBOT_TO_ANGLED_PHOTON = new Transform3d(
                 new Translation3d(Units.inchesToMeters(0.05), Units.inchesToMeters(-9.6036),
                         Units.inchesToMeters(6.6108)),
-                new Rotation3d(Math.toRadians(150), Math.toRadians(0), Math.toRadians(180))); // TODO - Need to modify position of Left
+                new Rotation3d(Math.toRadians(0), Math.toRadians(-30), Math.toRadians(-90)));
 
         // Min target ambiguity. Targets w/ higher ambiguity will be discarded
         public static final double APRILTAG_AMBIGUITY_THRESHOLD = 0.2;
