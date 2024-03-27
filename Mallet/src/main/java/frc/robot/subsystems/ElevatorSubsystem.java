@@ -214,12 +214,20 @@ public class ElevatorSubsystem extends SubsystemBase {
     return currState;
   }
 
-  /***
-   * Returns true if the elevator is within margin of error of the desired
-   * position
+  /**
+   * @return true if the elevator is within margin of error of the desired
+   *         position
    */
   public boolean isAtPos() {
     return Math.abs(leftEncoder.getPosition() - desiredReferencePosition) < ElevatorConstants.POSITION_TOLERANCE;
+  }
+
+  /**
+   * @param delta inches
+   * @return whether within delta of target setpoint
+   */
+  public boolean isWithinPos(double delta) {
+    return Math.abs(leftEncoder.getPosition() - desiredReferencePosition) < delta;
   }
 
   public boolean botBreakbeamTripped() {
