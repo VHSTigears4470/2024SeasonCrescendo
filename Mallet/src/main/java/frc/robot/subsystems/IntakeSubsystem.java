@@ -125,6 +125,11 @@ public class IntakeSubsystem extends SubsystemBase {
         topMotor.setVoltage(-IntakeConstants.NOTE_INTAKE_VOLTAGE);
     }
 
+    /*** Set intake motors to the speed for outputting notes at slow voltage */
+    public void setSlowOutputVoltage() {
+        topMotor.setVoltage(IntakeConstants.SLOW_OUTPUT_VOLTAGE);
+    }
+
     /*** Stops motors */
     public void setZeroVoltage() {
         topMotor.setVoltage(0);

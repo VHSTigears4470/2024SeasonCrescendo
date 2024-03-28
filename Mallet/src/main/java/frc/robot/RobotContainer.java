@@ -12,7 +12,6 @@ import frc.robot.subsystems.DifferentialSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.NoteLimelight;
-import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.PoseEstimation;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.util.DeadbandCommandXboxController;
@@ -22,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DifferentialConstants;
 import frc.robot.Constants.ElevatorConstants;
@@ -35,6 +35,7 @@ import frc.robot.commands.command_groups.*;
 import frc.robot.commands.differential.ArcadeDrive;
 import frc.robot.commands.drivebase.AbsoluteDrive;
 import frc.robot.commands.drivebase.AbsoluteDriveWithFocus;
+import frc.robot.commands.drivebase.ResetOdom;
 import frc.robot.commands.elevator.ElevatorChangePosition;
 import frc.robot.commands.elevator.ElevatorChangePositionIgnoreSoftLimit;
 import frc.robot.commands.elevator.ElevatorSetHeightState;
@@ -45,6 +46,8 @@ import frc.robot.commands.intake.IntakePusherExtend;
 import frc.robot.commands.intake.IntakePusherRetract;
 import frc.robot.commands.intake.IntakeSetAmpVoltage;
 import frc.robot.commands.intake.IntakeSetIntakeVoltage;
+import frc.robot.commands.intake.IntakeSetIntakeVoltageEndWithBreakbeam;
+import frc.robot.commands.intake.IntakeSetSlowShoot;
 import frc.robot.commands.intake.IntakeSetSpeakerVoltage;
 import frc.robot.commands.intake.IntakeSetZeroVoltage;
 
@@ -61,8 +64,8 @@ public class RobotContainer {
   private static DifferentialSubsystem differentialSub;
   private static IntakeSubsystem intakeSub;
   private static ElevatorSubsystem elevatorSub;
-  //private static PhotonSubsystem photonSub;
-  private static PoseEstimation poseEstimate = new PoseEstimation(swerveSub);
+  // private static PhotonSubsystem photonSub;
+  private static PoseEstimation poseEstimate;
   private static NoteLimelight limelightSub;
 
   // INIT XBOX CONTROLLER
@@ -124,11 +127,18 @@ public class RobotContainer {
               () -> -xbox1.getRightX(),
               () -> -xbox1.getRightY()));
         } else {
+          // swerveSub.setDefaultCommand(swerveSub.simDriveCommand(
+          // () -> -xbox1.getLeftY(),
+          // () -> -xbox1.getLeftX(),
+          // () -> -xbox1.getRawAxis(2)));
           swerveSub.setDefaultCommand(swerveSub.simDriveCommand(
               () -> -xbox1.getLeftY(),
               () -> -xbox1.getLeftX(),
-              () -> -xbox1.getRawAxis(2)));
+              () -> -xbox1.getRightX(),
+              () -> -xbox1.getRightY()));
         }
+
+        poseEstimate = new PoseEstimation(swerveSub);
       }
     } else {
       swerveSub = null;
@@ -143,16 +153,16 @@ public class RobotContainer {
       elevatorSub = new ElevatorSubsystem();
     }
     if (PhotonConstants.USING_VISION) {
-      //photonSub = new PhotonSubsystem();
+      // photonSub = new PhotonSubsystem();
       // Set up vision readings for Swerve
       if (SwerveConstants.USING_SWERVE) {
-       // swerveSub.setupVisionMeasurement(
-            // () -> {
-            //   return photonSub.getEstimatedRobotPoseFromLeftPhoton(swerveSub.getPose());
-            // },
-            // () -> {
-            //   return photonSub.getEstimatedRobotPoseFromLeftPhoton(swerveSub.getPose());
-            // });
+        // swerveSub.setupVisionMeasurement(
+        // () -> {
+        // return photonSub.getEstimatedRobotPoseFromLeftPhoton(swerveSub.getPose());
+        // },
+        // () -> {
+        // return photonSub.getEstimatedRobotPoseFromLeftPhoton(swerveSub.getPose());
+        // });
       }
     }
     if (NoteLLConstants.IS_USING_NOTE_LIMELIGHT) {
@@ -225,6 +235,14 @@ public class RobotContainer {
     // Init auto preset chooser
     autoPresetChooser.setDefaultOption("Use Modular", null);
     if (SwerveConstants.USING_SWERVE && ElevatorConstants.IS_USING_ELEVATOR && IntakeConstants.IS_USING_INTAKE) {
+      if (SwerveConstants.USING_SWERVE) {
+        autoPresetChooser.addOption("TEST ONLY STRAIGHT", new ResetOdom(swerveSub).andThen(
+            swerveSub.driveToPose(swerveSub.createPose(1, 0))));
+        autoPresetChooser.addOption("TEST ONLY SIDE", new ResetOdom(swerveSub).andThen(
+            swerveSub.driveToPose(swerveSub.createPose(1, 1))));
+        autoPresetChooser.addOption("TEST ONLY DIAG", new ResetOdom(swerveSub).andThen(
+            swerveSub.driveToPose(swerveSub.createPose(0, 1))));
+      }
       autoPresetChooser.addOption("Preset One (Amp Side)",
           new ShootSpeakerAndReset(intakeSub, elevatorSub)
               .andThen(swerveSub.getAutonomousCommand(
@@ -280,17 +298,23 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // XBOX 1 Configs
     if (OperatorConstants.USING_XBOX_1) {
-      if (SwerveConstants.USING_SWERVE) {
+      if (SwerveConstants.USING_SWERVE && NoteLLConstants.IS_USING_NOTE_LIMELIGHT) {
         xbox1.a().onTrue(new AbsoluteDriveWithFocus(swerveSub, limelightSub,
             () -> -xbox1.getLeftY(),
             () -> -xbox1.getLeftX()));
       }
 
-      // if (IntakeConstants.IS_USING_INTAKE && ElevatorConstants.IS_USING_ELEVATOR) {
-      // xbox1.y().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
-      // xbox1.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
-      // xbox1.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
-      // }
+      if (IntakeConstants.IS_USING_INTAKE && SwerveConstants.USING_SWERVE && ElevatorConstants.IS_USING_ELEVATOR
+          && NoteLLConstants.IS_USING_NOTE_LIMELIGHT) {
+        xbox1.y().whileTrue(new IntakeNoteWhileFocus(swerveSub, intakeSub, elevatorSub, limelightSub)).onFalse(
+            new IntakeSetZeroVoltage(intakeSub));
+      }
+
+      if (IntakeConstants.IS_USING_INTAKE && ElevatorConstants.IS_USING_ELEVATOR) {
+        // xbox1.y().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
+        xbox1.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
+        // xbox1.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
+      }
 
       if (IntakeConstants.IS_USING_INTAKE && IntakeConstants.DEBUG) {
         // TODO - Remove the debug commands for real testing
@@ -350,28 +374,54 @@ public class RobotContainer {
     }
     // XBOX 2 Configs
     if (OperatorConstants.USING_XBOX_2) {
-      // if (ElevatorConstants.IS_USING_ELEVATOR && !ElevatorConstants.DEBUG) {
-      // xbox2.a().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub,
-      // 0.1));
-      // xbox2.b().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub,
-      // -0.1));
+      if (ElevatorConstants.IS_USING_ELEVATOR && !ElevatorConstants.DEBUG) {
+        xbox2.povUp().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub,
+            0.1));
+        xbox2.povDown().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub,
+            -0.1));
 
-      // xbox2.rightBumper().whileTrue(new ElevatorSetHeightState(elevatorSub,
-      // ELEVATOR_STATE.UP));
-      // xbox2.leftBumper().whileTrue(new ElevatorSetHeightState(elevatorSub,
-      // ELEVATOR_STATE.DOWN));
-      // }
+        xbox2.rightTrigger().whileTrue(new ElevatorSetHeightState(elevatorSub,
+            ELEVATOR_STATE.UP));
+        xbox2.leftTrigger().whileTrue(new ElevatorSetHeightState(elevatorSub,
+            ELEVATOR_STATE.DOWN));
+      }
+      if (IntakeConstants.IS_USING_INTAKE && ElevatorConstants.IS_USING_ELEVATOR && SwerveConstants.USING_SWERVE
+          && NoteLLConstants.IS_USING_NOTE_LIMELIGHT) {
+        xbox2.rightStick().whileTrue(new IntakeNoteWhileFocus(swerveSub, intakeSub, elevatorSub, limelightSub)).onFalse(
+            new IntakeSetZeroVoltage(intakeSub));
+      }
+      if (IntakeConstants.IS_USING_INTAKE && ElevatorConstants.IS_USING_ELEVATOR) {
+        xbox2.b().whileTrue(new ShootSpeakerAndReset(intakeSub, elevatorSub));
+        xbox2.leftTrigger().whileTrue(new ShootAmpPosition(intakeSub, elevatorSub));
+        xbox2.x().whileTrue(new RevUpAndShootAmp(intakeSub, elevatorSub)).onFalse(
+            new IntakeSetZeroVoltage(intakeSub));
+        xbox2.a().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
+        xbox2.y().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub)).onFalse(
+            new IntakeSetZeroVoltage(intakeSub));
+        xbox2.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
+      }
+      if (IntakeConstants.IS_USING_INTAKE) {
+        xbox2.rightBumper().whileTrue(new IntakeShootSlow(intakeSub)).onFalse(
+            new IntakeSetZeroVoltage(intakeSub));
+        xbox2.leftBumper().whileTrue(new IntakeSetIntakeVoltageEndWithBreakbeam(intakeSub)).onFalse(
+            new IntakeSetZeroVoltage(intakeSub));
 
-      // if (IntakeConstants.IS_USING_INTAKE && ElevatorConstants.IS_USING_ELEVATOR) {
-      // xbox2.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
-      // xbox2.y().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
+        // xbox2.rightBumper().whileTrue(new ElevatorSetHeightState(elevatorSub,
+        // ELEVATOR_STATE.UP));
+        // xbox2.leftBumper().whileTrue(new ElevatorSetHeightState(elevatorSub,
+        // ELEVATOR_STATE.DOWN));
+        // }
 
-      // xbox2.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
+        // if (IntakeConstants.IS_USING_INTAKE && ElevatorConstants.IS_USING_ELEVATOR) {
+        // xbox2.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
+        // xbox2.y().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
 
-      // xbox2.leftTrigger().whileTrue(new ShootAmpAndReset(intakeSub, elevatorSub));
-      // xbox2.rightTrigger().whileTrue(new ShootSpeakerAndReset(intakeSub,
-      // elevatorSub));
-      // }
+        // xbox2.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
+
+        // xbox2.leftTrigger().whileTrue(new ShootAmpAndReset(intakeSub, elevatorSub));
+        // xbox2.rightTrigger().whileTrue(new ShootSpeakerAndReset(intakeSub,
+        // elevatorSub));
+      }
     }
   }
 

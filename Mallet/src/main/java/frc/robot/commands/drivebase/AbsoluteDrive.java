@@ -24,6 +24,7 @@ public class AbsoluteDrive extends Command {
   private final SwerveSubsystem swerve;
   private final DoubleSupplier vX, vY;
   private final DoubleSupplier headingHorizontal, headingVertical;
+  private double lastHeadingPositionHorizontal, lastHeadingPositionVertical;
   private boolean initRotation = false;
 
   /**
@@ -67,6 +68,8 @@ public class AbsoluteDrive extends Command {
     this.vY = vY;
     this.headingHorizontal = headingHorizontal;
     this.headingVertical = headingVertical;
+    lastHeadingPositionHorizontal = headingHorizontal.getAsDouble();
+    lastHeadingPositionVertical = headingVertical.getAsDouble();
 
     addRequirements(swerve);
   }
@@ -79,11 +82,18 @@ public class AbsoluteDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
+    // Pythag Theorem to find distance of joystick
+    // Make sure motor angles does not reset to Default Position
+    if (Math.sqrt(Math.abs(headingHorizontal.getAsDouble()) * Math.abs(headingHorizontal.getAsDouble()) +
+        Math.abs(headingVertical.getAsDouble())
+            * Math.abs(headingVertical.getAsDouble())) > SwerveConstants.MIN_ANGLE_THRESHOLD) {
+      lastHeadingPositionHorizontal = headingHorizontal.getAsDouble();
+      lastHeadingPositionVertical = headingVertical.getAsDouble();
+    }
     // Get the desired chassis speeds based on a 2 joystick module.
     ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(vX.getAsDouble(), vY.getAsDouble(),
-        headingHorizontal.getAsDouble(),
-        headingVertical.getAsDouble());
+        lastHeadingPositionHorizontal,
+        lastHeadingPositionVertical);
 
     // Prevent Movement After Auto
     if (initRotation) {
