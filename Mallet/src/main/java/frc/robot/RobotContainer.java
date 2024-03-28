@@ -64,7 +64,7 @@ public class RobotContainer {
   private static IntakeSubsystem intakeSub;
   private static ElevatorSubsystem elevatorSub;
   //private static PhotonSubsystem photonSub;
-  private static PoseEstimation poseEstimate = new PoseEstimation(swerveSub);
+  private static PoseEstimation poseEstimate;
   private static NoteLimelight limelightSub;
 
   // INIT XBOX CONTROLLER
@@ -145,6 +145,7 @@ public class RobotContainer {
       elevatorSub = new ElevatorSubsystem();
     }
     if (PhotonConstants.USING_VISION) {
+      poseEstimate = new PoseEstimation(swerveSub);
       //photonSub = new PhotonSubsystem();
       // Set up vision readings for Swerve
       if (SwerveConstants.USING_SWERVE) {
