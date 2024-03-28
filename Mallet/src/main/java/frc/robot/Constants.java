@@ -71,7 +71,7 @@ public final class Constants {
     }
 
     public static final class SwerveConstants {
-        public static final boolean USING_SWERVE = false;
+        public static final boolean USING_SWERVE = true;
         public static final boolean DEBUG = true;
 
         public static final PIDFConfig X_AUTO_PID = new PIDFConfig(0.000000005, 0, 0);
@@ -196,11 +196,11 @@ public final class Constants {
 
         // SMART MOTION
         public static final int SM_ID = 0;
-        private static final double SM_MAX_INCHES_VEL = 12; // Elevator maximum inches per second
+        private static final double SM_MAX_INCHES_VEL = 4; // Elevator maximum inches per second
         public static final double SM_MAX_RPM_VEL = SM_MAX_INCHES_VEL / GEAR_CIRCUMFRENCE
                 * GEAR_RATIO * 60; // Elevator maximum revolutions per minute -> revolutions -> gear ratio
 
-        private static final double SM_MAX_INCHES_VEL_DOWN = .7; // Elevator maximum inches per second
+        private static final double SM_MAX_INCHES_VEL_DOWN = 4; // Elevator maximum inches per second
         public static final double SM_MAX_RPM_VEL_DOWN = SM_MAX_INCHES_VEL_DOWN / GEAR_CIRCUMFRENCE
                 * GEAR_RATIO * 60; // Elevator maximum revolutions per minute -> revolutions -> gear ratio
 
@@ -275,9 +275,9 @@ public final class Constants {
         public static final boolean USING_VISION = true;
 
         public static final boolean USING_REAR_PHOTON = true;
-        public static final boolean USING_ANGLED_PHOTON = true;
+        public static final boolean USING_ANGLED_PHOTON = false;
 
-        public static final String REAR_PHOTON_NAME = "rightCamera"; // TODO - Change both names
+        public static final String REAR_PHOTON_NAME = "Arducam_Back_Camera"; // TODO - Change both names
         public static final String ANGLED_PHOTON_NAME = "leftCamera";
 
         public static final PoseStrategy PHOTON_CAMERA_STRAT = PoseStrategy.LOWEST_AMBIGUITY;
