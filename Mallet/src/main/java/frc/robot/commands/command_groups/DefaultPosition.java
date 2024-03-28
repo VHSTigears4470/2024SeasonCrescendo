@@ -19,7 +19,7 @@ public class DefaultPosition extends SequentialCommandGroup {
                 new ElevatorSetHeightState(elevatorSubsystem, ElevatorConstants.ELEVATOR_STATE.DOWN),
                 new IntakeSetZeroVoltage(intakeSubsystem), // Sequential because use same subsystem
                 new IntakePusherRetract(intakeSubsystem),
-                new WaitUntilCommand(elevatorSubsystem::isAtPos),
+                new WaitUntilCommand(() -> elevatorSubsystem.isWithinPos(4)),
                 new IntakePositionUp(intakeSubsystem));
     }
 }

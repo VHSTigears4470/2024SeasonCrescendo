@@ -16,30 +16,35 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class ShootAmpAndReset extends SequentialCommandGroup {
-    public ShootAmpAndReset(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem) {
-        addRequirements(intakeSubsystem, elevatorSubsystem);
-        // Start if note is in the intake
-        addCommands(
-                // TODO: Align to amp with on the fly path planning, ensure that the path is
-                // actually only traversed when close enough to the amp to prevent collisions
-                new ConditionalCommand(
-                        new SequentialCommandGroup(
-                                new IntakePositionDown(intakeSubsystem),
-                                new ConditionalCommand(new WaitCommand(IntakeConstants.SECONDS_TILL_EXTEND),
-                                        new WaitCommand(0),
-                                        () -> intakeSubsystem.getIntakeState() != Value.kForward), // if intake not down
-                                new ElevatorSetHeightState(elevatorSubsystem,
-                                        ELEVATOR_STATE.UP),
-                                new WaitUntilCommand(elevatorSubsystem::isAtPos),
-                                new WaitCommand(0.5),
-                                new IntakeSetAmpVoltage(intakeSubsystem),
-                                new WaitCommand(CycleTimes.INTAKE_MOTORS_WARM_UP_CYCLE_TIME),
-                                new IntakePusherExtend(intakeSubsystem),
-                                new WaitCommand(CycleTimes.INTAKE_MOTORS_WARM_UP_CYCLE_TIME),
-                                new DefaultPosition(intakeSubsystem,
-                                        elevatorSubsystem)),
-                        new WaitCommand(0),
-                        intakeSubsystem::noteBreambeamTripped));
-    }
+        public ShootAmpAndReset(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem) {
+                addRequirements(intakeSubsystem, elevatorSubsystem);
+                // Start if note is in the intake
+                addCommands(
+                                // TODO: Align to amp with on the fly path planning, ensure that the path is
+                                // actually only traversed when close enough to the amp to prevent collisions
+                                new ConditionalCommand(
+                                                new SequentialCommandGroup(
+                                                                new IntakePositionDown(intakeSubsystem),
+                                                                new ConditionalCommand(new WaitCommand(
+                                                                                IntakeConstants.SECONDS_TILL_DOWN),
+                                                                                new WaitCommand(0),
+                                                                                () -> intakeSubsystem
+                                                                                                .getIntakeState() != Value.kForward), // if
+                                                                                                                                      // intake
+                                                                                                                                      // not
+                                                                                                                                      // down
+                                                                new ElevatorSetHeightState(elevatorSubsystem,
+                                                                                ELEVATOR_STATE.UP),
+                                                                new WaitUntilCommand(elevatorSubsystem::isAtPos),
+                                                                new WaitCommand(0.5),
+                                                                new IntakeSetAmpVoltage(intakeSubsystem),
+                                                                new WaitCommand(CycleTimes.INTAKE_MOTORS_WARM_UP_CYCLE_TIME),
+                                                                new IntakePusherExtend(intakeSubsystem),
+                                                                new WaitCommand(CycleTimes.INTAKE_MOTORS_WARM_UP_CYCLE_TIME),
+                                                                new DefaultPosition(intakeSubsystem,
+                                                                                elevatorSubsystem)),
+                                                new WaitCommand(0),
+                                                intakeSubsystem::noteBreambeamTripped));
+        }
 
 }

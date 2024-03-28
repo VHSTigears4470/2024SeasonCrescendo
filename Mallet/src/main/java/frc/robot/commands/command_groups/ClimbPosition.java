@@ -15,18 +15,19 @@ import frc.robot.commands.intake.IntakePositionDown;
 import frc.robot.commands.intake.IntakePositionUp;
 
 public class ClimbPosition extends SequentialCommandGroup {
-    public ClimbPosition(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem) {
-        addRequirements(intakeSubsystem, elevatorSubsystem);
-        addCommands(
-                // TODO: Ask for more clarification on it needs to wait before intaking
-                // (when it is getting ready to climb)
-                new IntakePositionDown(intakeSubsystem),
-                new ConditionalCommand(new WaitCommand(IntakeConstants.SECONDS_TILL_EXTEND),
-                        new WaitCommand(0),
-                        () -> intakeSubsystem.getIntakeState() != Value.kForward), // if intake not down
-                new ElevatorSetHeightState(elevatorSubsystem,
-                        ElevatorConstants.ELEVATOR_STATE.CLIMB),
-                new WaitUntilCommand(() -> elevatorSubsystem.isWithinPos(4)),
-                new IntakePositionUp(intakeSubsystem));
-    }
- } 
+        public ClimbPosition(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem) {
+                addRequirements(intakeSubsystem, elevatorSubsystem);
+                addCommands(
+                                // TODO: Ask for more clarification on it needs to wait before intaking
+                                // (when it is getting ready to climb)
+                                new IntakePositionDown(intakeSubsystem),
+                                new ConditionalCommand(new WaitCommand(IntakeConstants.SECONDS_TILL_DOWN),
+                                                new WaitCommand(0),
+                                                () -> intakeSubsystem.getIntakeState() != Value.kForward), // if intake
+                                                                                                           // not down
+                                new ElevatorSetHeightState(elevatorSubsystem,
+                                                ElevatorConstants.ELEVATOR_STATE.CLIMB),
+                                new WaitUntilCommand(() -> elevatorSubsystem.isWithinPos(4)),
+                                new IntakePositionUp(intakeSubsystem));
+        }
+}

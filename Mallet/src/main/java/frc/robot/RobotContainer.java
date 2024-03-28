@@ -13,6 +13,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.NoteLimelight;
 import frc.robot.subsystems.PhotonSubsystem;
+import frc.robot.subsystems.PoseEstimation;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.util.DeadbandCommandXboxController;
 import swervelib.SwerveDrive;
@@ -60,7 +61,8 @@ public class RobotContainer {
   private static DifferentialSubsystem differentialSub;
   private static IntakeSubsystem intakeSub;
   private static ElevatorSubsystem elevatorSub;
-  private static PhotonSubsystem photonSub;
+  //private static PhotonSubsystem photonSub;
+  private static PoseEstimation poseEstimate = new PoseEstimation(swerveSub);
   private static NoteLimelight limelightSub;
 
   // INIT XBOX CONTROLLER
@@ -141,16 +143,16 @@ public class RobotContainer {
       elevatorSub = new ElevatorSubsystem();
     }
     if (PhotonConstants.USING_VISION) {
-      photonSub = new PhotonSubsystem();
+      //photonSub = new PhotonSubsystem();
       // Set up vision readings for Swerve
       if (SwerveConstants.USING_SWERVE) {
-        swerveSub.setupVisionMeasurement(
-            () -> {
-              return photonSub.getEstimatedRobotPoseFromLeftPhoton(swerveSub.getPose());
-            },
-            () -> {
-              return photonSub.getEstimatedRobotPoseFromLeftPhoton(swerveSub.getPose());
-            });
+       // swerveSub.setupVisionMeasurement(
+            // () -> {
+            //   return photonSub.getEstimatedRobotPoseFromLeftPhoton(swerveSub.getPose());
+            // },
+            // () -> {
+            //   return photonSub.getEstimatedRobotPoseFromLeftPhoton(swerveSub.getPose());
+            // });
       }
     }
     if (NoteLLConstants.IS_USING_NOTE_LIMELIGHT) {
