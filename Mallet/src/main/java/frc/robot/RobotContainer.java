@@ -365,31 +365,27 @@ public class RobotContainer {
     }
     // XBOX 2 Configs
     if (OperatorConstants.USING_XBOX_2) {
-      if (ElevatorConstants.IS_USING_ELEVATOR && !ElevatorConstants.DEBUG) {
-        xbox2.povUp().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub,
-            0.1));
-        xbox2.povDown().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub,
-            -0.1));
-
-        xbox2.rightTrigger().whileTrue(new ElevatorSetHeightState(elevatorSub,
-            ELEVATOR_STATE.UP));
-        xbox2.leftTrigger().whileTrue(new ElevatorSetHeightState(elevatorSub,
-            ELEVATOR_STATE.DOWN));
-      }
       if (IntakeConstants.IS_USING_INTAKE && ElevatorConstants.IS_USING_ELEVATOR && SwerveConstants.USING_SWERVE
           && NoteLLConstants.IS_USING_NOTE_LIMELIGHT) {
         xbox2.rightStick().whileTrue(new IntakeNoteWhileFocus(swerveSub, intakeSub, elevatorSub, limelightSub)).onFalse(
             new IntakeSetZeroVoltage(intakeSub));
       }
       if (IntakeConstants.IS_USING_INTAKE && ElevatorConstants.IS_USING_ELEVATOR) {
-        xbox2.b().whileTrue(new ShootSpeakerAndReset(intakeSub, elevatorSub));
-        xbox2.leftTrigger().whileTrue(new ShootAmpPosition(intakeSub, elevatorSub));
+        xbox2.b().onTrue(new ShootSpeakerAndReset(intakeSub, elevatorSub));
+        xbox2.leftStick().onTrue(new ShootAmpPosition(intakeSub, elevatorSub));
         xbox2.x().whileTrue(new RevUpAndShootAmp(intakeSub, elevatorSub)).onFalse(
             new IntakeSetZeroVoltage(intakeSub));
-        xbox2.a().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
-        xbox2.y().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub)).onFalse(
-            new IntakeSetZeroVoltage(intakeSub));
-        xbox2.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
+        xbox2.a().onTrue(new DefaultPosition(intakeSub, elevatorSub));
+        xbox2.y().onTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
+        xbox2.start().onTrue(new ClimbPosition(intakeSub, elevatorSub));
+        xbox2.leftTrigger().whileTrue(new ElevatorChangePosition(elevatorSub,
+            -0.15));
+        xbox2.rightTrigger().whileTrue(new ElevatorChangePosition(elevatorSub,
+            0.15));
+        xbox2.povDown().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub,
+            -0.15));
+        xbox2.povUp().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub,
+            0.15));
       }
       if (IntakeConstants.IS_USING_INTAKE) {
         xbox2.rightBumper().whileTrue(new IntakeShootSlow(intakeSub)).onFalse(
