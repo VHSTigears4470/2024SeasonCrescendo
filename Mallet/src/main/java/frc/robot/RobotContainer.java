@@ -12,7 +12,6 @@ import frc.robot.subsystems.DifferentialSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.NoteLimelight;
-import frc.robot.subsystems.PhotonSubsystem;
 import frc.robot.subsystems.PoseEstimation;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.util.DeadbandCommandXboxController;
@@ -22,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DifferentialConstants;
 import frc.robot.Constants.ElevatorConstants;
@@ -35,6 +35,7 @@ import frc.robot.commands.command_groups.*;
 import frc.robot.commands.differential.ArcadeDrive;
 import frc.robot.commands.drivebase.AbsoluteDrive;
 import frc.robot.commands.drivebase.AbsoluteDriveWithFocus;
+import frc.robot.commands.drivebase.ResetOdom;
 import frc.robot.commands.elevator.ElevatorChangePosition;
 import frc.robot.commands.elevator.ElevatorChangePositionIgnoreSoftLimit;
 import frc.robot.commands.elevator.ElevatorSetHeightState;
@@ -126,10 +127,15 @@ public class RobotContainer {
               () -> -xbox1.getRightX(),
               () -> -xbox1.getRightY()));
         } else {
+          // swerveSub.setDefaultCommand(swerveSub.simDriveCommand(
+          // () -> -xbox1.getLeftY(),
+          // () -> -xbox1.getLeftX(),
+          // () -> -xbox1.getRawAxis(2)));
           swerveSub.setDefaultCommand(swerveSub.simDriveCommand(
               () -> -xbox1.getLeftY(),
               () -> -xbox1.getLeftX(),
-              () -> -xbox1.getRawAxis(2)));
+              () -> -xbox1.getRightX(),
+              () -> -xbox1.getRightY()));
         }
 
         poseEstimate = new PoseEstimation(swerveSub);
@@ -230,9 +236,12 @@ public class RobotContainer {
     autoPresetChooser.setDefaultOption("Use Modular", null);
     if (SwerveConstants.USING_SWERVE && ElevatorConstants.IS_USING_ELEVATOR && IntakeConstants.IS_USING_INTAKE) {
       if (SwerveConstants.USING_SWERVE) {
-        autoPresetChooser.addOption("TEST ONLY STRAIGHT", swerveSub.driveToPose(swerveSub.createPose(1, 0)));
-        autoPresetChooser.addOption("TEST ONLY SIDE", swerveSub.driveToPose(swerveSub.createPose(0, 1)));
-        autoPresetChooser.addOption("TEST ONLY DIAG", swerveSub.driveToPose(swerveSub.createPose(1, 1)));
+        autoPresetChooser.addOption("TEST ONLY STRAIGHT", new ResetOdom(swerveSub).andThen(
+            swerveSub.driveToPose(swerveSub.createPose(1, 0))));
+        autoPresetChooser.addOption("TEST ONLY SIDE", new ResetOdom(swerveSub).andThen(
+            swerveSub.driveToPose(swerveSub.createPose(1, 1))));
+        autoPresetChooser.addOption("TEST ONLY DIAG", new ResetOdom(swerveSub).andThen(
+            swerveSub.driveToPose(swerveSub.createPose(0, 1))));
       }
       autoPresetChooser.addOption("Preset One (Amp Side)",
           new ShootSpeakerAndReset(intakeSub, elevatorSub)
@@ -289,7 +298,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // XBOX 1 Configs
     if (OperatorConstants.USING_XBOX_1) {
-      if (SwerveConstants.USING_SWERVE) {
+      if (SwerveConstants.USING_SWERVE && NoteLLConstants.IS_USING_NOTE_LIMELIGHT) {
         xbox1.a().onTrue(new AbsoluteDriveWithFocus(swerveSub, limelightSub,
             () -> -xbox1.getLeftY(),
             () -> -xbox1.getLeftX()));
@@ -376,13 +385,13 @@ public class RobotContainer {
         xbox2.leftTrigger().whileTrue(new ElevatorSetHeightState(elevatorSub,
             ELEVATOR_STATE.DOWN));
       }
-      if (IntakeConstants.IS_USING_INTAKE && ElevatorConstants.IS_USING_ELEVATOR && SwerveConstants.USING_SWERVE) {
-
-        xbox2.b().whileTrue(new ShootSpeakerAndReset(intakeSub, elevatorSub));
+      if (IntakeConstants.IS_USING_INTAKE && ElevatorConstants.IS_USING_ELEVATOR && SwerveConstants.USING_SWERVE
+          && NoteLLConstants.IS_USING_NOTE_LIMELIGHT) {
         xbox2.rightStick().whileTrue(new IntakeNoteWhileFocus(swerveSub, intakeSub, elevatorSub, limelightSub)).onFalse(
             new IntakeSetZeroVoltage(intakeSub));
       }
       if (IntakeConstants.IS_USING_INTAKE && ElevatorConstants.IS_USING_ELEVATOR) {
+        xbox2.b().whileTrue(new ShootSpeakerAndReset(intakeSub, elevatorSub));
         xbox2.leftTrigger().whileTrue(new ShootAmpPosition(intakeSub, elevatorSub));
         xbox2.x().whileTrue(new RevUpAndShootAmp(intakeSub, elevatorSub)).onFalse(
             new IntakeSetZeroVoltage(intakeSub));

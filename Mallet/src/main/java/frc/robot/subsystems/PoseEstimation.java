@@ -19,6 +19,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -66,6 +67,7 @@ public class PoseEstimation extends SubsystemBase {
     // Start PhotonVision thread
     allNotifier.setName("runAll");
     allNotifier.startPeriodic(0.2);
+    addDashboardWidgets(Shuffleboard.getTab("Debug Tab"));
   }
 
   public void addDashboardWidgets(ShuffleboardTab tab) {
@@ -127,6 +129,8 @@ public class PoseEstimation extends SubsystemBase {
       dashboardPose = flipAlliance(dashboardPose);
     }
     field2d.setRobotPose(dashboardPose);
+    // System.out.println(swerveSub.getPose().getX() + " :" +
+    // swerveSub.getPose().getY());
   }
 
   /**

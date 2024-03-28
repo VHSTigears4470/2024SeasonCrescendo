@@ -25,7 +25,6 @@ public class AbsoluteDrive extends Command {
   private final DoubleSupplier vX, vY;
   private final DoubleSupplier headingHorizontal, headingVertical;
   private double lastHeadingPositionHorizontal, lastHeadingPositionVertical;
-  private final double minHeadingPos = 0.25; // unsigned
   private boolean initRotation = false;
 
   /**
@@ -83,10 +82,12 @@ public class AbsoluteDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (Math.abs(headingHorizontal.getAsDouble()) > minHeadingPos) {
+    // Pythag Theorem to find distance of joystick
+    // Make sure motor angles does not reset to Default Position
+    if (Math.sqrt(Math.abs(headingHorizontal.getAsDouble()) * Math.abs(headingHorizontal.getAsDouble()) +
+        Math.abs(headingVertical.getAsDouble())
+            * Math.abs(headingVertical.getAsDouble())) > SwerveConstants.MIN_ANGLE_THRESHOLD) {
       lastHeadingPositionHorizontal = headingHorizontal.getAsDouble();
-    }
-    if (Math.abs(headingVertical.getAsDouble()) > minHeadingPos) {
       lastHeadingPositionVertical = headingVertical.getAsDouble();
     }
     // Get the desired chassis speeds based on a 2 joystick module.

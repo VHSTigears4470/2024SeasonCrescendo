@@ -74,6 +74,8 @@ public final class Constants {
         public static final boolean USING_SWERVE = true;
         public static final boolean DEBUG = true;
 
+        public static final double MIN_ANGLE_THRESHOLD = 0.25; // Unsigned, dealt with in logic
+
         public static final PIDFConfig X_AUTO_PID = new PIDFConfig(0.000000005, 0, 0);
         public static final PIDFConfig Y_AUTO_PID = new PIDFConfig(0.000000005, 0, 0);
         public static final PIDFConfig ANGLE_AUTO_PID = new PIDFConfig(0.01, 0, 0.04);
