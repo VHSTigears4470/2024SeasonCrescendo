@@ -63,7 +63,7 @@ public class RobotContainer {
   private static DifferentialSubsystem differentialSub;
   private static IntakeSubsystem intakeSub;
   private static ElevatorSubsystem elevatorSub;
-  // private static PhotonSubsystem photonSub;
+  //private static PhotonSubsystem photonSub;
   private static PoseEstimation poseEstimate = new PoseEstimation(swerveSub);
   private static NoteLimelight limelightSub;
 
@@ -145,16 +145,16 @@ public class RobotContainer {
       elevatorSub = new ElevatorSubsystem();
     }
     if (PhotonConstants.USING_VISION) {
-      // photonSub = new PhotonSubsystem();
+      //photonSub = new PhotonSubsystem();
       // Set up vision readings for Swerve
       if (SwerveConstants.USING_SWERVE) {
-        // swerveSub.setupVisionMeasurement(
-        // () -> {
-        // return photonSub.getEstimatedRobotPoseFromLeftPhoton(swerveSub.getPose());
-        // },
-        // () -> {
-        // return photonSub.getEstimatedRobotPoseFromLeftPhoton(swerveSub.getPose());
-        // });
+       // swerveSub.setupVisionMeasurement(
+            // () -> {
+            //   return photonSub.getEstimatedRobotPoseFromLeftPhoton(swerveSub.getPose());
+            // },
+            // () -> {
+            //   return photonSub.getEstimatedRobotPoseFromLeftPhoton(swerveSub.getPose());
+            // });
       }
     }
     if (NoteLLConstants.IS_USING_NOTE_LIMELIGHT) {
@@ -262,17 +262,19 @@ public class RobotContainer {
   }
 
   public void initializeCommandNames() {
-    NamedCommands.registerCommand("test1", new PrintCommand("Test 1 Triggered"));
     if (Constants.IntakeConstants.IS_USING_INTAKE && Constants.ElevatorConstants.IS_USING_ELEVATOR) {
-      NamedCommands.registerCommand("Climb Position", new ClimbPosition(intakeSub, elevatorSub));
-      NamedCommands.registerCommand("Default Position", new DefaultPosition(intakeSub, elevatorSub));
-      NamedCommands.registerCommand("Intake Note", new IntakeNoteCommandGroup(intakeSub, elevatorSub));
-      NamedCommands.registerCommand("Robot Climb", new RobotClimbCommandGroup(intakeSub, elevatorSub));
-      NamedCommands.registerCommand("Shoot Amp", new ShootAmpCommandGroup(intakeSub, elevatorSub));
-      NamedCommands.registerCommand("Shoot Speaker", new ShootSpeakerCommandGroup(intakeSub, elevatorSub));
+      NamedCommands.registerCommand(AutoConstants.CLIMB_POSITION, new ClimbPosition(intakeSub, elevatorSub));
+      NamedCommands.registerCommand(AutoConstants.DEFAULT_POSITION, new DefaultPosition(intakeSub, elevatorSub));
+      NamedCommands.registerCommand(AutoConstants.INTAKE_POSITION, new IntakePosition(intakeSub, elevatorSub));
+
+      NamedCommands.registerCommand(AutoConstants.INTAKE_NOTE, new IntakePositionAndSuck(intakeSub, elevatorSub));
+      NamedCommands.registerCommand(AutoConstants.SHOOT_AMP, new ShootAmpAndReset(intakeSub, elevatorSub));
+      NamedCommands.registerCommand(AutoConstants.SHOOT_SPEAKER, new ShootSpeakerAndReset(intakeSub, elevatorSub));
     }
-    if (Constants.IntakeConstants.IS_USING_INTAKE && Constants.SwerveConstants.USING_SWERVE) {
-      NamedCommands.registerCommand("Drive Till Have Note", new DriveTillHaveNote(intakeSub, swerveSub));
+    if (Constants.IntakeConstants.IS_USING_INTAKE && Constants.ElevatorConstants.IS_USING_ELEVATOR
+        && Constants.SwerveConstants.USING_SWERVE) {
+      NamedCommands.registerCommand(AutoConstants.DRIVE_TIL_HAVE_NOTE,
+          new DriveTillHaveNote(intakeSub, elevatorSub, swerveSub));
     }
   }
 
@@ -280,36 +282,42 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // XBOX 1 Configs
     if (OperatorConstants.USING_XBOX_1) {
-      // if (SwerveConstants.USING_SWERVE) {
-      // xbox1.a().onTrue(new AbsoluteDriveWithFocus(swerveSub, limelightSub,
-      // () -> -xbox1.getLeftY(),
-      // () -> -xbox1.getLeftX()));
-      // }
+      if (SwerveConstants.USING_SWERVE) {
+        xbox1.a().onTrue(new AbsoluteDriveWithFocus(swerveSub, limelightSub,
+            () -> -xbox1.getLeftY(),
+            () -> -xbox1.getLeftX()));
+      }
 
       // if (IntakeConstants.IS_USING_INTAKE && ElevatorConstants.IS_USING_ELEVATOR) {
-      // xbox1.y().whileTrue(new IntakeNoteWhileFocus(swerveSub, intakeSub,
-      // elevatorSub, limelightSub));
+      // xbox1.y().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
       // xbox1.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
+      // xbox1.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
       // }
 
-      // TODO - Remove the debug commands for real testing
-      // Testing ONLY
+      if (IntakeConstants.IS_USING_INTAKE && IntakeConstants.DEBUG) {
+        // TODO - Remove the debug commands for real testing
+        // Testing ONLY
+        xbox1.leftBumper().whileTrue(new IntakeSetIntakeVoltage(intakeSub))
+            .onFalse(new IntakeSetZeroVoltage(intakeSub));
+        xbox1.rightBumper().whileTrue(new IntakeSetSpeakerVoltage(intakeSub))
+            .onFalse(new IntakeSetZeroVoltage(intakeSub));
+        xbox1.a().whileTrue(new IntakeSetAmpVoltage(intakeSub))
+            .onFalse(new IntakeSetZeroVoltage(intakeSub));
 
-      // shuffleDebugIntakeCommandList.add("Intake Retract", new
-      // IntakePositionUp(intakeSub))
-      // .withWidget(BuiltInWidgets.kCommand);
-      // shuffleDebugIntakeCommandList.add("Intake Extend", new
-      // IntakePositionDown(intakeSub))
-      // .withWidget(BuiltInWidgets.kCommand);
-      // shuffleDebugIntakeCommandList.add("Intake Pusher Retract", new
-      // IntakePusherRetract(intakeSub))
-      // .withWidget(BuiltInWidgets.kCommand);
-      // shuffleDebugIntakeCommandList.add("Intake Pusher Extend", new
-      // IntakePusherExtend(intakeSub))
-      // .withWidget(BuiltInWidgets.kCommand);
+        shuffleDebugIntakeCommandList.add("Intake Retract", new IntakePositionUp(intakeSub))
+            .withWidget(BuiltInWidgets.kCommand);
+        shuffleDebugIntakeCommandList.add("Intake Extend", new IntakePositionDown(intakeSub))
+            .withWidget(BuiltInWidgets.kCommand);
+        shuffleDebugIntakeCommandList.add("Intake Pusher Retract", new IntakePusherRetract(intakeSub))
+            .withWidget(BuiltInWidgets.kCommand);
+        shuffleDebugIntakeCommandList.add("Intake Pusher Extend", new IntakePusherExtend(intakeSub))
+            .withWidget(BuiltInWidgets.kCommand);
+      }
 
       if (ElevatorConstants.IS_USING_ELEVATOR && ElevatorConstants.DEBUG) {
         // TODO - Remove the debug commands for real testing
+        xbox1.leftTrigger().whileTrue(new ElevatorChangePosition(elevatorSub, -0.15));
+        xbox1.rightTrigger().whileTrue(new ElevatorChangePosition(elevatorSub, 0.15));
         shuffleDebugElevatorCommandList.add("Elevator Up No Soft Limit",
             new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, 0.15)).withWidget(BuiltInWidgets.kCommand);
         shuffleDebugElevatorCommandList.add("Elevator Down No Soft Limit",
@@ -324,28 +332,26 @@ public class RobotContainer {
             .add("Elevator Climb", new ElevatorSetHeightState(elevatorSub, ELEVATOR_STATE.CLIMB))
             .withWidget(BuiltInWidgets.kCommand);
 
-        if (IntakeConstants.IS_USING_INTAKE && IntakeConstants.DEBUG && ElevatorConstants.IS_USING_ELEVATOR
-            && ElevatorConstants.DEBUG) {
-          // Positions
-          shuffleDebugElevatorCommandList.add("Default Position", new DefaultPosition(intakeSub, elevatorSub))
-              .withWidget(BuiltInWidgets.kCommand);
-          shuffleDebugElevatorCommandList.add("IntakePosition", new IntakePosition(intakeSub, elevatorSub))
-              .withWidget(BuiltInWidgets.kCommand);
-          shuffleDebugElevatorCommandList
-              .add("IntakeAndSuckPosition", new IntakePositionAndSuck(intakeSub, elevatorSub))
-              .withWidget(BuiltInWidgets.kCommand);
-          shuffleDebugElevatorCommandList.add("ShootAmp&Default", new ShootAmpAndReset(intakeSub, elevatorSub))
-              .withWidget(BuiltInWidgets.kCommand);
-          shuffleDebugElevatorCommandList.add("ShootSpeaker&Default", new ShootSpeakerAndReset(intakeSub, elevatorSub))
-              .withWidget(BuiltInWidgets.kCommand);
+      }
 
-        }
+      if (IntakeConstants.IS_USING_INTAKE && IntakeConstants.DEBUG && ElevatorConstants.IS_USING_ELEVATOR
+          && ElevatorConstants.DEBUG) {
+        // Positions
+        shuffleDebugElevatorCommandList.add("Default Position", new DefaultPosition(intakeSub, elevatorSub))
+            .withWidget(BuiltInWidgets.kCommand);
+        shuffleDebugElevatorCommandList.add("IntakePosition", new IntakePosition(intakeSub, elevatorSub))
+            .withWidget(BuiltInWidgets.kCommand);
+        shuffleDebugElevatorCommandList.add("IntakeAndSuckPosition", new IntakePositionAndSuck(intakeSub, elevatorSub))
+            .withWidget(BuiltInWidgets.kCommand);
+        shuffleDebugElevatorCommandList.add("ShootAmp&Default", new ShootAmpAndReset(intakeSub, elevatorSub))
+            .withWidget(BuiltInWidgets.kCommand);
+        shuffleDebugElevatorCommandList.add("ShootSpeaker&Default", new ShootSpeakerAndReset(intakeSub, elevatorSub))
+            .withWidget(BuiltInWidgets.kCommand);
+
       }
     }
     // XBOX 2 Configs
-    if (OperatorConstants.USING_XBOX_2)
-
-    {
+    if (OperatorConstants.USING_XBOX_2) {
       if (ElevatorConstants.IS_USING_ELEVATOR && !ElevatorConstants.DEBUG) {
         xbox2.povUp().whileTrue(new ElevatorChangePositionIgnoreSoftLimit(elevatorSub,
             0.1));
@@ -383,8 +389,49 @@ public class RobotContainer {
     }
   }
 
-  public Command getAutoInput() {
-    return autoChooser.getSelected();
+  public Command getAutonomousCommand() {
+    // If the user did not press "Use Modular", then return the preset command they
+    // selected
+    if (autoPresetChooser.getSelected() != null) {
+      return autoPresetChooser.getSelected();
+    }
+    // Object to store sequential command. This is done to init a command that does
+    // nothing (at first)
+    SequentialCommandGroup compiledCommand = new SequentialCommandGroup();
+
+    // Where the robot starts at each direction
+    String startPos = basePositionChooser.getSelected();
+
+    for (SendableChooser<String> choice : autoDirections) {
+      // Default choosen command does nothing
+      Command choosenCommand = null;
+      // Selected choice as a string
+      String selected = choice.getSelected();
+
+      // If command is not a path command but a normal named command
+      Command namedCommand = NamedCommands.getCommand(selected);
+      // If named command
+      if (namedCommand != null) {
+        choosenCommand = namedCommand;
+      }
+      // If path planner command
+      else {
+        Command pathPlannerComand = swerveSub.getAutonomousCommand(startPos + " to " + selected, false);
+        if (pathPlannerComand != null) {
+          choosenCommand = pathPlannerComand;
+        }
+        startPos = selected;
+      }
+
+      // Apends it to the sequential command
+      if (choosenCommand == null || selected.equals("Nothing")) {
+        continue;
+      }
+      compiledCommand = compiledCommand.andThen(choosenCommand);
+    }
+
+    // returns the compiled sequential command
+    return compiledCommand;
   }
 
   public void setMotorBrake(boolean brake) {
