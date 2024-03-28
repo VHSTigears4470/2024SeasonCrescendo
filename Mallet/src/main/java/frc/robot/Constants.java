@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 public final class Constants {
     public static final class OperatorConstants {
         public static final boolean USING_XBOX_1 = true;
-        public static final boolean USING_XBOX_2 = false;
+        public static final boolean USING_XBOX_2 = true;
 
         public static final int XBOX_1_ID = 0;
         public static final double XBOX_1_DEADBAND = 0.2;
@@ -139,7 +139,7 @@ public final class Constants {
         public static final Value INTAKE_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse;
         public static final Value PISTON_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse;
 
-        public static final double SECONDS_TILL_UP = 3;
+        public static final double SECONDS_TILL_UP = 3.5;
         public static final double SECONDS_TILL_DOWN = 1.5;
 
         // MOTORS
@@ -186,11 +186,11 @@ public final class Constants {
         public static final int TOP_BREAKBEAM_DIO = 4; // TODO: Update
 
         // PID
-        public static final double PID_KP = 0.0000010015; // TODO: Tune
+        public static final double PID_KP = 0.0000009015; // TODO: Tune
         public static final double PID_KI = 0; // TODO: Tune
         public static final double PID_KD = 0.0000000; // TODO: Tune
         public static final double PID_KIZ = 0.005; // TODO: Tune
-        public static final double PID_KFF = 0.00071; // TODO: Tune
+        public static final double PID_KFF = 0.00031; // TODO: Tune
         /** Max positive voltage (must be positive) */
         public static final double PID_KMAX_OUTPUT = 3.5; // TODO: Tune
         /** Max negative voltage (must be negative) */
@@ -198,11 +198,11 @@ public final class Constants {
 
         // SMART MOTION
         public static final int SM_ID = 0;
-        private static final double SM_MAX_INCHES_VEL = 4; // Elevator maximum inches per second
+        private static final double SM_MAX_INCHES_VEL = 1.5; // Elevator maximum inches per second
         public static final double SM_MAX_RPM_VEL = SM_MAX_INCHES_VEL / GEAR_CIRCUMFRENCE
                 * GEAR_RATIO * 60; // Elevator maximum revolutions per minute -> revolutions -> gear ratio
 
-        private static final double SM_MAX_INCHES_VEL_DOWN = 4; // Elevator maximum inches per second
+        private static final double SM_MAX_INCHES_VEL_DOWN = 1.5; // Elevator maximum inches per second
         public static final double SM_MAX_RPM_VEL_DOWN = SM_MAX_INCHES_VEL_DOWN / GEAR_CIRCUMFRENCE
                 * GEAR_RATIO * 60; // Elevator maximum revolutions per minute -> revolutions -> gear ratio
 

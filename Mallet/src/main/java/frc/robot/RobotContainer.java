@@ -89,10 +89,10 @@ public class RobotContainer {
   public static final HashMap<String, Command> eventMap = new HashMap<>();
 
   public RobotContainer() {
-    // Initialize drive system (swerve or differential)
-    initializeDriveMode();
     // Initialize the other subsystems and controllers
     initializeOtherVars();
+    // Initialize drive system (swerve or differential)
+    initializeDriveMode();
 
     // Initialize Shuffleboard
     initializeShuffleboard();
@@ -138,7 +138,7 @@ public class RobotContainer {
               () -> -xbox1.getRightY()));
         }
 
-        poseEstimate = new PoseEstimation(swerveSub);
+        // poseEstimate = new PoseEstimation(swerveSub);
       }
     } else {
       swerveSub = null;
@@ -151,19 +151,6 @@ public class RobotContainer {
     }
     if (ElevatorConstants.IS_USING_ELEVATOR) {
       elevatorSub = new ElevatorSubsystem();
-    }
-    if (PhotonConstants.USING_VISION) {
-      // photonSub = new PhotonSubsystem();
-      // Set up vision readings for Swerve
-      if (SwerveConstants.USING_SWERVE) {
-        // swerveSub.setupVisionMeasurement(
-        // () -> {
-        // return photonSub.getEstimatedRobotPoseFromLeftPhoton(swerveSub.getPose());
-        // },
-        // () -> {
-        // return photonSub.getEstimatedRobotPoseFromLeftPhoton(swerveSub.getPose());
-        // });
-      }
     }
     if (NoteLLConstants.IS_USING_NOTE_LIMELIGHT) {
       limelightSub = new NoteLimelight();
@@ -319,12 +306,12 @@ public class RobotContainer {
       if (IntakeConstants.IS_USING_INTAKE && IntakeConstants.DEBUG) {
         // TODO - Remove the debug commands for real testing
         // Testing ONLY
-        xbox1.leftBumper().whileTrue(new IntakeSetIntakeVoltage(intakeSub))
-            .onFalse(new IntakeSetZeroVoltage(intakeSub));
-        xbox1.rightBumper().whileTrue(new IntakeSetSpeakerVoltage(intakeSub))
-            .onFalse(new IntakeSetZeroVoltage(intakeSub));
-        xbox1.a().whileTrue(new IntakeSetAmpVoltage(intakeSub))
-            .onFalse(new IntakeSetZeroVoltage(intakeSub));
+        // xbox1.leftBumper().whileTrue(new IntakeSetIntakeVoltage(intakeSub))
+        // .onFalse(new IntakeSetZeroVoltage(intakeSub));
+        // xbox1.rightBumper().whileTrue(new IntakeSetSpeakerVoltage(intakeSub))
+        // .onFalse(new IntakeSetZeroVoltage(intakeSub));
+        // xbox1.a().whileTrue(new IntakeSetAmpVoltage(intakeSub))
+        // .onFalse(new IntakeSetZeroVoltage(intakeSub));
 
         shuffleDebugIntakeCommandList.add("Intake Retract", new IntakePositionUp(intakeSub))
             .withWidget(BuiltInWidgets.kCommand);
@@ -338,8 +325,10 @@ public class RobotContainer {
 
       if (ElevatorConstants.IS_USING_ELEVATOR && ElevatorConstants.DEBUG) {
         // TODO - Remove the debug commands for real testing
-        xbox1.leftTrigger().whileTrue(new ElevatorChangePosition(elevatorSub, -0.15));
-        xbox1.rightTrigger().whileTrue(new ElevatorChangePosition(elevatorSub, 0.15));
+        // xbox1.leftTrigger().whileTrue(new ElevatorChangePosition(elevatorSub,
+        // -0.15));
+        // xbox1.rightTrigger().whileTrue(new ElevatorChangePosition(elevatorSub,
+        // 0.15));
         shuffleDebugElevatorCommandList.add("Elevator Up No Soft Limit",
             new ElevatorChangePositionIgnoreSoftLimit(elevatorSub, 0.15)).withWidget(BuiltInWidgets.kCommand);
         shuffleDebugElevatorCommandList.add("Elevator Down No Soft Limit",
@@ -359,7 +348,9 @@ public class RobotContainer {
       if (IntakeConstants.IS_USING_INTAKE && IntakeConstants.DEBUG && ElevatorConstants.IS_USING_ELEVATOR
           && ElevatorConstants.DEBUG) {
         // Positions
-        shuffleDebugElevatorCommandList.add("Default Position", new DefaultPosition(intakeSub, elevatorSub))
+        shuffleDebugElevatorCommandList.add("Default Full Position", new DefaultPosition(intakeSub, elevatorSub))
+            .withWidget(BuiltInWidgets.kCommand);
+        shuffleDebugElevatorCommandList.add("Climb Full Position", new ClimbPosition(intakeSub, elevatorSub))
             .withWidget(BuiltInWidgets.kCommand);
         shuffleDebugElevatorCommandList.add("IntakePosition", new IntakePosition(intakeSub, elevatorSub))
             .withWidget(BuiltInWidgets.kCommand);

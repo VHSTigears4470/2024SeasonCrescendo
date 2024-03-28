@@ -8,7 +8,6 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class GyroSubsystem extends SubsystemBase {
@@ -17,7 +16,7 @@ public class GyroSubsystem extends SubsystemBase {
 
     // Creates a new Gyro.
     public GyroSubsystem() {
-        gScope = new AHRS(I2C.Port.kMXP);
+        gScope = new AHRS();
     }
 
     // returns the current displacement of the bot from initial calibration
@@ -86,23 +85,23 @@ public class GyroSubsystem extends SubsystemBase {
     }
 
     // Returns the angles from 0 (inclusive) - 360 (not inclusive) degrees
-    public double getAngle(){
+    public double getAngle() {
         return gScope.getAngle();
     }
 
-    public double getAngleAdjustment(){
+    public double getAngleAdjustment() {
         return gScope.getAngleAdjustment();
     }
 
-    public Rotation2d getRotation2d(){
+    public Rotation2d getRotation2d() {
         return gScope.getRotation2d();
     }
 
-    public Rotation3d getRotation3d(){
+    public Rotation3d getRotation3d() {
         return gScope.getRotation3d();
     }
 
-    public void setAngleAdjustment(double offset){
+    public void setAngleAdjustment(double offset) {
         gScope.setAngleAdjustment(offset);
     }
 

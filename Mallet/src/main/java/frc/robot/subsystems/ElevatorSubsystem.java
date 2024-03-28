@@ -58,6 +58,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private GenericEntry entry_desiredPosition;
   private GenericEntry entry_leftEncoder;
   private GenericEntry entry_rightEncoder;
+  private GenericEntry entry_leftMotorPower;
 
   // PID Entries
   private GenericEntry entry_pid_kp;
@@ -104,6 +105,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     pidController.setI(ElevatorConstants.PID_KI);
     pidController.setD(ElevatorConstants.PID_KD);
     pidController.setIZone(ElevatorConstants.PID_KIZ);
+    pidController.setFF(ElevatorConstants.PID_KFF);
     pidController.setOutputRange(ElevatorConstants.PID_KMIN_OUTPUT, ElevatorConstants.PID_KMAX_OUTPUT);
 
     // Init Smart Motion
@@ -113,6 +115,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     pidController.setSmartMotionMaxAccel(ElevatorConstants.SM_MAX_RPM_ACC, ElevatorConstants.SM_ID);
     pidController.setSmartMotionAllowedClosedLoopError(ElevatorConstants.SM_ALLOWED_ERR,
         ElevatorConstants.SM_ID);
+
+    leftMotor.burnFlash();
 
     // Init Shuffleboard
     initalizeShuffleboard();
@@ -269,33 +273,41 @@ public class ElevatorSubsystem extends SubsystemBase {
       entry_maxLimit = shuffleDebugTab.getLayout("Elevator", BuiltInLayouts.kList)
           .add("Max Height", desiredReferencePosition).withWidget(BuiltInWidgets.kTextView).getEntry();
 
-      // PID Init
-      entry_pid_kp = shuffleDebugTab.getLayout("Elevator PID", BuiltInLayouts.kList)
-          .add("P Gain", ElevatorConstants.PID_KP)
-          .withWidget(BuiltInWidgets.kTextView)
-          .getEntry();
-      entry_pid_ki = shuffleDebugTab.getLayout("Elevator PID", BuiltInLayouts.kList)
-          .add("I Gain", ElevatorConstants.PID_KI)
-          .withWidget(BuiltInWidgets.kTextView)
-          .getEntry();
-      entry_pid_kd = shuffleDebugTab.getLayout("Elevator PID", BuiltInLayouts.kList)
-          .add("D Gain", ElevatorConstants.PID_KD)
-          .withWidget(BuiltInWidgets.kTextView)
-          .getEntry();
-      entry_pid_kiz = shuffleDebugTab.getLayout("Elevator PID", BuiltInLayouts.kList)
-          .add("Iz Gain", ElevatorConstants.PID_KIZ)
-          .withWidget(BuiltInWidgets.kTextView)
-          .getEntry();
-      entry_pid_kff = shuffleDebugTab.getLayout("Elevator PID", BuiltInLayouts.kList)
-          .add("FF Gain", ElevatorConstants.PID_KFF)
-          .withWidget(BuiltInWidgets.kTextView)
-          .getEntry();
+      entry_leftMotorPower = shuffleDebugTab.getLayout("Elevator", BuiltInLayouts.kList)
+          .add("Left Power", leftMotor.get()).getEntry();
+      // // PID Init
+      // entry_pid_kp = shuffleDebugTab.getLayout("Elevator PID",
+      // BuiltInLayouts.kList)
+      // .add("P Gain", ElevatorConstants.PID_KP)
+      // .withWidget(BuiltInWidgets.kTextView)
+      // .getEntry();
+      // entry_pid_ki = shuffleDebugTab.getLayout("Elevator PID",
+      // BuiltInLayouts.kList)
+      // .add("I Gain", ElevatorConstants.PID_KI)
+      // .withWidget(BuiltInWidgets.kTextView)
+      // .getEntry();
+      // entry_pid_kd = shuffleDebugTab.getLayout("Elevator PID",
+      // BuiltInLayouts.kList)
+      // .add("D Gain", ElevatorConstants.PID_KD)
+      // .withWidget(BuiltInWidgets.kTextView)
+      // .getEntry();
+      // entry_pid_kiz = shuffleDebugTab.getLayout("Elevator PID",
+      // BuiltInLayouts.kList)
+      // .add("Iz Gain", ElevatorConstants.PID_KIZ)
+      // .withWidget(BuiltInWidgets.kTextView)
+      // .getEntry();
+      // entry_pid_kff = shuffleDebugTab.getLayout("Elevator PID",
+      // BuiltInLayouts.kList)
+      // .add("FF Gain", ElevatorConstants.PID_KFF)
+      // .withWidget(BuiltInWidgets.kTextView)
+      // .getEntry();
 
-      // Smart Motion
-      entry_smart_motion_allowed_err = shuffleDebugTab.getLayout("Elevator PID", BuiltInLayouts.kList)
-          .add("Allowed Error", ElevatorConstants.SM_ALLOWED_ERR)
-          .withWidget(BuiltInWidgets.kTextView)
-          .getEntry();
+      // // Smart Motion
+      // entry_smart_motion_allowed_err = shuffleDebugTab.getLayout("Elevator PID",
+      // BuiltInLayouts.kList)
+      // .add("Allowed Error", ElevatorConstants.SM_ALLOWED_ERR)
+      // .withWidget(BuiltInWidgets.kTextView)
+      // .getEntry();
     }
 
   }
@@ -312,15 +324,23 @@ public class ElevatorSubsystem extends SubsystemBase {
       entry_minLimit.setDouble(lowestPos);
       entry_maxLimit.setDouble(highestPos);
 
-      int slotId = ElevatorConstants.SM_ID;
-      pidController.setP(entry_pid_kp.getDouble(pidController.getP(slotId)), slotId);
-      pidController.setI(entry_pid_ki.getDouble(pidController.getI(slotId)), slotId);
-      pidController.setD(entry_pid_kd.getDouble(pidController.getD(slotId)), slotId);
-      pidController.setIZone(entry_pid_kiz.getDouble(pidController.getIZone(slotId)), slotId);
-      pidController.setFF(entry_pid_kff.getDouble(pidController.getFF(slotId)), slotId);
+      entry_leftMotorPower.setDouble(leftMotor.getAppliedOutput());
 
-      pidController.setSmartMotionAllowedClosedLoopError(
-          entry_smart_motion_allowed_err.getDouble(pidController.getSmartMotionAllowedClosedLoopError(slotId)), slotId);
+      // int slotId = ElevatorConstants.SM_ID;
+      // pidController.setP(entry_pid_kp.getDouble(pidController.getP(slotId)),
+      // slotId);
+      // pidController.setI(entry_pid_ki.getDouble(pidController.getI(slotId)),
+      // slotId);
+      // pidController.setD(entry_pid_kd.getDouble(pidController.getD(slotId)),
+      // slotId);
+      // pidController.setIZone(entry_pid_kiz.getDouble(pidController.getIZone(slotId)),
+      // slotId);
+      // pidController.setFF(entry_pid_kff.getDouble(pidController.getFF(slotId)),
+      // slotId);
+
+      // pidController.setSmartMotionAllowedClosedLoopError(
+      // entry_smart_motion_allowed_err.getDouble(pidController.getSmartMotionAllowedClosedLoopError(slotId)),
+      // slotId);
     }
   }
 
