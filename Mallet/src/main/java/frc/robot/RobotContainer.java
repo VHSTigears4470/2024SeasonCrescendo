@@ -356,7 +356,7 @@ public class RobotContainer {
         xbox2.x().whileTrue(new ShootAmpAndReset(intakeSub, elevatorSub));
         xbox2.b().whileTrue(new ShootSpeakerAndReset(intakeSub, elevatorSub));
 
-        xbox2.c().whileTrue(new IntakePusherExtend(intakeSub));
+        //TODO: Fix
         xbox2.leftBumper().whileTrue(new IntakeSetZeroVoltage(intakeSub));
         xbox2.rightBumper().whileTrue(new IntakeSetZeroVoltage(intakeSub));
       }
