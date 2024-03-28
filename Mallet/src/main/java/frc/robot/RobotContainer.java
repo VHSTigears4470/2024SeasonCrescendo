@@ -147,7 +147,6 @@ public class RobotContainer {
       elevatorSub = new ElevatorSubsystem();
     }
     if (PhotonConstants.USING_VISION) {
-      poseEstimate = new PoseEstimation(swerveSub);
       // photonSub = new PhotonSubsystem();
       // Set up vision readings for Swerve
       if (SwerveConstants.USING_SWERVE) {
