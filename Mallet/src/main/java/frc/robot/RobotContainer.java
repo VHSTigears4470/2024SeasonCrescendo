@@ -295,11 +295,17 @@ public class RobotContainer {
             () -> -xbox1.getLeftX()));
       }
 
-      // if (IntakeConstants.IS_USING_INTAKE && ElevatorConstants.IS_USING_ELEVATOR) {
-      // xbox1.y().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
-      // xbox1.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
-      // xbox1.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
-      // }
+      if (IntakeConstants.IS_USING_INTAKE && SwerveConstants.USING_SWERVE && ElevatorConstants.IS_USING_ELEVATOR
+          && NoteLLConstants.IS_USING_NOTE_LIMELIGHT) {
+        xbox1.y().whileTrue(new IntakeNoteWhileFocus(swerveSub, intakeSub, elevatorSub, limelightSub)).onFalse(
+            new IntakeSetZeroVoltage(intakeSub));
+      }
+
+      if (IntakeConstants.IS_USING_INTAKE && ElevatorConstants.IS_USING_ELEVATOR) {
+        // xbox1.y().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
+        xbox1.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
+        // xbox1.x().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub));
+      }
 
       if (IntakeConstants.IS_USING_INTAKE && IntakeConstants.DEBUG) {
         // TODO - Remove the debug commands for real testing
