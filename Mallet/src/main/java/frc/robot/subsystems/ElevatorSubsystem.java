@@ -280,26 +280,32 @@ public class ElevatorSubsystem extends SubsystemBase {
       // BuiltInLayouts.kList)
       // .add("P Gain", ElevatorConstants.PID_KP)
       // .withWidget(BuiltInWidgets.kTextView)
+      // .withPosition(0, 0)
+      // .withSize(4, 5)
       // .getEntry();
       // entry_pid_ki = shuffleDebugTab.getLayout("Elevator PID",
       // BuiltInLayouts.kList)
       // .add("I Gain", ElevatorConstants.PID_KI)
       // .withWidget(BuiltInWidgets.kTextView)
+      // .withSize(4, 5)
       // .getEntry();
       // entry_pid_kd = shuffleDebugTab.getLayout("Elevator PID",
       // BuiltInLayouts.kList)
       // .add("D Gain", ElevatorConstants.PID_KD)
       // .withWidget(BuiltInWidgets.kTextView)
+      // .withSize(4, 5)
       // .getEntry();
       // entry_pid_kiz = shuffleDebugTab.getLayout("Elevator PID",
       // BuiltInLayouts.kList)
       // .add("Iz Gain", ElevatorConstants.PID_KIZ)
       // .withWidget(BuiltInWidgets.kTextView)
+      // .withSize(4, 5)
       // .getEntry();
       // entry_pid_kff = shuffleDebugTab.getLayout("Elevator PID",
       // BuiltInLayouts.kList)
       // .add("FF Gain", ElevatorConstants.PID_KFF)
       // .withWidget(BuiltInWidgets.kTextView)
+      // .withSize(4, 5)
       // .getEntry();
 
       // // Smart Motion
