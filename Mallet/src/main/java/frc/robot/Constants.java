@@ -153,6 +153,7 @@ public final class Constants {
         public static final double NOTE_INTAKE_VOLTAGE = 4; // unsigned, polarity set in subsystem
         public static final double SPEAKER_OUTPUT_VOLTAGE = 12; // unsigned, polarity set in subsystem
         public static final double AMP_OUTPUT_VOLTAGE = 3; // unsigned, polarity set in subsystem
+        public static final double SLOW_OUTPUT_VOLTAGE = 2; // unsigned, polarity set in subsystem
 
         // SENSORS
         public static final int NOTE_BREAKBEAM_DIO = 3; // TODO: Set DIO
@@ -232,6 +233,8 @@ public final class Constants {
     public static class NoteLLConstants {
         public static final boolean IS_USING_NOTE_LIMELIGHT = false;
         public static final boolean DEBUG = true;
+
+        public static final double DISTANCE_TO_CENTER = 1; // TODO: UPDATE *INCHES
 
         public static final String LIMELIGHT_NAME = "limelight-note";
         public static final NOTE_LL_PIPELINE DEFAULT_PIPELINE = NOTE_LL_PIPELINE.NOTES;

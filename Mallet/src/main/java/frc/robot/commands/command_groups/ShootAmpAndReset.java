@@ -36,7 +36,6 @@ public class ShootAmpAndReset extends SequentialCommandGroup {
                                                                 new ElevatorSetHeightState(elevatorSubsystem,
                                                                                 ELEVATOR_STATE.UP),
                                                                 new WaitUntilCommand(elevatorSubsystem::isAtPos),
-                                                                new WaitCommand(0.5),
                                                                 new IntakeSetAmpVoltage(intakeSubsystem),
                                                                 new WaitCommand(CycleTimes.INTAKE_MOTORS_WARM_UP_CYCLE_TIME),
                                                                 new IntakePusherExtend(intakeSubsystem),
