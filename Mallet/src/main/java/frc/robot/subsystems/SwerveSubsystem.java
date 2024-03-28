@@ -679,6 +679,8 @@ public class SwerveSubsystem extends SubsystemBase {
       entry_swerveHeading = shuffleDebugTab.getLayout("Swerve", BuiltInLayouts.kList)
           .add("Swerve Heading", 0)
           .withWidget(BuiltInWidgets.kGyro)
+          .withPosition(0, 9)
+          .withSize(4, 5)
           .getEntry();
 
     }

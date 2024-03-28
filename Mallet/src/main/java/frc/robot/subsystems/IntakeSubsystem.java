@@ -146,14 +146,18 @@ public class IntakeSubsystem extends SubsystemBase {
             entry_compressorPressure = shuffleDebugTab.getLayout("Intake", BuiltInLayouts.kList)
                     .add("Compressor Pressure", 0)
                     .withWidget(BuiltInWidgets.kTextView)
+                    .withPosition(0, 2)
+                    .withSize(4, 5)
                     .getEntry();
             entry_compressorSwitch = shuffleDebugTab.getLayout("Intake", BuiltInLayouts.kList)
                     .add("Compressor Switch", false)
                     .withWidget(BuiltInWidgets.kBooleanBox)
+                    .withSize(4, 5)
                     .getEntry();
             entry_noteBreakBeam = shuffleDebugTab.getLayout("Intake", BuiltInLayouts.kList)
                     .add("Note Break Beam Tripped", false)
                     .withWidget(BuiltInWidgets.kBooleanBox)
+                    .withSize(4, 5)
                     .getEntry();
 
         }

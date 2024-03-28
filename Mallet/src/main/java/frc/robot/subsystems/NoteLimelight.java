@@ -84,19 +84,29 @@ public class NoteLimelight extends SubsystemBase {
             entry_pipelineName = shuffleDebugTab.getLayout("Note Limelight", BuiltInLayouts.kList)
                     .add("Current Pipeline", "Default")
                     .withWidget(BuiltInWidgets.kTextView)
+                    .withPosition(0, 5)
+                    .withSize(4, 5)
                     .getEntry();
             entry_tvEntry = shuffleDebugTab.getLayout("Note Limelight", BuiltInLayouts.kList)
                     .add("Is Target", false)
-                    .withWidget(BuiltInWidgets.kTextView).getEntry();
+                    .withWidget(BuiltInWidgets.kTextView)
+                    .withSize(4, 5)
+                    .getEntry();
             entry_txEntry = shuffleDebugTab.getLayout("Note Limelight", BuiltInLayouts.kList)
                     .add("X Offset", 0)
-                    .withWidget(BuiltInWidgets.kTextView).getEntry();
+                    .withWidget(BuiltInWidgets.kTextView)
+                    .withSize(4, 5)
+                    .getEntry();
             entry_tyEntry = shuffleDebugTab.getLayout("Note Limelight", BuiltInLayouts.kList)
                     .add("Y Offset", 0)
-                    .withWidget(BuiltInWidgets.kTextView).getEntry();
+                    .withWidget(BuiltInWidgets.kTextView)
+                    .withSize(4, 5)
+                    .getEntry();
             entry_taEntry = shuffleDebugTab.getLayout("Note Limelight", BuiltInLayouts.kList)
                     .add("Area", 0)
-                    .withWidget(BuiltInWidgets.kTextView).getEntry();
+                    .withWidget(BuiltInWidgets.kTextView)
+                    .withSize(4, 5)
+                    .getEntry();
         }
     }
 

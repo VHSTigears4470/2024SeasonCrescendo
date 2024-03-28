@@ -79,6 +79,8 @@ public class OdomLimelight extends SubsystemBase {
             entry_pipelineName = shuffleDebugTab.getLayout("Odometry Limelight", BuiltInLayouts.kList)
                     .add("Current Pipeline", "Default")
                     .withWidget(BuiltInWidgets.kTextView)
+                    .withPosition(0, 7)
+                    .withSize(4, 5)
                     .getEntry();
 
         }
