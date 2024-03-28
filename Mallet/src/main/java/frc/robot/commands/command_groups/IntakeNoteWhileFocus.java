@@ -18,7 +18,6 @@ public class IntakeNoteWhileFocus extends SequentialCommandGroup {
             ElevatorSubsystem elevatorSubsystem, NoteLimelight limelight) {
         // Does nothing if a note is already in the intake
         addCommands(
-                new ConditionalCommand(
                         new SequentialCommandGroup(
                                 new ParallelCommandGroup(
                                         // Sets robot to intake position
@@ -30,13 +29,12 @@ public class IntakeNoteWhileFocus extends SequentialCommandGroup {
                                 new ParallelRaceGroup(
                                         new IntakeSetIntakeVoltageEndWithBreakbeam(
                                                 intakeSubsystem),
+                                        new WaitCommand(3), // Deadline without breakbeam
                                         new DriveForwardWithFocusNote(
                                                 swerveSubsystem,
                                                 limelight)),
                                 new WaitCommand(2) // Deadline
-                        ),
-                        new WaitCommand(0),
-                        () -> !intakeSubsystem.noteBreambeamTripped())
+                        )
         // Centers while going to intake position, wait command used to ensure enough
         // time to set up intake position
         );

@@ -22,7 +22,6 @@ public class ShootAmpAndReset extends SequentialCommandGroup {
                 addCommands(
                                 // TODO: Align to amp with on the fly path planning, ensure that the path is
                                 // actually only traversed when close enough to the amp to prevent collisions
-                                new ConditionalCommand(
                                                 new SequentialCommandGroup(
                                                                 new IntakePositionDown(intakeSubsystem),
                                                                 new ConditionalCommand(new WaitCommand(
@@ -41,9 +40,7 @@ public class ShootAmpAndReset extends SequentialCommandGroup {
                                                                 new IntakePusherExtend(intakeSubsystem),
                                                                 new WaitCommand(CycleTimes.INTAKE_MOTORS_WARM_UP_CYCLE_TIME),
                                                                 new DefaultPosition(intakeSubsystem,
-                                                                                elevatorSubsystem)),
-                                                new WaitCommand(0),
-                                                intakeSubsystem::noteBreambeamTripped));
+                                                                                elevatorSubsystem)));
         }
 
 }

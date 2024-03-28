@@ -20,7 +20,6 @@ public class ShootSpeakerAndReset extends SequentialCommandGroup {
                 addRequirements(intakeSubsystem, elevatorSubsystem);
                 // Start if note is in the intake
                 addCommands(
-                                new ConditionalCommand(
                                                 new SequentialCommandGroup(
                                                                 new ElevatorSetHeightState(elevatorSubsystem,
                                                                                 ELEVATOR_STATE.DOWN),
@@ -44,9 +43,7 @@ public class ShootSpeakerAndReset extends SequentialCommandGroup {
                                                                 new IntakePusherExtend(intakeSubsystem),
                                                                 new WaitCommand(CycleTimes.INTAKE_MOTORS_WARM_UP_CYCLE_TIME),
                                                                 new DefaultPosition(intakeSubsystem,
-                                                                                elevatorSubsystem)),
-                                                new WaitCommand(0),
-                                                intakeSubsystem::noteBreambeamTripped)
+                                                                                elevatorSubsystem))
                 // TODO: Light on the robot glows when in correct range/radius around the
                 // speaker and pointing in correct direction
                 );

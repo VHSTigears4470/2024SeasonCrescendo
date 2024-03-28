@@ -7,7 +7,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -31,13 +30,12 @@ public class IntakeSubsystem extends SubsystemBase {
     private final RelativeEncoder topEncoder;
 
     // Variables for sensors
-    private final DigitalInput noteBreakbeam;
+    // private final DigitalInput noteBreakbeam;
 
     // Shuffleboard
     private ShuffleboardTab shuffleDebugTab;
     private GenericEntry entry_compressorPressure;
     private GenericEntry entry_compressorSwitch;
-    private GenericEntry entry_noteBreakBeam;
 
     private Value intakeState;
 
@@ -74,7 +72,7 @@ public class IntakeSubsystem extends SubsystemBase {
         botMotor.follow(topMotor, IntakeConstants.FOLLOWER_INVERTED);
 
         // Sensor initialization
-        noteBreakbeam = new DigitalInput(IntakeConstants.NOTE_BREAKBEAM_DIO);
+        // noteBreakbeam = new DigitalInput(IntakeConstants.NOTE_BREAKBEAM_DIO);
 
         initializeShuffleboard();
     }
@@ -135,11 +133,6 @@ public class IntakeSubsystem extends SubsystemBase {
         topMotor.setVoltage(0);
     }
 
-    /*** Returns the state of the note break beam */
-    public boolean noteBreambeamTripped() {
-        return !noteBreakbeam.get(); // Inverted because it is true when not tripped
-    }
-
     public Value getIntakeState() {
         return intakeState;
     }
@@ -156,10 +149,6 @@ public class IntakeSubsystem extends SubsystemBase {
                     .add("Compressor Switch", false)
                     .withWidget(BuiltInWidgets.kBooleanBox)
                     .getEntry();
-            entry_noteBreakBeam = shuffleDebugTab.getLayout("Intake", BuiltInLayouts.kList)
-                    .add("Note Break Beam Tripped", false)
-                    .withWidget(BuiltInWidgets.kBooleanBox)
-                    .getEntry();
 
         }
     }
@@ -169,7 +158,6 @@ public class IntakeSubsystem extends SubsystemBase {
         if (IntakeConstants.DEBUG) {
             entry_compressorPressure.setDouble(compressor.getPressure());
             entry_compressorSwitch.setBoolean(compressor.getPressureSwitchValue());
-            entry_noteBreakBeam.setBoolean(noteBreambeamTripped());
         }
     }
 
