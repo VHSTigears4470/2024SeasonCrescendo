@@ -226,6 +226,11 @@ public class RobotContainer {
 
     // Init auto preset chooser
     autoPresetChooser.setDefaultOption("Use Modular", null);
+    if(SwerveConstants.USING_SWERVE) { 
+      autoPresetChooser.addOption("TEST ONLY STRAIGHT", swerveSub.driveToPose(swerveSub.createPose(1, 0)));
+      autoPresetChooser.addOption("TEST ONLY SIDE", swerveSub.driveToPose(swerveSub.createPose(0, 1)));
+      autoPresetChooser.addOption("TEST ONLY DIAG", swerveSub.driveToPose(swerveSub.createPose(1, 1)));
+    }
     if (SwerveConstants.USING_SWERVE && ElevatorConstants.IS_USING_ELEVATOR && IntakeConstants.IS_USING_INTAKE) {
       autoPresetChooser.addOption("Preset One (Amp Side)",
           new ShootSpeakerAndReset(intakeSub, elevatorSub)
@@ -370,7 +375,9 @@ public class RobotContainer {
             new IntakeSetZeroVoltage(intakeSub));
       }
       if (IntakeConstants.IS_USING_INTAKE && ElevatorConstants.IS_USING_ELEVATOR) {
-        xbox2.x().whileTrue(new ShootAmpAndReset(intakeSub, elevatorSub));
+        xbox2.leftTrigger().whileTrue(new ShootAmpPosition(intakeSub, elevatorSub));
+        xbox2.x().whileTrue(new RevUpAndShootAmp(intakeSub, elevatorSub)).onFalse(
+          new IntakeSetZeroVoltage(intakeSub));
         xbox2.a().whileTrue(new DefaultPosition(intakeSub, elevatorSub));
         xbox2.y().whileTrue(new IntakePositionAndSuck(intakeSub, elevatorSub)).onFalse(
             new IntakeSetZeroVoltage(intakeSub));
