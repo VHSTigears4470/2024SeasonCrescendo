@@ -384,7 +384,9 @@ public class RobotContainer {
         xbox2.start().whileTrue(new ClimbPosition(intakeSub, elevatorSub));
       }
       if (IntakeConstants.IS_USING_INTAKE) {
-        xbox2.rightBumper().whileTrue(new IntakeSetSlowShoot(intakeSub));
+        xbox2.rightBumper().whileTrue(new IntakeShootSlow(intakeSub)).onFalse(
+          new IntakeSetZeroVoltage(intakeSub)
+        );
         xbox2.leftBumper().whileTrue(new IntakeSetIntakeVoltageEndWithBreakbeam(intakeSub)).onFalse(
             new IntakeSetZeroVoltage(intakeSub));
 
