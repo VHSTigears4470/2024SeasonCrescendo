@@ -24,6 +24,8 @@ public class AbsoluteDrive extends Command {
   private final SwerveSubsystem swerve;
   private final DoubleSupplier vX, vY;
   private final DoubleSupplier headingHorizontal, headingVertical;
+  private double lastHeadingPositionHorizontal, lastHeadingPositionVertical;
+  private final double minHeadingPos = 0.25; // unsigned
   private boolean initRotation = false;
 
   /**
@@ -67,6 +69,8 @@ public class AbsoluteDrive extends Command {
     this.vY = vY;
     this.headingHorizontal = headingHorizontal;
     this.headingVertical = headingVertical;
+    lastHeadingPositionHorizontal = headingHorizontal.getAsDouble();
+    lastHeadingPositionVertical = headingVertical.getAsDouble();
 
     addRequirements(swerve);
   }
@@ -79,11 +83,16 @@ public class AbsoluteDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
+    if (Math.abs(headingHorizontal.getAsDouble()) > minHeadingPos) {
+      lastHeadingPositionHorizontal = headingHorizontal.getAsDouble();
+    }
+    if (Math.abs(headingVertical.getAsDouble()) > minHeadingPos) {
+      lastHeadingPositionVertical = headingVertical.getAsDouble();
+    }
     // Get the desired chassis speeds based on a 2 joystick module.
     ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(vX.getAsDouble(), vY.getAsDouble(),
-        headingHorizontal.getAsDouble(),
-        headingVertical.getAsDouble());
+        lastHeadingPositionHorizontal,
+        lastHeadingPositionVertical);
 
     // Prevent Movement After Auto
     if (initRotation) {
