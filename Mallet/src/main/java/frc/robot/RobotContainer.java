@@ -285,6 +285,10 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // XBOX 1 Configs
     if (OperatorConstants.USING_XBOX_1) {
+      if (SwerveConstants.USING_SWERVE) {
+        xbox1.back().onTrue(new ResetOdom(swerveSub));
+      }
+
       if (SwerveConstants.USING_SWERVE && NoteLLConstants.IS_USING_NOTE_LIMELIGHT) {
         xbox1.a().onTrue(new AbsoluteDriveWithFocus(swerveSub, limelightSub,
             () -> -xbox1.getLeftY(),
