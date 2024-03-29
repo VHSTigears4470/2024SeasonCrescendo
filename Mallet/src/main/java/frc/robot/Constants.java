@@ -102,7 +102,7 @@ public final class Constants {
         public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
         public static final double WHEEL_LOCK_TIME = 10;
 
-        public static final double SWERVE_AUTO_VELOCITY = 1;
+        public static final double SWERVE_AUTO_VELOCITY = .3;
 
         // TOLERANCES
         public static final double HEADING_TOLERANCE = 10;
@@ -140,7 +140,7 @@ public final class Constants {
         public static final Value PISTON_DEFAULT_POSITION = DoubleSolenoid.Value.kReverse;
 
         public static final double SECONDS_TILL_UP = 3.5;
-        public static final double SECONDS_TILL_DOWN = 1.5;
+        public static final double SECONDS_TILL_DOWN = 1;
 
         // MOTORS
         public static final int TOP_MOTOR_ID = 9; // Leader
@@ -154,7 +154,7 @@ public final class Constants {
         // Intake sucking and shooting speeds
         public static final double NOTE_INTAKE_VOLTAGE = 4; // unsigned, polarity set in subsystem
         public static final double SPEAKER_OUTPUT_VOLTAGE = 12; // unsigned, polarity set in subsystem
-        public static final double AMP_OUTPUT_VOLTAGE = 3; // unsigned, polarity set in subsystem
+        public static final double AMP_OUTPUT_VOLTAGE = 2; // unsigned, polarity set in subsystem
         public static final double SLOW_OUTPUT_VOLTAGE = 2; // unsigned, polarity set in subsystem
 
         // SENSORS
@@ -198,11 +198,11 @@ public final class Constants {
 
         // SMART MOTION
         public static final int SM_ID = 0;
-        private static final double SM_MAX_INCHES_VEL = 1.5; // Elevator maximum inches per second
+        private static final double SM_MAX_INCHES_VEL = 3.5; // Elevator maximum inches per second
         public static final double SM_MAX_RPM_VEL = SM_MAX_INCHES_VEL / GEAR_CIRCUMFRENCE
                 * GEAR_RATIO * 60; // Elevator maximum revolutions per minute -> revolutions -> gear ratio
 
-        private static final double SM_MAX_INCHES_VEL_DOWN = 1.5; // Elevator maximum inches per second
+        private static final double SM_MAX_INCHES_VEL_DOWN = 1.8; // Elevator maximum inches per second
         public static final double SM_MAX_RPM_VEL_DOWN = SM_MAX_INCHES_VEL_DOWN / GEAR_CIRCUMFRENCE
                 * GEAR_RATIO * 60; // Elevator maximum revolutions per minute -> revolutions -> gear ratio
 

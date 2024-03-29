@@ -4,7 +4,6 @@
 
 package frc.robot.commands.drivebase;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,12 +19,9 @@ import swervelib.math.SwerveMath;
  * An example command that uses an example subsystem.
  */
 public class AbsoluteDrive extends Command {
-
   private final SwerveSubsystem swerve;
   private final DoubleSupplier vX, vY;
   private final DoubleSupplier headingHorizontal, headingVertical;
-  private double lastHeadingPositionHorizontal, lastHeadingPositionVertical;
-  private boolean initRotation = false;
 
   /**
    * Used to drive a swerve robot in full field-centric mode. vX and vY supply
@@ -60,51 +56,30 @@ public class AbsoluteDrive extends Command {
    *                          with no deadband. Positive is away from the alliance
    *                          wall.
    */
-  public AbsoluteDrive(SwerveSubsystem swerve, DoubleSupplier vX, DoubleSupplier vY,
-      DoubleSupplier headingHorizontal,
+  public AbsoluteDrive(SwerveSubsystem swerve, DoubleSupplier vX, DoubleSupplier vY, DoubleSupplier headingHorizontal,
       DoubleSupplier headingVertical) {
     this.swerve = swerve;
     this.vX = vX;
     this.vY = vY;
     this.headingHorizontal = headingHorizontal;
     this.headingVertical = headingVertical;
-    lastHeadingPositionHorizontal = headingHorizontal.getAsDouble();
-    lastHeadingPositionVertical = headingVertical.getAsDouble();
 
     addRequirements(swerve);
   }
 
   @Override
   public void initialize() {
-    initRotation = true;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // Pythag Theorem to find distance of joystick
-    // Make sure motor angles does not reset to Default Position
-    if (Math.sqrt(Math.abs(headingHorizontal.getAsDouble()) * Math.abs(headingHorizontal.getAsDouble()) +
-        Math.abs(headingVertical.getAsDouble())
-            * Math.abs(headingVertical.getAsDouble())) > SwerveConstants.MIN_ANGLE_THRESHOLD) {
-      lastHeadingPositionHorizontal = headingHorizontal.getAsDouble();
-      lastHeadingPositionVertical = headingVertical.getAsDouble();
-    }
+
     // Get the desired chassis speeds based on a 2 joystick module.
+
     ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(vX.getAsDouble(), vY.getAsDouble(),
-        lastHeadingPositionHorizontal,
-        lastHeadingPositionVertical);
-
-    // Prevent Movement After Auto
-    if (initRotation) {
-      if (headingHorizontal.getAsDouble() == 0 && headingVertical.getAsDouble() == 0) {
-
-        // Set the Current Heading and not moving
-        desiredSpeeds = swerve.getTargetSpeeds(0, 0, swerve.getHeading());
-      }
-      // Dont Init Rotation Again
-      initRotation = false;
-    }
+        headingHorizontal.getAsDouble(),
+        headingVertical.getAsDouble());
 
     // Limit velocity to prevent tippy
     Translation2d translation = SwerveController.getTranslation2d(desiredSpeeds);

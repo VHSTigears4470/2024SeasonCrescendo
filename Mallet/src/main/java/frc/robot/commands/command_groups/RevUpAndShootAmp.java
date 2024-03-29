@@ -22,13 +22,9 @@ public class RevUpAndShootAmp extends SequentialCommandGroup {
         addCommands(
                 // TODO: Align to amp with on the fly path planning, ensure that the path is
                 // actually only traversed when close enough to the amp to prevent collisions
-                new ConditionalCommand(
-                        new SequentialCommandGroup(
-                                new IntakeSetAmpVoltage(intakeSubsystem),
-                                new WaitCommand(CycleTimes.INTAKE_MOTORS_WARM_UP_CYCLE_TIME),
-                                new IntakePusherExtend(intakeSubsystem)),
-                        new WaitCommand(0),
-                        intakeSubsystem::noteBreambeamTripped));
+                new IntakeSetAmpVoltage(intakeSubsystem),
+                new WaitCommand(CycleTimes.INTAKE_MOTORS_WARM_UP_CYCLE_TIME),
+                new IntakePusherExtend(intakeSubsystem));
     }
 
 }
