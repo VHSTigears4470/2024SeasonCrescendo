@@ -199,6 +199,9 @@ public class RobotContainer {
         compiledCommandEnd.addOption("Middle Center Note", AutoConstants.MIDDLE_CENTER_NOTE_ENDING);
         compiledCommandEnd.addOption("Feeder Middle Center Note", AutoConstants.FEEDER_MIDDLE_CENTER_NOTE_ENDING);
         compiledCommandEnd.addOption("Feeder Center Note", AutoConstants.FEEDER_CENTER_NOTE_ENDING);
+
+        compiledCommandEnd.addOption("Far", "Far");
+
       }
 
       // Named commands
@@ -269,10 +272,10 @@ public class RobotContainer {
       autoPresetChooser.addOption("Shoot and go to side feeder side",
           new ShootSpeakerAndReset(intakeSub, elevatorSub)
               .andThen(swerveSub.getAutonomousCommand(
-                  "Alt", true)));
+                  "Feeder to Far", true)));
       autoPresetChooser.addOption("Go to side feeder side",
           swerveSub.getAutonomousCommand(
-              "Alt", true));
+              "Feeder to Far", true));
 
     }
     shuffleDebugTab.add("Presets", autoPresetChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
