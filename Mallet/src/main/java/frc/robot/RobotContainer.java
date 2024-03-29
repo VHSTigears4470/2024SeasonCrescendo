@@ -224,11 +224,14 @@ public class RobotContainer {
     if (SwerveConstants.USING_SWERVE && ElevatorConstants.IS_USING_ELEVATOR && IntakeConstants.IS_USING_INTAKE) {
       if (SwerveConstants.USING_SWERVE) {
         autoPresetChooser.addOption("TEST ONLY STRAIGHT", new ResetOdom(swerveSub).andThen(
-            swerveSub.driveToPose(swerveSub.createPose(1, 0))));
+            swerveSub.driveToPose(swerveSub.createPose(.2, 0))));
         autoPresetChooser.addOption("TEST ONLY SIDE", new ResetOdom(swerveSub).andThen(
-            swerveSub.driveToPose(swerveSub.createPose(1, 1))));
+            swerveSub.driveToPose(swerveSub.createPose(.2, .2))));
         autoPresetChooser.addOption("TEST ONLY DIAG", new ResetOdom(swerveSub).andThen(
-            swerveSub.driveToPose(swerveSub.createPose(0, 1))));
+            swerveSub.driveToPose(swerveSub.createPose(0, .2))));
+        autoPresetChooser.addOption("TEST ONLY ROTATE", new ResetOdom(swerveSub).andThen(
+            swerveSub.driveToPose(swerveSub.createPose(0, 0, -90))));
+
       }
       autoPresetChooser.addOption("Preset One (Amp Side)",
           new ShootSpeakerAndReset(intakeSub, elevatorSub)
@@ -443,7 +446,7 @@ public class RobotContainer {
       }
       // If path planner command
       else {
-        Command pathPlannerComand = swerveSub.getAutonomousCommand(startPos + " to " + selected, false);
+        Command pathPlannerComand = swerveSub.getAutonomousCommand(startPos + " to " + selected, true);
         if (pathPlannerComand != null) {
           choosenCommand = pathPlannerComand;
         }

@@ -17,17 +17,19 @@ public class ShootSpeakerPosition extends SequentialCommandGroup {
                 addRequirements(intakeSubsystem, elevatorSubsystem);
                 // Start if note is in the intake
                 addCommands(
-                    new SequentialCommandGroup(
-                            new ElevatorSetHeightState(elevatorSubsystem, ELEVATOR_STATE.DOWN),
-                            new WaitUntilCommand(elevatorSubsystem::isAtPos), // wait until it is at position
-                            new IntakePositionUp(intakeSubsystem),
-                            new ConditionalCommand(new WaitCommand(
-                            IntakeConstants.SECONDS_TILL_UP),
-                            new WaitCommand(0),
-                            () -> intakeSubsystem.getIntakeState() != Value.kReverse)
-                         ) // if intake
-                                                                                                                                      // not
-                                                                                                                                      // up
+                                new SequentialCommandGroup(
+                                                new ElevatorSetHeightState(elevatorSubsystem, ELEVATOR_STATE.DOWN),
+                                                new WaitUntilCommand(elevatorSubsystem::isAtPos), // wait until it is at
+                                                                                                  // position
+                                                new IntakePositionUp(intakeSubsystem),
+                                                new ConditionalCommand(new WaitCommand(
+                                                                IntakeConstants.SECONDS_TILL_UP),
+                                                                new WaitCommand(0),
+                                                                () -> intakeSubsystem
+                                                                                .getIntakeState() != Value.kReverse)) // if
+                                                                                                                      // intake
+                                                                                                                      // not
+                                                                                                                      // up
                 // TODO: Light on the robot glows when in correct range/radius around the
                 // speaker and pointing in correct direction
                 );
