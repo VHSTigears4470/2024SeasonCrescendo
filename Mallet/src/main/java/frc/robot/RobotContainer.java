@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -55,6 +56,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -215,8 +217,9 @@ public class RobotContainer {
     // Adds each number of directions to the shuffleboard list
     for (int i = 0; i < autoDirections.size(); i++) {
       shuffleDriverTab.getLayout("Directions", BuiltInLayouts.kList)
+          .withProperties(Map.of("Number of columns", 1, "Number of rows", autoDirections.size() + 1))
           .add("#" + (i + 1) + " Note", autoDirections.get(i))
-          .withWidget(BuiltInWidgets.kComboBoxChooser);
+          .withWidget(BuiltInWidgets.kComboBoxChooser).withPosition(0, i);
     }
 
     // Init auto preset chooser
@@ -431,30 +434,33 @@ public class RobotContainer {
 
     // Where the robot starts at each direction
     String startPos = basePositionChooser.getSelected();
+    boolean isFirstPath = true;
 
     for (SendableChooser<String> choice : autoDirections) {
       // Default choosen command does nothing
       Command choosenCommand = null;
       // Selected choice as a string
       String selected = choice.getSelected();
-
-      // If command is not a path command but a normal named command
-      Command namedCommand = NamedCommands.getCommand(selected);
-      // If named command
-      if (namedCommand != null) {
-        choosenCommand = namedCommand;
+      if (selected.equals("Nothing")) {
+        continue;
       }
-      // If path planner command
-      else {
-        Command pathPlannerComand = swerveSub.getAutonomousCommand(startPos + " to " + selected, true);
-        if (pathPlannerComand != null) {
-          choosenCommand = pathPlannerComand;
-        }
+      Command pathPlannerComand = swerveSub.getAutonomousCommand(startPos + " to " + selected, isFirstPath);
+      if (pathPlannerComand != null) {
+        System.out.println(
+            "Add Path Command " + startPos + " to " + selected + " | First Path: " + isFirstPath);
+        isFirstPath = false;
+        choosenCommand = pathPlannerComand;
         startPos = selected;
+
+      } else {
+        // If command is not a path command but a normal named command
+        choosenCommand = NamedCommands.getCommand(selected);
+        DriverStation.reportWarning("Add NamedCommand " + selected, false);
+        // if doesn't exist will be an empty command
       }
 
       // Apends it to the sequential command
-      if (choosenCommand == null || selected.equals("Nothing")) {
+      if (choosenCommand == null) {
         continue;
       }
       compiledCommand = compiledCommand.andThen(choosenCommand);
