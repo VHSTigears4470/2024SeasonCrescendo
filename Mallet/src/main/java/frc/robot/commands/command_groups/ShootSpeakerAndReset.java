@@ -29,7 +29,8 @@ public class ShootSpeakerAndReset extends SequentialCommandGroup {
                                 new ConditionalCommand(
                                         new ParallelCommandGroup(
                                                 new WaitCommand(IntakeConstants.SECONDS_TILL_UP),
-                                                new IntakePositionUp(intakeSubsystem)),
+                                                new IntakePositionUp(
+                                                        intakeSubsystem)),
                                         new WaitCommand(0),
                                         () -> intakeSubsystem
                                                 .getIntakeState() != Value.kReverse),
