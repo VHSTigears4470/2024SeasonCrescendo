@@ -4,6 +4,7 @@
   "holonomicMode": true,
   "pathFolders": [
     "Hoi",
+    "Extras",
     "Start & Center",
     "Start & Wing"
   ],

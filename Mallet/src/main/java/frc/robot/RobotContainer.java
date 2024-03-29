@@ -266,6 +266,14 @@ public class RobotContainer {
               .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub))
               .andThen(swerveSub.getAutonomousCommand(
                   AutoConstants.FEEDER_SIDE_START + " to " + AutoConstants.FEEDER_CENTER_NOTE_ENDING, false)));
+      autoPresetChooser.addOption("Shoot and go to side feeder side",
+          new ShootSpeakerAndReset(intakeSub, elevatorSub)
+              .andThen(swerveSub.getAutonomousCommand(
+                  "Alt", true)));
+      autoPresetChooser.addOption("Go to side feeder side",
+          swerveSub.getAutonomousCommand(
+              "Alt", true));
+
     }
     shuffleDebugTab.add("Presets", autoPresetChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
   }
