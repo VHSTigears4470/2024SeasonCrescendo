@@ -242,17 +242,17 @@ public class RobotContainer {
       autoPresetChooser.addOption("Preset One (Amp Side)",
           new ShootSpeakerAndReset(intakeSub, elevatorSub)
               .andThen(swerveSub.getAutonomousCommand(
-                  AutoConstants.AMP_SIDE_START + " to " + AutoConstants.AMP_WING_NOTE_ENDING, false))
+                  AutoConstants.AMP_SIDE_START + " to " + AutoConstants.AMP_WING_NOTE_ENDING, true))
+              .andThen(new IntakePositionAndSuck(intakeSub, elevatorSub))
               .andThen(new DriveTillHaveNote(intakeSub, elevatorSub, swerveSub))
               .andThen(swerveSub.getAutonomousCommand(
                   AutoConstants.AMP_WING_NOTE_ENDING + " to " + AutoConstants.AMP_SIDE_START, false))
-              .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub))
-              .andThen(swerveSub.getAutonomousCommand(
-                  AutoConstants.AMP_SIDE_START + " to " + AutoConstants.AMP_CENTER_NOTE_ENDING, false)));
+              .andThen(new ShootSpeakerAndReset(intakeSub, elevatorSub)));
       autoPresetChooser.addOption("Preset Two (Middle Side)",
           new ShootSpeakerAndReset(intakeSub, elevatorSub)
               .andThen(swerveSub.getAutonomousCommand(
-                  AutoConstants.MIDDLE_SIDE_START + " to " + AutoConstants.MIDDLE_WING_NOTE_ENDING, false))
+                  AutoConstants.MIDDLE_SIDE_START + " to " + AutoConstants.MIDDLE_WING_NOTE_ENDING, true))
+              .andThen(new IntakePositionAndSuck(intakeSub, elevatorSub))
               .andThen(new DriveTillHaveNote(intakeSub, elevatorSub, swerveSub))
               .andThen(swerveSub.getAutonomousCommand(
                   AutoConstants.MIDDLE_WING_NOTE_ENDING + " to " + AutoConstants.MIDDLE_SIDE_START, false))
@@ -262,7 +262,8 @@ public class RobotContainer {
       autoPresetChooser.addOption("Preset Three (Feeder Side)",
           new ShootSpeakerAndReset(intakeSub, elevatorSub)
               .andThen(swerveSub.getAutonomousCommand(
-                  AutoConstants.FEEDER_SIDE_START + " to " + AutoConstants.FEEDER_WING_NOTE_ENDING, false))
+                  AutoConstants.FEEDER_SIDE_START + " to " + AutoConstants.FEEDER_WING_NOTE_ENDING, true))
+              .andThen(new IntakePositionAndSuck(intakeSub, elevatorSub))
               .andThen(new DriveTillHaveNote(intakeSub, elevatorSub, swerveSub))
               .andThen(swerveSub.getAutonomousCommand(
                   AutoConstants.FEEDER_WING_NOTE_ENDING + " to " + AutoConstants.FEEDER_SIDE_START, false))
