@@ -92,10 +92,10 @@ public final class Constants {
         // TODO CHANGE SCALAR in gettargetspeeds
 
         // SWERVE
-        public static final TelemetryVerbosity TELEMETRY_VERBOSITY = TelemetryVerbosity.NONE;
+        public static final TelemetryVerbosity TELEMETRY_VERBOSITY = TelemetryVerbosity.HIGH;
         public static final double SPEED_SCALAR = 0.8;
         public static final double MAX_ACCELERATION = 2;
-        public static final double MAX_SPEED_METERS = 2;
+        public static final double MAX_SPEED_METERS = 3;
 
         public static final double ROBOT_MASS = Units.lbsToKilograms(128); //
         public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(0)), ROBOT_MASS);
