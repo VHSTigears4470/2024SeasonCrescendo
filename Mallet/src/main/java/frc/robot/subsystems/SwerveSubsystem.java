@@ -695,7 +695,7 @@ public class SwerveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     updateShuffleboard();
-  }
+}
 
   @Override
   public void simulationPeriodic() {
