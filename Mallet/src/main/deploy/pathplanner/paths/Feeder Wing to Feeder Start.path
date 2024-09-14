@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 0.7418259386281802,
-        "y": 4.435354463125988
+        "x": 0.857297007033385,
+        "y": 4.08
       },
       "prevControl": {
-        "x": 1.1748386405203997,
-        "y": 4.185354463125988
+        "x": 1.2903097089256041,
+        "y": 3.83
       },
       "nextControl": null,
       "isLocked": false,
@@ -36,25 +36,7 @@
     }
   ],
   "constraintZones": [],
-  "eventMarkers": [
-    {
-      "name": "New Event Marker",
-      "waypointRelativePos": 0,
-      "command": {
-        "type": "sequential",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "Default Position"
-              }
-            }
-          ]
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,

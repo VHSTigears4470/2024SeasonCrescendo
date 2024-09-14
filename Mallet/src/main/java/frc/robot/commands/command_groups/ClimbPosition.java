@@ -29,5 +29,6 @@ public class ClimbPosition extends SequentialCommandGroup {
                                                 ElevatorConstants.ELEVATOR_STATE.CLIMB),
                                 new WaitUntilCommand(() -> elevatorSubsystem.isWithinPos(4)),
                                 new IntakePositionUp(intakeSubsystem));
+                // TODO: ADD WAIT CONDITIONAL
         }
 }

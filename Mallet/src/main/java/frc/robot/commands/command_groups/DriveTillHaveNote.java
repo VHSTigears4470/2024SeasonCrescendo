@@ -19,7 +19,7 @@ public class DriveTillHaveNote extends SequentialCommandGroup {
                 new ParallelRaceGroup(
                         new IntakeSetIntakeVoltageEndWithBreakbeam(intake),
                         new DriveForward(swerve, SwerveConstants.SWERVE_AUTO_VELOCITY),
-                        new WaitCommand(3)) // time out so don't keep driving
+                        new WaitCommand(1.5)) // time out so don't keep driving
         );
     }
 }
